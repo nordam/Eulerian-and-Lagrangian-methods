@@ -1,0 +1,7 @@
+*.swp
+*.pyc
+*.npy
+*.pdf
+*.png
+.DS_store
+.ipynb_checkpoints
