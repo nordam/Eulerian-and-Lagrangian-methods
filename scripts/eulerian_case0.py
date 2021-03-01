@@ -63,6 +63,8 @@ K_A = lambda z: 1e-3*np.ones(len(z))
 alpha, beta, zeta, z0 = (0.00636, 0.088, 1.54, 1.3)
 K_B = lambda z: alpha*(z+z0)*np.exp(-(beta*(z+z0))**zeta)
 
+K_B = lambda z: 1e-3 + 1e-2*np.sin(z*np.pi/Zmax)
+
 
 ####################################################
 ####   Populate object with system parameters   ####
