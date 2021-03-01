@@ -23,7 +23,7 @@ from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_
 parser = argparse.ArgumentParser()
 parser.add_argument('--dt', dest = 'dt', type = int, default = 600, help = 'Timestep')
 parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
-parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
+parser.add_argument('--NK', dest = 'NK', type = int, default = 3, help = 'Number of speed classes')
 args = parser.parse_args()
 
 
@@ -35,23 +35,20 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 72*3600
 
-# For this case, we use a speed distribution directly, taken from
-# Table 3 in Sundby (1983).
-# Mean speed = 0.96 mm/s
-# Standard deviation = 0.38 mm/s
-# Truncated at +/- 2*sigma
-mean_speed = 0.96 * 1e-3
+# For this test, we use three speeds, one positive, one zero, one negative
+mean_speed = 0 * 1e-3
 std_dev_speed = 0.38 * 1e-3
 Vmin = mean_speed - 2*std_dev_speed
 Vmax = mean_speed + 2*std_dev_speed
 speed_distribution = lambda v: np.exp(-0.5*((v - mean_speed)/std_dev_speed)**2) / (std_dev_speed*np.sqrt(2*np.pi))
+speed_distribution = lambda v: np.ones_like(v) / (4*std_dev_speed)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
 sigma_IC = 4
-mu_IC = 20
+mu_IC = 25
 pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*np.pi))
 
 
@@ -60,7 +57,7 @@ pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*
 ##################################
 
 # Constant diffusivity
-K_A = lambda z: 1e-2*np.ones(len(z))
+K_A = lambda z: 1e-3*np.ones(len(z))
 
 # Fitted to results of GOTM simulation
 alpha, beta, zeta, z0 = (0.00636, 0.088, 1.54, 1.3)
@@ -96,5 +93,5 @@ for K, label in zip((K_A, K_B), ('A', 'B')):
     c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params)
     end = time.time()
 
-    np.save(f'../data/Case1_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy', c)
+    np.save(f'../data/Case0_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy', c)
 

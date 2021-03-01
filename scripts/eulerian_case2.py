@@ -12,10 +12,10 @@ from scipy.integrate import romb
 # import stuff from .py files in notebooks folder
 import sys
 sys.path.append('.')
-from fractionator import Fractionator
-from particlefunctions import CONST, rise_speed
-from wavefunctions import jonswap
-from webernaturaldispersion import weber_natural_dispersion
+#from fractionator import Fractionator
+#from particlefunctions import CONST, rise_speed
+#from wavefunctions import jonswap
+#from webernaturaldispersion import weber_natural_dispersion
 
 
 
@@ -99,7 +99,7 @@ def rho_vector_plus_function(c, NJ, NK):
     # for all components NK
     
     # Global epsilon to prevent division by zero
-    global epsilon
+    epsilon = 1e-20
     
     # Allocate vector coinciding with the cell faces
     rho_vector_plus = np.zeros([NJ+1, NK], order='F')
@@ -120,7 +120,7 @@ def rho_vector_minus_function(c, NJ, NK):
     # for all components NK
 
     # Global epsilon to prevent division by zero
-    global epsilon
+    epsilon = 1e-20
     
     # Allocate vector coinciding with the cell faces
     rho_vector_minus = np.zeros([NJ+1, NK], order='F')
@@ -197,7 +197,7 @@ def flux_limiter_reaction_term_function(c, NJ, NK, r_sans_D, CFL_sans_v, velocit
     flux_limiter_reaction_term = np.zeros([NJ, NK], order='F')
     
     # Global epsilon to prevent division by zero
-    global epsilon
+    epsilon = 1e-20
     
     # Vectors for the flux limiter functions
     psi_vector_plus = psi_vector_function(rho_vector_plus_function(c, NJ, NK), NJ, NK)
@@ -416,173 +416,175 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, z_cell, z_face, dz, 
     return C_out
 
 
-########################################
-#### Scenario parameters for Case 1 ####
-########################################
+
+if __name__ == '__main__':
+    ########################################
+    #### Scenario parameters for Case 1 ####
+    ########################################
 
 
-# Oil parameters
-## Dynamic viscosity of oil (kg/m/s)
-mu     = 1.51
-## Interfacial tension (N/m)
-ift    = 0.013
-## Oil density (kg/m**3)
-rho    = 992
-## Intial oil film thickness (m)
-h0     = 3e-3
+    # Oil parameters
+    ## Dynamic viscosity of oil (kg/m/s)
+    mu     = 1.51
+    ## Interfacial tension (N/m)
+    ift    = 0.013
+    ## Oil density (kg/m**3)
+    rho    = 992
+    ## Intial oil film thickness (m)
+    h0     = 3e-3
 
-# Environmental parameters
-## Windspeed (m/s)
-windspeed = 9
+    # Environmental parameters
+    ## Windspeed (m/s)
+    windspeed = 9
 
-# Size distribution parameters
-# Significant wave height and peak wave period
-Hs, Tp = jonswap(windspeed)
-# Assign new sizes from Johansen distribution
-sigma = 0.4 * np.log(10)
-D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
-D50v  = np.exp(np.log(D50n) + 3*sigma**2)
+    # Size distribution parameters
+    # Significant wave height and peak wave period
+    Hs, Tp = jonswap(windspeed)
+    # Assign new sizes from Johansen distribution
+    sigma = 0.4 * np.log(10)
+    D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
+    D50v  = np.exp(np.log(D50n) + 3*sigma**2)
 
-##################################
-####   Numerical parameters   ####
-##################################
+    ##################################
+    ####   Numerical parameters   ####
+    ##################################
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = float, default = 300, help = 'Timestep')
-parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
-parser.add_argument('--NK', dest = 'NK', type = int, default = 64, help = 'Number of speed classes')
-args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dt', dest = 'dt', type = float, default = 300, help = 'Timestep')
+    parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
+    parser.add_argument('--NK', dest = 'NK', type = int, default = 64, help = 'Number of speed classes')
+    args = parser.parse_args()
 
-# Number of size classes
-Nclasses = args.NK
-# Timestep
-dt = args.dt
-# Number of grid cells
-NJ = args.NJ
-# Small number to prevent division by zero
-epsilon = 1e-20
-# Total depth
-depth = 50
-# Uniform grid spacing between neighbouring cell centres/cell faces
-dz = (abs(depth - 0))/NJ
-# Position of cell centres
-z_cell = np.linspace(0, depth, NJ + 1)[:-1] + dz/2
-# Position of cell faces
-z_face = np.linspace(0, depth, NJ + 1)
-# Indices of entrainment region [1.15*Hs, 1.85*Hs]
-Hs = 1 # Dummy value, not used in Case 2
-sub_cells = np.where((z_cell >= 1.15*Hs) & (z_cell <= 1.85*Hs))[0]
-# Number of cells in the entrainment region
-N_sub = len(sub_cells)
-# Start time
-t_start = 0
-# End time
-t_end = 6*3600
-# Time gridpoints
-NN = int((t_end - t_start)/dt)
-
-
-
-##################################
-####   Diffusivity profiles   ####
-##################################
-
-K_A = lambda z: 1e-2*np.ones(len(z))
-
-alpha, beta, zeta, z0 = (0.00636, 0.088, 1.54, 1.3)
-K_B = lambda z: alpha*(z+z0)*np.exp(-(beta*(z+z0))**zeta)
+    # Number of size classes
+    Nclasses = args.NK
+    # Timestep
+    dt = args.dt
+    # Number of grid cells
+    NJ = args.NJ
+    # Small number to prevent division by zero
+    epsilon = 1e-20
+    # Total depth
+    depth = 50
+    # Uniform grid spacing between neighbouring cell centres/cell faces
+    dz = (abs(depth - 0))/NJ
+    # Position of cell centres
+    z_cell = np.linspace(0, depth, NJ + 1)[:-1] + dz/2
+    # Position of cell faces
+    z_face = np.linspace(0, depth, NJ + 1)
+    # Indices of entrainment region [1.15*Hs, 1.85*Hs]
+    Hs = 1 # Dummy value, not used in Case 2
+    sub_cells = np.where((z_cell >= 1.15*Hs) & (z_cell <= 1.85*Hs))[0]
+    # Number of cells in the entrainment region
+    N_sub = len(sub_cells)
+    # Start time
+    t_start = 0
+    # End time
+    t_end = 6*3600
+    # Time gridpoints
+    NN = int((t_end - t_start)/dt)
 
 
 
-##############################################################
-####    Run simulations for different number of classes   ####
-##############################################################
+    ##################################
+    ####   Diffusivity profiles   ####
+    ##################################
+
+    K_A = lambda z: 1e-2*np.ones(len(z))
+
+    alpha, beta, zeta, z0 = (0.00636, 0.088, 1.54, 1.3)
+    K_B = lambda z: alpha*(z+z0)*np.exp(-(beta*(z+z0))**zeta)
+
+
+
+    ##############################################################
+    ####    Run simulations for different number of classes   ####
+    ##############################################################
 
 
 
 
-# Probability for resubmersion
-gamma = 0
+    # Probability for resubmersion
+    gamma = 0
 
 
-bin_spacing = 'logarithmic'
+    bin_spacing = 'logarithmic'
 
-# Read random samples and create histogram of speeds
-if bin_spacing == 'linear':
-    bins_positive = np.linspace(0, 0.3, 3*int(Nclasses/4)+1)
-    mids_positive = bins_positive[:-1] + width_positive/2
+    # Read random samples and create histogram of speeds
+    if bin_spacing == 'linear':
+        bins_positive = np.linspace(0, 0.3, 3*int(Nclasses/4)+1)
+        mids_positive = bins_positive[:-1] + width_positive/2
 
-    bins_negative = np.linspace(-0.1, 0, int(Nclasses/4)+1)
-    mids_negative = bins_negative[:-1] + width_negative/2
+        bins_negative = np.linspace(-0.1, 0, int(Nclasses/4)+1)
+        mids_negative = bins_negative[:-1] + width_negative/2
 
-    bins = np.concatenate((bins_negative, bins_positive[1:]))
-    mids = np.concatenate((mids_negative, mids_positive))
-    counts = np.zeros(len(bins)-1)
+        bins = np.concatenate((bins_negative, bins_positive[1:]))
+        mids = np.concatenate((mids_negative, mids_positive))
+        counts = np.zeros(len(bins)-1)
 
-elif bin_spacing == 'logarithmic':
-    bins_positive = np.logspace(-4, np.log10(0.3), 3*int(Nclasses/4) + 1)
-    bins_negative = np.logspace(-4, np.log10(0.1), 1*int(Nclasses/4) + 1)
+    elif bin_spacing == 'logarithmic':
+        bins_positive = np.logspace(-4, np.log10(0.3), 3*int(Nclasses/4) + 1)
+        bins_negative = np.logspace(-4, np.log10(0.1), 1*int(Nclasses/4) + 1)
 
-    mids_positive =    np.sqrt(bins_positive[1:]*bins_positive[:-1])
-    mids_negative = -( np.sqrt(bins_negative[1:]*bins_negative[:-1]) )[::-1]
+        mids_positive =    np.sqrt(bins_positive[1:]*bins_positive[:-1])
+        mids_negative = -( np.sqrt(bins_negative[1:]*bins_negative[:-1]) )[::-1]
 
-    bins_negative = -bins_negative[::-1]
-    bins = np.concatenate((bins_negative, bins_positive))
-    mids = np.concatenate((mids_negative, [0.0], mids_positive))
-    counts = np.zeros(len(bins)-1)
+        bins_negative = -bins_negative[::-1]
+        bins = np.concatenate((bins_negative, bins_positive))
+        mids = np.concatenate((mids_negative, [0.0], mids_positive))
+        counts = np.zeros(len(bins)-1)
 
-else:
-    print('Invalid bin spacing: ', bin_spacing)
-    import sys
-    sys.exit()
+    else:
+        print('Invalid bin spacing: ', bin_spacing)
+        import sys
+        sys.exit()
 
-#for filename in tqdm(glob('speeds_nonfibre_*.npy')[:100]):
-for i in trange(500):
-    speeds_fibre = np.load(f'../data/speeds_fibre_{i:04}.npy')
-    speeds_nonfibre = np.load(f'../data/speeds_nonfibre_{i:04}.npy')
-    cf, _ = np.histogram(speeds_fibre, bins = bins)
-    cnf, _ = np.histogram(speeds_nonfibre, bins = bins)
-    counts += cf*0.485 + cnf*0.465
+    #for filename in tqdm(glob('speeds_nonfibre_*.npy')[:100]):
+    for i in trange(500):
+        speeds_fibre = np.load(f'../data/speeds_fibre_{i:04}.npy')
+        speeds_nonfibre = np.load(f'../data/speeds_nonfibre_{i:04}.npy')
+        cf, _ = np.histogram(speeds_fibre, bins = bins)
+        cnf, _ = np.histogram(speeds_nonfibre, bins = bins)
+        counts += cf*0.485 + cnf*0.465
 
-# Normalised mass fractions
-mass_fractions = counts / np.sum(counts)
-# midpoints representing speed of each class
-speeds = mids
-# Number of components
-NK = len(speeds)
+    # Normalised mass fractions
+    mass_fractions = counts / np.sum(counts)
+    # midpoints representing speed of each class
+    speeds = mids
+    # Number of components
+    NK = len(speeds)
 
-np.save(f'../data/Case2_speeds_Nclasses={NK}.npy', speeds)
-np.save(f'../data/Case2_fractions_Nclasses={NK}.npy', mass_fractions)
+    np.save(f'../data/Case2_speeds_Nclasses={NK}.npy', speeds)
+    np.save(f'../data/Case2_fractions_Nclasses={NK}.npy', mass_fractions)
 
-for diffusivity_profile, label in zip((K_A, K_B), ('A', 'B')):
+    for diffusivity_profile, label in zip((K_A, K_B), ('A', 'B')):
 
-    print(f'Running simulation with {Nclasses:>3} classes, profile {label}')
+        print(f'Running simulation with {Nclasses:>3} classes, profile {label}')
 
-    # Velocities
-    v = speeds
+        # Velocities
+        v = speeds
 
-    # Eta for reduced velocity at surface and bottom
-    # Set eta_top to zero, that is, reflecting for all components
-    eta_top = np.zeros(NK)
-    # Set eta_bottom to one, that is, absorbing for all components with downwards velocity
-    eta_bottom = np.zeros(NK)
-    # Absorbing bottom boundary for all sinking particles
-    eta_bottom[v > 0] = 1
+        # Eta for reduced velocity at surface and bottom
+        # Set eta_top to zero, that is, reflecting for all components
+        eta_top = np.zeros(NK)
+        # Set eta_bottom to one, that is, absorbing for all components with downwards velocity
+        eta_bottom = np.zeros(NK)
+        # Absorbing bottom boundary for all sinking particles
+        eta_bottom[v > 0] = 1
 
-    # Concentration array for all cells and time levels
-    C0 = np.zeros([NJ, NK], order='F')
+        # Concentration array for all cells and time levels
+        C0 = np.zeros([NJ, NK], order='F')
 
-    # Initial condition:
-    # Normal distribution with mean mu and standard deviation sigma
-    sigma_IC = 4
-    mu_IC = 20
-    for k in range(0, NK):
-        C0[:, k] = mass_fractions[k]*np.exp(-(z_cell - mu_IC)**2/(2*sigma_IC**2))/(sigma_IC*np.sqrt(2*np.pi))
+        # Initial condition:
+        # Normal distribution with mean mu and standard deviation sigma
+        sigma_IC = 4
+        mu_IC = 20
+        for k in range(0, NK):
+            C0[:, k] = mass_fractions[k]*np.exp(-(z_cell - mu_IC)**2/(2*sigma_IC**2))/(sigma_IC*np.sqrt(2*np.pi))
 
 
-    start = time.time()
-    c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, z_cell, z_face, dz, NJ, NK, NN, dt, N_sub, sub_cells, gamma)
-    end = time.time()
-    print(f'Running simulation with {Nclasses:>3} classes... | {"#" * 50} | Elapsed: {(end-start):.2f} seconds')
+        start = time.time()
+        c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, z_cell, z_face, dz, NJ, NK, NN, dt, N_sub, sub_cells, gamma)
+        end = time.time()
+        print(f'Running simulation with {Nclasses:>3} classes... | {"#" * 50} | Elapsed: {(end-start):.2f} seconds')
 
-    np.save(f'../data/Case2_K_{label}_block_Nclasses={NK}_NJ={NJ}_dt={dt}_umist.npy', c)
+        np.save(f'../data/Case2_K_{label}_block_Nclasses={NK}_NJ={NJ}_dt={dt}_umist.npy', c)
