@@ -24,16 +24,16 @@ def thomas_solver(a, b, c, d):
     # 0 ..........aN bN
     # Note index offset of a
     N = len(d)
-    c_ = np.empty(N-1)
-    d_ = np.empty(N)
-    x  = np.empty(N)
+    c_ = np.zeros(N-1)
+    d_ = np.zeros(N)
+    x  = np.zeros(N)
     c_[0] = c[0]/b[0]
     d_[0] = d[0]/b[0]
     for i in range(1, N-1):
-        tmp = (b[i] - a[i-1]*c_[i-1])
-        c_[i] = c[i]/tmp
-        d_[i] = (d[i] - a[i-1]*d_[i-1])/tmp
-    d_[-1] = (d[-1] - a[-2]*d_[-2])/(b[-1] - a[-2]*c_[-2])
+        q = (b[i] - a[i-1]*c_[i-1])
+        c_[i] = c[i]/q
+        d_[i] = (d[i] - a[i-1]*d_[i-1])/q
+    d_[N-1] = (d[N-1] - a[N-2]*d_[N-2])/(b[N-1] - a[N-2]*c_[N-2])
     x[-1] = d_[-1]
     for i in range(N-2, -1, -1):
         x[i] = d_[i] - c_[i]*x[i+1]
