@@ -131,23 +131,26 @@ def get_rho_vectors(c):
     NJ, NK = c.shape
 
     # Allocate vector coinciding with the cell faces
-    rho_vector_plus = np.zeros([NJ+1, NK])
     rho_vector_minus = np.zeros([NJ+1, NK])
+    rho_vector_plus = np.zeros([NJ+1, NK])
     # Cell faces that include only interior cells
     # epsilon in numerator as well?
-    rho_vector_plus[2:NJ, :] = (c[1:NJ-1, :] - c[0:NJ-2, :])/(c[2:NJ, :] - c[1:NJ-1, :] + epsilon)
     rho_vector_minus[1:NJ-1, :] = (c[2:NJ, :] - c[1:NJ-1, :])/(c[1:NJ-1, :] - c[0:NJ-2, :] + epsilon)
+    rho_vector_plus[2:NJ, :] = (c[1:NJ-1, :] - c[0:NJ-2, :])/(c[2:NJ, :] - c[1:NJ-1, :] + epsilon)
 
     # Elements that are not explicitly set should remain zero:
     # First (index 0) cell face (-1/2) reduces to upwind, but the correction cancels (no flux into the system from the boundary)
     # Second (index 1) cell face (+1/2) set to zero due to boundary condition for diffusive flux
     # Last (index -1) cell face(NJ-1/2) set to zero and reduces to upwind, does not appear for zero total flux BC
-    return rho_vector_plus, rho_vector_minus
+    return rho_vector_minus, rho_vector_plus
 
 
 def psi_vector_function(rho_vec):
+    # Sweby flux limiter
+    beta = 1.5
+    return np.maximum(np.maximum(0, np.minimum(beta*rho_vec, 1)), np.minimum(rho_vec, beta))
     # UMIST flux limiter
-    return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.25 + 0.75*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2))))
+    #return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.25 + 0.75*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2))))
 
 
 def setup_FL_matrices(params, v_minus, v_plus, c):
@@ -159,10 +162,10 @@ def setup_FL_matrices(params, v_minus, v_plus, c):
     NK = params.Nclasses
 
     # Rho vectors
-    rho_plus, rho_minus = get_rho_vectors(c)
+    rho_minus, rho_plus = get_rho_vectors(c)
     # Vectors for the flux limiter functions
-    psi_plus = psi_vector_function(rho_plus)
     psi_minus = psi_vector_function(rho_minus)
+    psi_plus = psi_vector_function(rho_plus)
 
     # Superdiagonal for all components, with zeros between the superdiagonals for each component
     sup = np.zeros(NJ*NK-1)
@@ -309,6 +312,12 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
 
         # Iterative procedure
         C_now = Iterative_Solver(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus)
+        if n == 0:
+            np.save('L_AD.npy', L_AD.todense())
+            np.save('R_AD.npy', R_AD.todense())
+            L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, C_now)
+            np.save('L_FL.npy', L_FL.todense())
+            np.save('R_FL.npy', R_FL.todense())
 
     # Finally, store last timestep to output array
     C_out[:,-1,:] = C_now
