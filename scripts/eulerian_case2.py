@@ -173,14 +173,14 @@ def psi_vector_function(rho_vec, NJ, NK):
     #return (rho_vec + rho_vec**2)/(1 + rho_vec**2)
     
     # Sweby flux limiter
-    #beta = 1.5
-    #return np.maximum(np.maximum(0, np.minimum(beta*rho_vec, 1)), np.minimum(rho_vec, beta))
+    beta = 1.5
+    return np.maximum(np.maximum(0, np.minimum(beta*rho_vec, 1)), np.minimum(rho_vec, beta))
 
     # Koren flux limiter
     #return np.maximum(0, np.minimum(2*rho_vec, np.minimum((1 + 2*rho_vec)/(3), 2)))
     
     # UMIST flux limiter
-    return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.25 + 0.75*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2))))
+    #return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.25 + 0.75*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2))))
 
     # QUICK flux limiter
     #return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2)))
