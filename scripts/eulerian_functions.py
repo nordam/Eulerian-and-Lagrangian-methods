@@ -252,7 +252,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     # Max number of iterations
     maxiter = 20
     # Tolerance
-    tol = 1e-9
+    tol = 1e-12
 
     # Set up flux-limeter matrices
     L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, c_now)
@@ -266,7 +266,6 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
 
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
-        print(f'This is iterative_solver, iteration {n}, norm = {norm}')
         if norm < tol:
             return c_next
 
@@ -298,8 +297,8 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
     # Array to hold one timestep, to avoid allocating too much memory
     C_now  = np.zeros_like(C0)
     C_now[:] = C0.copy()
-    # Array for output, store once every 600 seconds
-    N_skip = int(600/params.dt)
+    # Array for output, store once every 3600 seconds
+    N_skip = int(3600/params.dt)
     N_out = 1 + int(params.Nt / N_skip)
     C_out = np.zeros((NJ, N_out, NK))
 
@@ -312,12 +311,6 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
 
         # Iterative procedure
         C_now = Iterative_Solver(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus)
-        if n == 0:
-            np.save('L_AD.npy', L_AD.todense())
-            np.save('R_AD.npy', R_AD.todense())
-            L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, C_now)
-            np.save('L_FL.npy', L_FL.todense())
-            np.save('R_FL.npy', R_FL.todense())
 
     # Finally, store last timestep to output array
     C_out[:,-1,:] = C_now
