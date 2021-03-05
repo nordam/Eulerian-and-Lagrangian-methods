@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #Importing standard packages
+import os
 import time
 import argparse
 import logging
@@ -96,5 +97,6 @@ for K, label in zip((K_A, K_B), ('A', 'B')):
     c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params)
     end = time.time()
 
-    np.save(f'../data/Case1_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy', c)
+    datafolder = '/work6/torn/EulerLagrange'
+    np.save(os.path.join(datafolder, f'Case1_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy', c))
 

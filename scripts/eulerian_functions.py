@@ -302,10 +302,11 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
     N_out = 1 + int(params.Nt / N_skip)
     C_out = np.zeros((NJ, N_out, NK))
 
-    for n in trange(0, params.Nt):
+    for n in range(0, params.Nt):
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
+            print(f'dt = {params.dt}, NJ = {params.Nz}, NK = {params.Nclasses}')
             i = int(n / N_skip)
             C_out[:,i,:] = C_now[:]
 
