@@ -91,7 +91,7 @@ params = EulerianSystemParameters(
 for K, label in zip((K_A, K_B), ('A', 'B')):
 
     # Initial concentration array for all cells and time levels
-    C0 = pdf_IC(params.z_cell)[:,None] * params.mass_fractions[None,:]
+    C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
     start = time.time()
     c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params)

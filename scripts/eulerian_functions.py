@@ -110,7 +110,7 @@ def velocity_vector_function(params):
     # is notated by z_{a} = z_{-1/2}, while the bottom boundary is notated by z_{b} = z_{NJ+1/2}. 
 
     # All cell faces within domain, including boundaries v_{-1/2} and v_{NJ+1/2}
-    vel = params.speeds*np.ones((params.Nz+1, params.Nclasses))
+    vel = params.speeds[:,None]*np.ones((params.Nclasses, params.Nz+1))
     # Optionally reduced velocty at surface
     vel[ 0, :] = params.eta_top*vel[0, :]
     # Zero velocity at bottom boundary
@@ -128,15 +128,15 @@ def get_rho_vectors(c):
     # Small number to prevent division by zero
     epsilon = 1e-20
     # array shape
-    NJ, NK = c.shape
+    NK, NJ = c.shape
 
     # Allocate vector coinciding with the cell faces
-    rho_vector_minus = np.zeros([NJ+1, NK])
-    rho_vector_plus = np.zeros([NJ+1, NK])
+    rho_vector_minus = np.zeros([NK, NJ+1])
+    rho_vector_plus = np.zeros([NK, NJ+1])
     # Cell faces that include only interior cells
     # epsilon in numerator as well?
-    rho_vector_minus[1:NJ-1, :] = (c[2:NJ, :] - c[1:NJ-1, :])/(c[1:NJ-1, :] - c[0:NJ-2, :] + epsilon)
-    rho_vector_plus[2:NJ, :] = (c[1:NJ-1, :] - c[0:NJ-2, :])/(c[2:NJ, :] - c[1:NJ-1, :] + epsilon)
+    rho_vector_minus[:, 1:NJ-1] = (c[:, 2:NJ] - c[:, 1:NJ-1])/(c[:, 1:NJ-1] - c[:, 0:NJ-2] + epsilon)
+    rho_vector_plus[:, 2:NJ] = (c[:, 1:NJ-1] - c[:, 0:NJ-2])/(c[:, 2:NJ] - c[:, 1:NJ-1] + epsilon)
 
     # Elements that are not explicitly set should remain zero:
     # First (index 0) cell face (-1/2) reduces to upwind, but the correction cancels (no flux into the system from the boundary)
@@ -177,21 +177,21 @@ def setup_FL_matrices(params, v_minus, v_plus, c):
     for k in range(0, NK):
 
         # Superdiagonal
-        sup[1+k*NJ:NJ-1+k*NJ] = b*(-v_plus[2:NJ, k]*psi_plus[2:NJ, k] + v_minus[2:NJ, k]*psi_minus[2:NJ, k])
+        sup[1+k*NJ:NJ-1+k*NJ] = b*(-v_plus[k, 2:NJ]*psi_plus[k, 2:NJ] + v_minus[k, 2:NJ]*psi_minus[k, 2:NJ])
         # Absorbing boundary condition at surface (J_D = 0)
-        sup[0+k*NJ] = b*(-v_plus[1, k]*psi_plus[1, k] + v_minus[1, k]*psi_minus[1, k])
+        sup[0+k*NJ] = b*(-v_plus[k, 1]*psi_plus[k, 1] + v_minus[k, 1]*psi_minus[k, 1])
 
         # Main diagonal
-        diag[1+k*NJ:NJ-1+k*NJ] = b*(v_plus[1:NJ-1, k]*psi_plus[1:NJ-1, k] - v_minus[1:NJ-1, k]*psi_minus[1:NJ-1, k] + v_plus[2:NJ, k]*psi_plus[2:NJ, k] - v_minus[2:NJ, k]*psi_minus[2:NJ, k])
+        diag[1+k*NJ:NJ-1+k*NJ] = b*(v_plus[k, 1:NJ-1]*psi_plus[k, 1:NJ-1] - v_minus[k, 1:NJ-1]*psi_minus[k, 1:NJ-1] + v_plus[k, 2:NJ]*psi_plus[k, 2:NJ] - v_minus[k, 2:NJ]*psi_minus[k, 2:NJ])
         # Absorbing boundary condition at surface (J_D = 0)
-        diag[0+k*NJ] = b*(v_plus[1, k]*psi_plus[1, k] - v_minus[1, k]*psi_minus[1, k])
+        diag[0+k*NJ] = b*(v_plus[k, 1]*psi_plus[k, 1] - v_minus[k, 1]*psi_minus[k, 1])
         # Reflecting boundary condition at bottom (J_T = J_A + J_D = 0)
-        diag[NJ-1+k*NJ] = b*(v_plus[NJ-1, k]*psi_plus[NJ-1, k] - v_minus[NJ-1, k]*psi_minus[NJ-1, k])
+        diag[NJ-1+k*NJ] = b*(v_plus[k, NJ-1]*psi_plus[k, NJ-1] - v_minus[k, NJ-1]*psi_minus[k, NJ-1])
 
         # Subdiagonal
-        sub[0+k*NJ:NJ-2+k*NJ] = b*(-v_plus[1:NJ-1, k]*psi_plus[1:NJ-1, k] + v_minus[1:NJ-1, k]*psi_minus[1:NJ-1, k])
+        sub[0+k*NJ:NJ-2+k*NJ] = b*(-v_plus[k, 1:NJ-1]*psi_plus[k, 1:NJ-1] + v_minus[k, 1:NJ-1]*psi_minus[k, 1:NJ-1])
         # Reflecting boundary condition at bottom (J_T = J_A + J_D = 0)
-        sub[NJ-2+k*NJ] = b*(-v_plus[NJ-1, k]*psi_plus[NJ-1, k] + v_minus[NJ-1, k]*psi_minus[NJ-1, k])
+        sub[NJ-2+k*NJ] = b*(-v_plus[k, NJ-1]*psi_plus[k, NJ-1] + v_minus[k, NJ-1]*psi_minus[k, NJ-1])
 
     # Return diagonal sparse matrices
     L_FL = 0.5*diags([ sup,  diag,  sub], offsets = [1, 0, -1])
@@ -222,21 +222,21 @@ def setup_AD_matrices(params, K_vec, v_minus, v_plus):
     for k in range(0, NK):
 
         # Superdiagonal
-        sup[1+k*NJ:NJ-1+k*NJ] = -a*K_vec[2:NJ] + b*v_minus[2:NJ, k]
+        sup[1+k*NJ:NJ-1+k*NJ] = -a*K_vec[2:NJ] + b*v_minus[k, 2:NJ]
         # Absorbing boundary condition at surface (J_D = 0)
-        sup[0+k*NJ] = -a*K_vec[1] + b*v_minus[1, k]
+        sup[0+k*NJ] = -a*K_vec[1] + b*v_minus[k, 1]
 
         # Main diagonal
-        diag[1+k*NJ:NJ-1+k*NJ] = a*(K_vec[2:NJ] + K_vec[1:NJ-1]) + b*(v_plus[2:NJ, k] - v_minus[1:NJ-1, k])
+        diag[1+k*NJ:NJ-1+k*NJ] = a*(K_vec[2:NJ] + K_vec[1:NJ-1]) + b*(v_plus[k, 2:NJ] - v_minus[k, 1:NJ-1])
         # Absorbing boundary condition at surface (J_D = 0)
-        diag[0+k*NJ] = a*K_vec[1] + b*(v_plus[1, k] - v_minus[0, k] - v_plus[0, k])
+        diag[0+k*NJ] = a*K_vec[1] + b*(v_plus[k, 1] - v_minus[k, 0] - v_plus[k, 0])
         # Reflecting boundary condition at bottom (J_T = J_A + J_D = 0)
-        diag[NJ-1+k*NJ] = a*K_vec[NJ-1] + b*(v_plus[NJ, k] + v_minus[NJ, k] - v_minus[NJ-1, k])
+        diag[NJ-1+k*NJ] = a*K_vec[NJ-1] + b*(v_plus[k, NJ] + v_minus[k, NJ] - v_minus[k, NJ-1])
 
         # Subdiagonal
-        sub[0+k*NJ:NJ-2+k*NJ] = -a*K_vec[1:NJ-1] - b*v_plus[1:NJ-1, k]
+        sub[0+k*NJ:NJ-2+k*NJ] = -a*K_vec[1:NJ-1] - b*v_plus[k, 1:NJ-1]
         # Reflecting boundary condition at bottom (J_T = J_A + J_D = 0)
-        sub[NJ-2+k*NJ] = -a*K_vec[NJ-1] - b*v_plus[NJ-1, k]
+        sub[NJ-2+k*NJ] = -a*K_vec[NJ-1] - b*v_plus[k, NJ-1]
 
     # Return diagonal sparse matrices
     L_AD = diags([ sup, 1 + diag,  sub], offsets = [1, 0, -1])
@@ -261,8 +261,8 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     for n in range(maxiter):
 
         # Compute new approximation of solution c[:, n+1] for new iteration, for each component
-        RHS = (R_AD + R_FL).dot(C0.T.flatten())
-        c_next = thomas(L_AD + L_FL, RHS).reshape((params.Nclasses, params.Nz)).T
+        RHS = (R_AD + R_FL).dot(C0.flatten())
+        c_next = thomas(L_AD + L_FL, RHS).reshape((params.Nclasses, params.Nz))
 
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
@@ -300,7 +300,7 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
     # Array for output, store once every 3600 seconds
     N_skip = int(3600/params.dt)
     N_out = 1 + int(params.Nt / N_skip)
-    C_out = np.zeros((NJ, N_out, NK))
+    C_out = np.zeros((N_out, NK, NJ))
 
     for n in range(0, params.Nt):
 
@@ -308,11 +308,11 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
         if n % N_skip == 0:
             print(f'dt = {params.dt}, NJ = {params.Nz}, NK = {params.Nclasses}')
             i = int(n / N_skip)
-            C_out[:,i,:] = C_now[:]
+            C_out[i,:,:] = C_now[:]
 
         # Iterative procedure
         C_now = Iterative_Solver(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus)
 
     # Finally, store last timestep to output array
-    C_out[:,-1,:] = C_now
+    C_out[-1,:,:] = C_now
     return C_out
