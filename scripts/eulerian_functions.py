@@ -52,7 +52,7 @@ def thomas(A, b):
 
 class EulerianSystemParameters():
 
-    def __init__(self, Zmax, Nz, Tmax, dt, Vmin, Vmax, Nclasses, speed_distribution, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0):
+    def __init__(self, Zmax, Nz, Tmax, dt, Vmin, Vmax, Nclasses, speed_distribution, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0):
         self.Z0 = 0.0
         self.Zmax = Zmax
         self.Nz = Nz
@@ -67,6 +67,7 @@ class EulerianSystemParameters():
         self.eta_top = eta_top
         self.eta_bottom = eta_bottom
         self.gamma = gamma
+        self.checkpoint = checkpoint
 
         # Inferred parameters
         # Position of cell faces, and spacing
@@ -112,9 +113,10 @@ def velocity_vector_function(params):
     # All cell faces within domain, including boundaries v_{-1/2} and v_{NJ+1/2}
     vel = params.speeds[:,None]*np.ones((params.Nclasses, params.Nz+1))
     # Optionally reduced velocty at surface
-    vel[ 0, :] = params.eta_top*vel[0, :]
+    vel[:, 0] = params.eta_top*vel[:,0]
     # Zero velocity at bottom boundary
-    vel[-1, :] = params.eta_bottom*vel[-1,:]
+    vel[:,-1] = params.eta_bottom*vel[:,-1]
+    print(vel)
     return vel
 
 
@@ -312,10 +314,9 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
-            print(f'dt = {params.dt}, NJ = {params.Nz}, NK = {params.Nclasses}, timestep {n} of {params.Nt}')
             i = int(n / N_skip)
             C_out[i,:,:] = C_now[:]
-            if outputfilename is not None:
+            if outputfilename is not None and params.checkpoint:
                 np.save(outputfilename, C_out)
 
         # Iterative procedure
