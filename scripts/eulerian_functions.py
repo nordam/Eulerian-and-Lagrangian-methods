@@ -153,7 +153,7 @@ def psi_vector_function(rho_vec):
     #return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.25 + 0.75*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2))))
 
 
-def setup_FL_matrices(params, v_minus, v_plus, c):
+def setup_FL_matrices(params, v_minus, v_plus, c, return_both = True):
 
     # CFL number, without velocity v
     b = params.dt/(2*params.dz)
@@ -194,9 +194,13 @@ def setup_FL_matrices(params, v_minus, v_plus, c):
         sub[NJ-2+k*NJ] = b*(-v_plus[k, NJ-1]*psi_plus[k, NJ-1] + v_minus[k, NJ-1]*psi_minus[k, NJ-1])
 
     # Return diagonal sparse matrices
-    L_FL = 0.5*diags([ sup,  diag,  sub], offsets = [1, 0, -1])
-    R_FL = 0.5*diags([-sup, -diag, -sub], offsets = [1, 0, -1])
-    return L_FL, R_FL
+    if return_both:
+        L_FL = 0.5*diags([ sup,  diag,  sub], offsets = [1, 0, -1])
+        R_FL = 0.5*diags([-sup, -diag, -sub], offsets = [1, 0, -1])
+        return L_FL, R_FL
+    else:
+        L_FL = 0.5*diags([ sup,  diag,  sub], offsets = [1, 0, -1])
+        return L_FL
 
 
 def setup_AD_matrices(params, K_vec, v_minus, v_plus):
@@ -257,7 +261,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     # Set up flux-limeter matrices
     L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, c_now)
 
-    # Compute right-hand side (remains constant throughout iterations)
+    # Calculate right-hand side (does not change with iterations)
     RHS = (R_AD + R_FL).dot(C0.flatten())
 
     # Iterate up to kappa_max times
@@ -272,7 +276,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
             return c_next
 
         # Recalculate the left-hand side flux-limiter matrix using new concentration estimate
-        L_FL, _ = setup_FL_matrices(params, v_minus, v_plus, c_next)
+        L_FL = setup_FL_matrices(params, v_minus, v_plus, c_next, return_both = False)
 
         # Copy concentration
         c_now[:] = c_next.copy()
@@ -280,7 +284,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     return c_next
 
 
-def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
+def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = None):
 
     # Evaluate diffusivity function at cell faces
     K_vec = K(params.z_face)
@@ -311,6 +315,8 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
             print(f'dt = {params.dt}, NJ = {params.Nz}, NK = {params.Nclasses}, timestep {n} of {params.Nt}')
             i = int(n / N_skip)
             C_out[i,:,:] = C_now[:]
+            if outputfilename is not None:
+                np.save(outputfilename, C_out)
 
         # Iterative procedure
         C_now = Iterative_Solver(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus)
