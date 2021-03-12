@@ -257,11 +257,13 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     # Set up flux-limeter matrices
     L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, c_now)
 
+    # Compute right-hand side (remains constant throughout iterations)
+    RHS = (R_AD + R_FL).dot(C0.flatten())
+
     # Iterate up to kappa_max times
     for n in range(maxiter):
 
         # Compute new approximation of solution c[:, n+1] for new iteration, for each component
-        RHS = (R_AD + R_FL).dot(C0.flatten())
         c_next = thomas(L_AD + L_FL, RHS).reshape((params.Nclasses, params.Nz))
 
         # Calculate norm
@@ -306,7 +308,7 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params):
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
-            print(f'dt = {params.dt}, NJ = {params.Nz}, NK = {params.Nclasses}')
+            print(f'dt = {params.dt}, NJ = {params.Nz}, NK = {params.Nclasses}, timestep {n} of {params.Nt}')
             i = int(n / N_skip)
             C_out[i,:,:] = C_now[:]
 
