@@ -44,7 +44,7 @@ Tmax = 12*3600
 # Mean speed = 0.96 mm/s
 # Standard deviation = 0.38 mm/s
 # Truncated at +/- 2*sigma
-mean_speed = 0.96 * 1e-3
+mean_speed = -0.96 * 1e-3
 std_dev_speed = 0.38 * 1e-3
 Vmin = mean_speed - 2*std_dev_speed
 Vmax = mean_speed + 2*std_dev_speed
@@ -101,7 +101,7 @@ else:
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
 datafolder = '/work6/torn/EulerLagrange'
-datafolder = '../results/'
+#datafolder = '../results/'
 outputfilename = os.path.join(datafolder, f'Case1_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
 
