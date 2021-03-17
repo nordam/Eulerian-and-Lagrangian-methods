@@ -52,7 +52,7 @@ def thomas(A, b):
 
 class EulerianSystemParameters():
 
-    def __init__(self, Zmax, Nz, Tmax, dt, Vmin, Vmax, Nclasses, speed_distribution, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0):
+    def __init__(self, Zmax, Nz, Tmax, dt, Nclasses, Vmin = None, Vmax = None, speed_distribution = None, speeds = None, mass_fractions = None, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0):
         self.Z0 = 0.0
         self.Zmax = Zmax
         self.Nz = Nz
@@ -77,27 +77,39 @@ class EulerianSystemParameters():
         # Number of timesteps
         self.Nt = int( (self.Tmax - self.T0) / self.dt)
 
-        # Calculate speed for each class
-        if logspaced:
-            # speed class edges (i.e., the values at the border between classes)
-            self.speed_class_edges = np.logspace(np.log10(self.Vmin), np.log10(self.Vmax), self.Nclasses + 1)
-            # The center of each class on a log scale
-            self.speeds = np.sqrt(self.speed_class_edges[1:]*self.speed_class_edges[:-1])
-        else:
-            # speed class edges (i.e., the values at the border between classes)
-            self.speed_class_edges = np.linspace(self.Vmin, self.Vmax, self.Nclasses + 1)
-            # The center of each class on a linear scale
-            self.speeds = (self.speed_class_edges[1:] + self.speed_class_edges[:-1]) / 2
-        self.mass_fractions = np.zeros(Nclasses)
+        if speed_distribution is not None:
+            assert Vmin is not None
+            assert Vmax is not None
+            # Calculate speed for each class
+            if logspaced:
+                # speed class edges (i.e., the values at the border between classes)
+                self.speed_class_edges = np.logspace(np.log10(self.Vmin), np.log10(self.Vmax), self.Nclasses + 1)
+                # The center of each class on a log scale
+                self.speeds = np.sqrt(self.speed_class_edges[1:]*self.speed_class_edges[:-1])
+            else:
+                # speed class edges (i.e., the values at the border between classes)
+                self.speed_class_edges = np.linspace(self.Vmin, self.Vmax, self.Nclasses + 1)
+                # The center of each class on a linear scale
+                self.speeds = (self.speed_class_edges[1:] + self.speed_class_edges[:-1]) / 2
+            self.mass_fractions = np.zeros(Nclasses)
 
-        # Parameter for romberg integration
-        Nsub = 2**10 + 1
-        for j in range(Nclasses):
-            evaluation_points = np.linspace(self.speed_class_edges[j], self.speed_class_edges[j+1], Nsub)
-            dx = evaluation_points[1] - evaluation_points[0]
-            self.mass_fractions[j] = romb(self.speed_distribution(evaluation_points), dx = dx)
-        # Normalise mass fractions
-        self.mass_fractions = self.mass_fractions / np.sum(self.mass_fractions)
+            # Parameter for romberg integration
+            Nsub = 2**10 + 1
+            for j in range(Nclasses):
+                evaluation_points = np.linspace(self.speed_class_edges[j], self.speed_class_edges[j+1], Nsub)
+                dx = evaluation_points[1] - evaluation_points[0]
+                self.mass_fractions[j] = romb(self.speed_distribution(evaluation_points), dx = dx)
+            # Normalise mass fractions
+            self.mass_fractions = self.mass_fractions / np.sum(self.mass_fractions)
+        else:
+            assert speeds is not None
+            assert mass_fractions is not None
+            assert len(mass_fractions) == len(speeds)
+            assert len(mass_fractions) == self.Nclasses
+            self.speeds = speeds
+            self.mass_fractions = mass_fractions
+            # Normalise mass fractions
+            self.mass_fractions = self.mass_fractions / np.sum(self.mass_fractions)
 
 
 #########################################################
@@ -116,7 +128,6 @@ def velocity_vector_function(params):
     vel[:, 0] = params.eta_top*vel[:,0]
     # Zero velocity at bottom boundary
     vel[:,-1] = params.eta_bottom*vel[:,-1]
-    print(vel)
     return vel
 
 
