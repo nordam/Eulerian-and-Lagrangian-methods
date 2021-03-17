@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#Importing standard packages
+# Importing standard packages
 import os
 import time
 import argparse
-import logging
 
 # Numerical packages
 import numpy as np
 from numba import jit
 
-# import stuff from .py files in notebooks folder
+# import stuff from .py files in local folder
 import sys
 sys.path.append('.')
 from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_advection_diffusion_reaction
