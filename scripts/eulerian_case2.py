@@ -22,7 +22,7 @@ from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_
 ####################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = int, default = 600, help = 'Timestep')
+parser.add_argument('--dt', dest = 'dt', type = float, default = 600, help = 'Timestep')
 parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
 parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
@@ -38,7 +38,7 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 6*3600
 
 # For this case, we use a speed distribution taken from
 # a random sample of microplastics properties
