@@ -38,7 +38,7 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 240*3600
 
 # For this case, we use a speed distribution directly, taken from
 # Table 3 in Sundby (1983).
