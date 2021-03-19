@@ -83,7 +83,7 @@ else:
         sys.exit()
 
     #for filename in tqdm(glob('speeds_nonfibre_*.npy')[:100]):
-    for i in trange(500):
+    for i in range(500):
         speeds_fibre = np.load(f'../data/speeds_fibre_{i:04}.npy')
         speeds_nonfibre = np.load(f'../data/speeds_nonfibre_{i:04}.npy')
         cf, _ = np.histogram(speeds_fibre, bins = bins)
@@ -150,7 +150,7 @@ else:
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
 datafolder = '/work6/torn/EulerLagrange'
-datafolder = '../results/'
+#datafolder = '../results/'
 outputfilename = os.path.join(datafolder, f'Case2_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
 
