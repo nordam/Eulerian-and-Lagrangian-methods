@@ -10,6 +10,7 @@ from scipy.sparse import diags
 # Progress bar
 from tqdm import trange
 
+from webernaturaldispersion import weber_natural_dispersion
 
 # Based on Wikipedia article about TDMA, written by Tor Nordam
 @jit(nopython = True)
@@ -52,7 +53,7 @@ def thomas(A, b):
 
 class EulerianSystemParameters():
 
-    def __init__(self, Zmax, Nz, Tmax, dt, Nclasses, Vmin = None, Vmax = None, speed_distribution = None, speeds = None, mass_fractions = None, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0):
+    def __init__(self, Zmax, Nz, Tmax, dt, Nclasses, Vmin = None, Vmax = None, speed_distribution = None, speeds = None, mass_fractions = None, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0, fractionator = None, h0 = None, mu = None, ift = None, rho = None, Hs = None):
         self.Z0 = 0.0
         self.Zmax = Zmax
         self.Nz = Nz
@@ -68,6 +69,12 @@ class EulerianSystemParameters():
         self.eta_bottom = eta_bottom
         self.gamma = gamma
         self.checkpoint = checkpoint
+        self.fractionator = fractionator
+        self.h0 = h0
+        self.mu = mu
+        self.ift = ift
+        self.rho = rho
+        self.Hs = Hs
 
         # Inferred parameters
         # Position of cell faces, and spacing
@@ -76,6 +83,12 @@ class EulerianSystemParameters():
         self.z_cell = np.linspace(self.Z0 + self.dz/2, self.Zmax - self.dz/2, self.Nz)
         # Number of timesteps
         self.Nt = int( (self.Tmax - self.T0) / self.dt)
+
+        if self.gamma > 0:
+            # Indices of entrainment region [1.15*Hs, 1.85*Hs]
+            self.sub_cells = np.where((self.z_cell >= 2) & (self.z_cell <= 3.2))[0]
+            # Number of cells in the entrainment region
+            self.N_sub = len(self.sub_cells)
 
         if speed_distribution is not None:
             assert Vmin is not None
@@ -115,6 +128,30 @@ class EulerianSystemParameters():
 #########################################################
 ####   Functions used by the Crank-Nicolson solver   ####
 #########################################################
+
+
+def entrainment_reaction_term_function(params, C):
+    # Creation of concentration uniformly distributed in the top 1m, that is, N_sub grid points, at time step n.
+    # Inputs c for all z, k, at time n
+    # Allocate vector
+    NK, NJ = C.shape
+    reaction_term = np.zeros((NK, NJ))
+    # Width parameter of distribution (constant)
+    sigma = 0.4*np.log(10)
+
+    # Find surface slick thicness as fraction of initial thickness,
+    # with some safeguards to prevent roundoff error leading to numbers outside [0, 1]
+    surfaced_fraction = (1 - max(0, min(1, np.sum(C[:, :])*params.dz)))
+    h = surfaced_fraction*params.h0
+    if h > 0:
+        D50n_h  = weber_natural_dispersion(params.rho, params.mu, params.ift, params.Hs, h)
+        D50v_h  = np.exp(np.log(D50n_h) + 3*sigma**2)
+        #f = Fractionator(speed_class_edges)
+        fractions = params.fractionator.evaluate(D50v_h, sigma)[:,None]*np.ones([NK, params.N_sub])
+        # Reaction term for the N_sub top cellss
+        reaction_term[:,params.sub_cells] = params.gamma*surfaced_fraction*fractions/((params.N_sub*params.dz))
+
+    return reaction_term
 
 
 def velocity_vector_function(params):
@@ -277,11 +314,23 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     # Calculate right-hand side (does not change with iterations)
     RHS = (R_AD + R_FL).dot(C0.flatten())
 
+    # Reaction term for oil entrainment, for current time
+    if params.gamma > 0:
+        reaction_term_now = 0.5*params.dt*entrainment_reaction_term_function(params, C0)
+        RHS += reaction_term_now.flatten()
+
     # Iterate up to kappa_max times
     for n in range(maxiter):
 
         # Compute new approximation of solution c[:, n+1] for new iteration, for each component
-        c_next = thomas(L_AD + L_FL, RHS).reshape((params.Nclasses, params.Nz))
+        if params.gamma > 0:
+            reaction_term_next = 0.5*params.dt*entrainment_reaction_term_function(params, c_now)
+        else:
+            reaction_term_next = 0
+
+        np.save('reaction_term.npy', reaction_term_next)
+
+        c_next = thomas(L_AD + L_FL, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
 
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
@@ -294,6 +343,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Copy concentration
         c_now[:] = c_next.copy()
 
+    np.save('reaction_term.npy', reaction_term_next)
     return c_next
 
 
@@ -317,7 +367,7 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     C_now  = np.zeros_like(C0)
     C_now[:] = C0.copy()
     # Array for output, store once every 3600 seconds
-    N_skip = int(3600/params.dt)
+    N_skip = int(1800/params.dt)
     N_out = 1 + int(params.Nt / N_skip)
     C_out = np.zeros((N_out, NK, NJ))
 

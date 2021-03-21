@@ -9,7 +9,6 @@ from tqdm import trange
 
 # Numerical packages
 import numpy as np
-from numba import jit
 
 # import stuff from .py files in local folder
 import sys
