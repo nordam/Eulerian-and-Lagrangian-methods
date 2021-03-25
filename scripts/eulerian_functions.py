@@ -11,7 +11,7 @@ from scipy.sparse import diags
 from tqdm import trange
 
 from webernaturaldispersion import weber_natural_dispersion
-from coagulation import get_new_classes_and_weights, coagulation_rate_prefactor
+from coagulation_functions import get_new_classes_and_weights, coagulation_rate_prefactor
 
 
 # Based on Wikipedia article about TDMA, written by Tor Nordam
@@ -55,7 +55,7 @@ def thomas(A, b):
 
 class EulerianSystemParameters():
 
-    def __init__(self, Zmax, Nz, Tmax, dt, Nclasses, Vmin = None, Vmax = None, speed_distribution = None, speeds = None, mass_fractions = None, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0, fractionator = None, h0 = None, mu = None, ift = None, rho = None, Hs = None, flocculate = False, radii = None):
+    def __init__(self, Zmax, Nz, Tmax, dt, Nclasses, Vmin = None, Vmax = None, speed_distribution = None, speeds = None, mass_fractions = None, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0, fractionator = None, h0 = None, mu = None, ift = None, rho = None, Hs = None, coagulate = False, radii = None):
         self.Z0 = 0.0
         self.Zmax = Zmax
         self.Nz = Nz
@@ -77,7 +77,7 @@ class EulerianSystemParameters():
         self.ift = ift
         self.rho = rho
         self.Hs = Hs
-        self.flocculate = flocculate
+        self.coagulate = coagulate
         self.radii = radii
 
         # Inferred parameters
@@ -128,7 +128,7 @@ class EulerianSystemParameters():
             # Normalise mass fractions
             self.mass_fractions = self.mass_fractions / np.sum(self.mass_fractions)
 
-        if self.flocculate:
+        if self.coagulate:
             assert self.radii is not None
             assert len(self.radii) == len(self.speeds)
 
@@ -341,7 +341,7 @@ def setup_coagulation_matrices_core(C_now, dt, radii):
 
 
 def setup_coagulation_matrices(params, C_now, return_both = True):
-    diagonals, offsets = setup_both_matrices_variable_reaction_term_core(C_now, params.dt, radii)
+    diagonals, offsets = setup_coagulation_matrices_core(C_now, params.dt, params.radii)
     # Create matrices encoding reaction part of the equation
     Lr = diags(diagonals, offsets)
     if return_both:
@@ -365,10 +365,14 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, c_now)
 
     # Set up coagulation reaction matrices
-    L_Co, R_Co = setup_coagulation_matrices(params, c_now)
+    if params.coagulate:
+        L_Co, R_Co = setup_coagulation_matrices(params, c_now)
+        R = R_AD + R_FL + R_Co
+    else:
+        R = R_ad + R_FL
 
     # Calculate right-hand side (does not change with iterations)
-    RHS = (R_AD + R_FL).dot(C0.flatten())
+    RHS = (R).dot(C0.flatten())
 
     # Reaction term for oil entrainment, for current time
     if params.gamma > 0:
@@ -382,11 +386,16 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         if params.gamma > 0:
             reaction_term_next = 0.5*params.dt*entrainment_reaction_term_function(params, c_now)
         else:
-            reaction_term_next = 0
+            reaction_term_next = np.array([0.0])
 
         np.save('reaction_term.npy', reaction_term_next)
 
-        c_next = thomas(L_AD + L_FL, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
+        if params.coagulate:
+            L = L_AD + L_FL + L_Co
+        else:
+            L = L_AD + L_FL
+
+        c_next = thomas(L, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
 
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
@@ -395,6 +404,10 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
 
         # Recalculate the left-hand side flux-limiter matrix using new concentration estimate
         L_FL = setup_FL_matrices(params, v_minus, v_plus, c_next, return_both = False)
+
+        # Recalculate concentration-dependent coagulation matrix
+        if params.coagulate:
+            L_Co = setup_coagulation_matrices(params, c_next, return_both = False)
 
         # Copy concentration
         c_now[:] = c_next.copy()
