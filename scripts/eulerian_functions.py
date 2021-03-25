@@ -3,7 +3,7 @@
 
 #Importing packages
 import numpy as np
-from numba import jit
+from numba import njit
 import argparse
 from scipy.integrate import romb
 from scipy.sparse import diags
@@ -11,9 +11,11 @@ from scipy.sparse import diags
 from tqdm import trange
 
 from webernaturaldispersion import weber_natural_dispersion
+from coagulation import get_new_classes_and_weights, coagulation_rate_prefactor
+
 
 # Based on Wikipedia article about TDMA, written by Tor Nordam
-@jit(nopython = True)
+@njit
 def thomas_solver(a, b, c, d):
     # Solves Ax = d,
     # where layout of matrix A is
@@ -53,7 +55,7 @@ def thomas(A, b):
 
 class EulerianSystemParameters():
 
-    def __init__(self, Zmax, Nz, Tmax, dt, Nclasses, Vmin = None, Vmax = None, speed_distribution = None, speeds = None, mass_fractions = None, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0, fractionator = None, h0 = None, mu = None, ift = None, rho = None, Hs = None):
+    def __init__(self, Zmax, Nz, Tmax, dt, Nclasses, Vmin = None, Vmax = None, speed_distribution = None, speeds = None, mass_fractions = None, checkpoint = False, logspaced = False, eta_top = 0, eta_bottom = 0, gamma = 0, fractionator = None, h0 = None, mu = None, ift = None, rho = None, Hs = None, flocculate = False, radii = None):
         self.Z0 = 0.0
         self.Zmax = Zmax
         self.Nz = Nz
@@ -75,6 +77,8 @@ class EulerianSystemParameters():
         self.ift = ift
         self.rho = rho
         self.Hs = Hs
+        self.flocculate = flocculate
+        self.radii = radii
 
         # Inferred parameters
         # Position of cell faces, and spacing
@@ -123,6 +127,11 @@ class EulerianSystemParameters():
             self.mass_fractions = mass_fractions
             # Normalise mass fractions
             self.mass_fractions = self.mass_fractions / np.sum(self.mass_fractions)
+
+        if self.flocculate:
+            assert self.radii is not None
+            assert len(self.radii) == len(self.speeds)
+
 
 
 #########################################################
@@ -203,6 +212,51 @@ def psi_vector_function(rho_vec):
     #return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.25 + 0.75*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2))))
 
 
+def setup_AD_matrices(params, K_vec, v_minus, v_plus):
+    # Setting up tridiagonal matrices L_AD and R_AD for the Crank-Nicolson solver
+    # In this implementation, the matrices L_AD and R_AD are tridiagonal, and constant in time
+    # (note that the higher-order correction flux-limiter for the advection is found in another matrix)
+
+    # von Neumann number, without diffusivity D
+    a = params.dt/(2*params.dz**2)
+    # CFL number, without velocity v
+    b = params.dt/(2*params.dz)
+    # Shorthand variables
+    NJ = params.Nz
+    NK = params.Nclasses
+
+    # Superdiagonal for all components, with zeros between the superdiagonals for each component
+    sup = np.zeros(NJ*NK-1)
+    # Main diagonal for all components
+    diag = np.zeros(NJ*NK)
+    # Subdiagonal for all components, with zeros between the subdiagonals for each component
+    sub = np.zeros(NJ*NK-1)
+
+    for k in range(0, NK):
+
+        # Superdiagonal
+        sup[1+k*NJ:NJ-1+k*NJ] = -a*K_vec[2:NJ] + b*v_minus[k, 2:NJ]
+        # Absorbing boundary condition at surface (J_D = 0)
+        sup[0+k*NJ] = -a*K_vec[1] + b*v_minus[k, 1]
+
+        # Main diagonal
+        diag[1+k*NJ:NJ-1+k*NJ] = a*(K_vec[2:NJ] + K_vec[1:NJ-1]) + b*(v_plus[k, 2:NJ] - v_minus[k, 1:NJ-1])
+        # Absorbing boundary condition at surface (J_D = 0)
+        diag[0+k*NJ] = a*K_vec[1] + b*(v_plus[k, 1] - v_minus[k, 0] - v_plus[k, 0])
+        # Reflecting boundary condition at bottom (J_T = J_A + J_D = 0)
+        diag[NJ-1+k*NJ] = a*K_vec[NJ-1] + b*(v_plus[k, NJ] + v_minus[k, NJ] - v_minus[k, NJ-1])
+
+        # Subdiagonal
+        sub[0+k*NJ:NJ-2+k*NJ] = -a*K_vec[1:NJ-1] - b*v_plus[k, 1:NJ-1]
+        # Reflecting boundary condition at bottom (J_T = J_A + J_D = 0)
+        sub[NJ-2+k*NJ] = -a*K_vec[NJ-1] - b*v_plus[k, NJ-1]
+
+    # Return diagonal sparse matrices
+    L_AD = diags([ sup, 1 + diag,  sub], offsets = [1, 0, -1])
+    R_AD = diags([-sup, 1 - diag, -sub], offsets = [1, 0, -1])
+    return L_AD, R_AD
+
+
 def setup_FL_matrices(params, v_minus, v_plus, c, return_both = True):
 
     # CFL number, without velocity v
@@ -253,49 +307,48 @@ def setup_FL_matrices(params, v_minus, v_plus, c, return_both = True):
         return L_FL
 
 
-def setup_AD_matrices(params, K_vec, v_minus, v_plus):
-    # Setting up tridiagonal matrices L_AD and R_AD for the Crank-Nicolson solver
-    # In this implementation, the matrices L_AD and R_AD are tridiagonal, and constant in time
-    # (note that the higher-order correction flux-limiter for the advection is found in another matrix)
+@njit
+def setup_coagulation_matrices_core(C_now, dt, radii):
+    Nclasses, Ncells = C_now.shape
+    diagonals = []
+    # Create empty diagonals, starting with main diagonal
+    # and going downwards
+    for i in range(Nclasses):
+        diagonals.append(np.zeros(Ncells*(Nclasses - i)))
+    # Offsets of those diagonals
+    offsets = -Ncells*np.arange(Nclasses)
+    # Loop over all classes twice
+    for j in range(Nclasses):
+        for k in range(Nclasses):
+            # radii of the two classes in question:
+            r_j = radii[j]
+            r_k = radii[k]
+            # Best matching new classes, and weighting between them
+            m1, w1, m2, w2 = get_new_classes_and_weights(j,k,radii)
+            # Reaction rate
+            rate_prefactor = coagulation_rate_prefactor(r_j, r_k)
+            # Fill diagonals with rate multiplied by concentration
+            # First, handle main diagonal (representing lost mass from class j)
+            diagonals[0][Ncells*j:Ncells*(j+1)] += rate_prefactor*C_now[k,:]*dt/2
+            # Then, handle off-diagonals (representing gained mass is classes m1 and m2)
+            diagonals[m1-j][Ncells*j:Ncells*(j+1)] -= w1*rate_prefactor*C_now[k,:]*dt/2
+            # Only add here if m2 is not above range
+            if m2 < Nclasses:
+                diagonals[m2-j][Ncells*j:Ncells*(j+1)] -= w2*rate_prefactor*C_now[k,:]*dt/2
+    # return diagonals and offsests to wrapper function,
+    # since scipy cannot be used in a numba-compiled function
+    return diagonals, offsets
 
-    # von Neumann number, without diffusivity D
-    a = params.dt/(2*params.dz**2)
-    # CFL number, without velocity v
-    b = params.dt/(2*params.dz)
-    # Shorthand variables
-    NJ = params.Nz
-    NK = params.Nclasses
 
-    # Superdiagonal for all components, with zeros between the superdiagonals for each component
-    sup = np.zeros(NJ*NK-1)
-    # Main diagonal for all components
-    diag = np.zeros(NJ*NK)
-    # Subdiagonal for all components, with zeros between the subdiagonals for each component
-    sub = np.zeros(NJ*NK-1)
-
-    for k in range(0, NK):
-
-        # Superdiagonal
-        sup[1+k*NJ:NJ-1+k*NJ] = -a*K_vec[2:NJ] + b*v_minus[k, 2:NJ]
-        # Absorbing boundary condition at surface (J_D = 0)
-        sup[0+k*NJ] = -a*K_vec[1] + b*v_minus[k, 1]
-
-        # Main diagonal
-        diag[1+k*NJ:NJ-1+k*NJ] = a*(K_vec[2:NJ] + K_vec[1:NJ-1]) + b*(v_plus[k, 2:NJ] - v_minus[k, 1:NJ-1])
-        # Absorbing boundary condition at surface (J_D = 0)
-        diag[0+k*NJ] = a*K_vec[1] + b*(v_plus[k, 1] - v_minus[k, 0] - v_plus[k, 0])
-        # Reflecting boundary condition at bottom (J_T = J_A + J_D = 0)
-        diag[NJ-1+k*NJ] = a*K_vec[NJ-1] + b*(v_plus[k, NJ] + v_minus[k, NJ] - v_minus[k, NJ-1])
-
-        # Subdiagonal
-        sub[0+k*NJ:NJ-2+k*NJ] = -a*K_vec[1:NJ-1] - b*v_plus[k, 1:NJ-1]
-        # Reflecting boundary condition at bottom (J_T = J_A + J_D = 0)
-        sub[NJ-2+k*NJ] = -a*K_vec[NJ-1] - b*v_plus[k, NJ-1]
-
-    # Return diagonal sparse matrices
-    L_AD = diags([ sup, 1 + diag,  sub], offsets = [1, 0, -1])
-    R_AD = diags([-sup, 1 - diag, -sub], offsets = [1, 0, -1])
-    return L_AD, R_AD
+def setup_coagulation_matrices(params, C_now, return_both = True):
+    diagonals, offsets = setup_both_matrices_variable_reaction_term_core(C_now, params.dt, radii)
+    # Create matrices encoding reaction part of the equation
+    Lr = diags(diagonals, offsets)
+    if return_both:
+        Rr = -Lr.copy()
+        return Lr, Rr
+    else:
+        return Lr
 
 
 def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
@@ -310,6 +363,9 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
 
     # Set up flux-limeter matrices
     L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, c_now)
+
+    # Set up coagulation reaction matrices
+    L_Co, R_Co = setup_coagulation_matrices(params, c_now)
 
     # Calculate right-hand side (does not change with iterations)
     RHS = (R_AD + R_FL).dot(C0.flatten())
