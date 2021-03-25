@@ -40,12 +40,12 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 6*3600
+Tmax = 24*3600
 # Particle density [kg/m3]
-rho  = 2000
+rho  = 1500
 # Smallest and largest particle size
-Dmin = 1e-5
-Dmax = 1e-3
+Dmin = 1e-6
+Dmax = 1e-4
 
 # For this case, we define log-spaced size classes, and calculate
 # the corresponding settling speeds from Stokes' law with a transition
@@ -56,7 +56,7 @@ Rf = np.logspace(np.log10(Dmin), np.log10(Dmax), args.NK+1)
 # Size class "cell" centers
 Rc = np.sqrt(Rf[:-1]*Rf[1:])
 # Size distribution
-pdf = lognorm(0.2, scale = 2e-5).pdf
+pdf = lognorm(0.25, scale = 2.5e-6).pdf
 # Calculate fractions in each cell
 mass_fractions = np.zeros(args.NK)
 # Parameter for romberg integration
@@ -71,7 +71,6 @@ mass_fractions = mass_fractions / np.sum(mass_fractions)
 # Speed class centers
 speeds = -rise_speed(2*Rc, rho)
 
-print('speeds: ', speeds)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
