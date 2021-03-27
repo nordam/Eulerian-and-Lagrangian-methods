@@ -369,7 +369,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         L_Co, R_Co = setup_coagulation_matrices(params, c_now)
         R = R_AD + R_FL + R_Co
     else:
-        R = R_ad + R_FL
+        R = R_AD + R_FL
 
     # Calculate right-hand side (does not change with iterations)
     RHS = (R).dot(C0.flatten())
@@ -387,8 +387,6 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
             reaction_term_next = 0.5*params.dt*entrainment_reaction_term_function(params, c_now)
         else:
             reaction_term_next = np.array([0.0])
-
-        np.save('reaction_term.npy', reaction_term_next)
 
         if params.coagulate:
             L = L_AD + L_FL + L_Co
@@ -412,7 +410,6 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Copy concentration
         c_now[:] = c_next.copy()
 
-    np.save('reaction_term.npy', reaction_term_next)
     return c_next
 
 
@@ -446,7 +443,7 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
         if n % N_skip == 0:
             i = int(n / N_skip)
             C_out[i,:,:] = C_now[:]
-            if outputfilename is not None and params.checkpoint:
+            if outputfilename is not None and (params.checkpoint or params.Nclasses == 512):
                 np.save(outputfilename, C_out)
 
         # Iterative procedure
