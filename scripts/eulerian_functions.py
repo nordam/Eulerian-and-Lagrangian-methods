@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 
 #Importing packages
+import sys
 import numpy as np
 from numba import njit
 import argparse
 from scipy.integrate import romb
-from scipy.sparse import diags
+from scipy.sparse import diags, csc_matrix
+from scipy.sparse.linalg import spilu, LinearOperator
+
 # Progress bar
 from tqdm import trange
 
@@ -390,10 +393,18 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
 
         if params.coagulate:
             L = L_AD + L_FL + L_Co
+            ILU = spilu(csc_matrix(L))
+            preconditioner = LinearOperator(L.shape, lambda x : ILU.solve(x))
+            C_next, status = bicgstab((L+Lr), RHS, x0 = C_now.flatten(), tol = 1e-12, M = preconditioner)
+            if status != 0:
+                print(f'Bicgstab failed, with error: {status}, switching to GMRES')
+                C_next, status = gmres((L+Lr), RHS, x0 = C_now.flatten(), tol = 1e-12, M = preconditioner)
+                if status != 0:
+                    print(f'GMRES failed, with error {status}, stopping')
+                    sys.exit()
         else:
             L = L_AD + L_FL
-
-        c_next = thomas(L, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
+            c_next = thomas(L, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
 
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
