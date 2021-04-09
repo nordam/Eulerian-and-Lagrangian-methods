@@ -45,7 +45,7 @@ Tmax = 24*3600
 rho  = 1500
 # Smallest and largest particle size
 Dmin = 1e-6
-Dmax = 1e-4
+Dmax = 2e-4
 
 # For this case, we define log-spaced size classes, and calculate
 # the corresponding settling speeds from Stokes' law with a transition

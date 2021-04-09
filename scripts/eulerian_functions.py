@@ -382,6 +382,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         reaction_term_now = 0.5*params.dt*entrainment_reaction_term_function(params, C0)
         RHS += reaction_term_now.flatten()
 
+    ILU = None
     # Iterate up to kappa_max times
     for n in range(maxiter):
 
@@ -393,8 +394,11 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
 
         if params.coagulate:
             L = L_AD + L_FL + L_Co
-            ILU = spilu(csc_matrix(L))
-            preconditioner = LinearOperator(L.shape, lambda x : ILU.solve(x))
+            if ILU is None:
+                # Create preconditioner only once, since it is anyway only an
+                # approximate inverse of L. This saves a lot of time.
+                ILU = spilu(csc_matrix(L))
+                preconditioner = LinearOperator(L.shape, lambda x : ILU.solve(x))
             c_next, status = bicgstab(L, RHS + reaction_term_next.flatten(), x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
             if status != 0:
                 print(f'Bicgstab failed, with error: {status}, switching to GMRES')
@@ -410,6 +414,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
         if norm < tol:
+            print(f'Used {n} iterations')
             return c_next
 
         # Recalculate the left-hand side flux-limiter matrix using new concentration estimate
@@ -422,6 +427,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Copy concentration
         c_now[:] = c_next.copy()
 
+    print(f'Used {n} iterations')
     return c_next
 
 
