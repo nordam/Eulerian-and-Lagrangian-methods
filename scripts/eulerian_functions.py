@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 
 #Importing packages
+import sys
 import numpy as np
 from numba import njit
 import argparse
 from scipy.integrate import romb
-from scipy.sparse import diags
+from scipy.sparse import diags, csc_matrix
+from scipy.sparse.linalg import spilu, LinearOperator, bicgstab
+
 # Progress bar
 from tqdm import trange
 
@@ -390,10 +393,19 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
 
         if params.coagulate:
             L = L_AD + L_FL + L_Co
+            ILU = spilu(csc_matrix(L))
+            preconditioner = LinearOperator(L.shape, lambda x : ILU.solve(x))
+            c_next, status = bicgstab(L, RHS + reaction_term_next.flatten(), x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
+            if status != 0:
+                print(f'Bicgstab failed, with error: {status}, switching to GMRES')
+                c_next, status = gmres(L, RHS + reaction_term_next.flatten(), x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
+                if status != 0:
+                    print(f'GMRES failed, with error {status}, stopping')
+                    sys.exit()
+            c_next = c_next.reshape((params.Nclasses, params.Nz))
         else:
             L = L_AD + L_FL
-
-        c_next = thomas(L, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
+            c_next = thomas(L, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
 
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
@@ -437,7 +449,7 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     N_out = 1 + int(params.Nt / N_skip)
     C_out = np.zeros((N_out, NK, NJ))
 
-    for n in range(0, params.Nt):
+    for n in trange(0, params.Nt):
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
