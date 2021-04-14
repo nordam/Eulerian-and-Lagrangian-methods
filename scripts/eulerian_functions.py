@@ -12,6 +12,7 @@ from scipy.sparse.linalg import spilu, LinearOperator, bicgstab
 
 # Progress bar
 from tqdm import trange
+from time import time
 
 from webernaturaldispersion import weber_natural_dispersion
 from coagulation_functions import get_new_classes_and_weights, coagulation_rate_prefactor
@@ -354,6 +355,7 @@ def setup_coagulation_matrices(params, C_now, return_both = True):
         return Lr
 
 
+#@profile
 def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
 
     # Make a copy, to avoid overwriting input
@@ -393,7 +395,10 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
             reaction_term_next = np.array([0.0])
 
         if params.coagulate:
-            L = L_AD + L_FL + L_Co
+            #L = L_AD + L_FL + L_Co
+            L = L_Co
+            for d in [-1, 0, 1]:
+                L.setdiag(L_Co.diagonal(d) + L_AD.diagonal(d) + L_FL.diagonal(d), d)
             if ILU is None:
                 # Create preconditioner only once, since it is anyway only an
                 # approximate inverse of L. This saves a lot of time.
@@ -414,7 +419,6 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
         if norm < tol:
-            print(f'Used {n} iterations')
             return c_next
 
         # Recalculate the left-hand side flux-limiter matrix using new concentration estimate
@@ -427,10 +431,10 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Copy concentration
         c_now[:] = c_next.copy()
 
-    print(f'Used {n} iterations')
     return c_next
 
 
+#@profile
 def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = None):
 
     # Evaluate diffusivity function at cell faces
@@ -455,7 +459,8 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     N_out = 1 + int(params.Nt / N_skip)
     C_out = np.zeros((N_out, NK, NJ))
 
-    for n in trange(0, params.Nt):
+    tic = time()
+    for n in range(0, params.Nt):
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
@@ -466,6 +471,12 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
 
         # Iterative procedure
         C_now = Iterative_Solver(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus)
+
+        # Print status
+        if n > 1:
+            toc = time()
+            ETA = ((toc - tic) / n) * (params.Nt - n)
+            print(f'dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, ETA = {ETA:.4f} seconds')
 
     # Finally, store last timestep to output array
     C_out[-1,:,:] = C_now

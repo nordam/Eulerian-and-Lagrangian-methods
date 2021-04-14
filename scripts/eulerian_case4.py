@@ -40,7 +40,7 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 24*3600
+Tmax = 12*3600
 # Particle density [kg/m3]
 rho  = 1500
 # Smallest and largest particle size
