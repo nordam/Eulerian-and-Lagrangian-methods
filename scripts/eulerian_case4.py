@@ -126,6 +126,7 @@ C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
 datafolder = '/work6/torn/EulerLagrange'
 datafolder = '../results/'
+datafolder = '../testresults_umist/'
 outputfilename = os.path.join(datafolder, f'Case4_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
 

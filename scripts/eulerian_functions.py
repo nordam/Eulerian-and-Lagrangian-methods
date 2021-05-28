@@ -7,7 +7,7 @@ import numpy as np
 from numba import njit
 import argparse
 from scipy.integrate import romb
-from scipy.sparse import diags, csc_matrix
+from scipy.sparse import diags, csc_matrix, dia_matrix
 from scipy.sparse.linalg import spilu, LinearOperator, bicgstab
 
 # Progress bar
@@ -210,10 +210,10 @@ def get_rho_vectors(c):
 
 def psi_vector_function(rho_vec):
     # Sweby flux limiter
-    beta = 1.5
-    return np.maximum(np.maximum(0, np.minimum(beta*rho_vec, 1)), np.minimum(rho_vec, beta))
+    #beta = 1.5
+    #return np.maximum(np.maximum(0, np.minimum(beta*rho_vec, 1)), np.minimum(rho_vec, beta))
     # UMIST flux limiter
-    #return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.25 + 0.75*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2))))
+    return np.maximum(0, np.minimum(2*rho_vec, np.minimum(0.25 + 0.75*rho_vec, np.minimum(0.75 + 0.25*rho_vec, 2))))
 
 
 def setup_AD_matrices(params, K_vec, v_minus, v_plus):
@@ -343,7 +343,6 @@ def setup_coagulation_matrices_core(C_now, dt, radii):
     # since scipy cannot be used in a numba-compiled function
     return diagonals, offsets
 
-
 def setup_coagulation_matrices(params, C_now, return_both = True):
     diagonals, offsets = setup_coagulation_matrices_core(C_now, params.dt, params.radii)
     # Create matrices encoding reaction part of the equation
@@ -354,6 +353,14 @@ def setup_coagulation_matrices(params, C_now, return_both = True):
     else:
         return Lr
 
+def add_sparse(*matrices):
+    result = matrices[0].copy()
+    if len(matrices) > 1:
+        for m in matrices[1:]:
+            assert type(m) == dia_matrix
+            for offset in m.offsets:
+                result.setdiag(result.diagonal(offset) + m.diagonal(offset), offset)
+    return result
 
 #@profile
 def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
@@ -372,9 +379,9 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     # Set up coagulation reaction matrices
     if params.coagulate:
         L_Co, R_Co = setup_coagulation_matrices(params, c_now)
-        R = R_AD + R_FL + R_Co
+        R = add_sparse(R_AD, R_FL, R_Co)
     else:
-        R = R_AD + R_FL
+        R = add_sparse(R_AD, R_FL)
 
     # Calculate right-hand side (does not change with iterations)
     RHS = (R).dot(C0.flatten())
@@ -413,13 +420,16 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
                     sys.exit()
             c_next = c_next.reshape((params.Nclasses, params.Nz))
         else:
-            L = L_AD + L_FL
+            #L = L_AD + L_FL
+            L = L_FL
+            for d in [-1, 0, 1]:
+                L.setdiag(L_AD.diagonal(d) + L_FL.diagonal(d), d)
             c_next = thomas(L, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
 
         # Calculate norm
         norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
         if norm < tol:
-            return c_next
+            break
 
         # Recalculate the left-hand side flux-limiter matrix using new concentration estimate
         L_FL = setup_FL_matrices(params, v_minus, v_plus, c_next, return_both = False)
@@ -431,8 +441,8 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Copy concentration
         c_now[:] = c_next.copy()
 
+    #print(f'{n} iterations')
     return c_next
-
 
 #@profile
 def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = None):
@@ -446,6 +456,11 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     # Set up matrices encoding advection and diffusion
     # (these are tri-diagonal, and constant in time)
     L_AD, R_AD = setup_AD_matrices(params, K_vec, v_minus, v_plus)
+
+    np.save('A_sub_new.npy', L_AD.diagonal(-1))
+    np.save('A_main_new.npy', L_AD.diagonal(0))
+    np.save('A_sup_new.npy', L_AD.diagonal( 1))
+    sys.exit()
 
     # Shorthand variables
     NJ = params.Nz
@@ -473,7 +488,7 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
         C_now = Iterative_Solver(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus)
 
         # Print status
-        if n > 1:
+        if (n > 1) and (n % N_skip == 0):
             toc = time()
             ETA = ((toc - tic) / n) * (params.Nt - n)
             print(f'dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, ETA = {ETA:.4f} seconds')

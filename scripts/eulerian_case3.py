@@ -63,9 +63,9 @@ def entrainmentrate(windspeed, Tp, Hs, rho, ift):
 ####################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = float, default = 600, help = 'Timestep')
+parser.add_argument('--dt', dest = 'dt', type = float, default = 60, help = 'Timestep')
 parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
-parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
+parser.add_argument('--NK', dest = 'NK', type = int, default = 32, help = 'Number of speed classes')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
 parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 args = parser.parse_args()
@@ -79,7 +79,7 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 24*3600
+Tmax = 6*3600
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)
 mu     = 1.51
@@ -168,18 +168,19 @@ else:
 
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
+C0[:] = 0.0
 
-datafolder = '/work6/torn/EulerLagrange'
-#datafolder = '../results/'
+#datafolder = '/work6/torn/EulerLagrange'
+datafolder = '../testresults/'
 outputfilename = os.path.join(datafolder, f'Case3_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
-if os.path.exists(outputfilename):
-    print('File exists, exiting: ', outputfilename)
-else:
-    tic = time.time()
-    c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename)
-    toc = time.time()
-    print(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}')
+#if os.path.exists(outputfilename):
+#    print('File exists, exiting: ', outputfilename)
+#else:
+tic = time.time()
+c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename)
+toc = time.time()
+print(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}')
 
-    np.save(outputfilename, c)
+np.save(outputfilename, c)
 
