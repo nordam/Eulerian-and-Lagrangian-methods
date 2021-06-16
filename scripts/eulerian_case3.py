@@ -113,8 +113,8 @@ mass_fractions = mass_fractions / np.sum(mass_fractions)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
-sigma_IC = 4
-mu_IC = 20
+sigma_IC = 2
+mu_IC = 1
 pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*np.pi))
 
 
@@ -168,7 +168,7 @@ else:
 
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
-C0[:] = 0.0
+np.save('C0_new.npy', C0)
 
 #datafolder = '/work6/torn/EulerLagrange'
 datafolder = '../testresults/'

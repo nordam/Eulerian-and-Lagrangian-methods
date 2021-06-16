@@ -427,11 +427,6 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, z_cell, z_face, dz, 
     # Set up matrix A on LHS
     A_sub, A_diag, A_sup = Crank_Nicolson_LHS(z_cell, dz, NJ, NK, r_sans_D, CFL_sans_v, diffusivity_vector, velocity_vector_minus, velocity_vector_plus)
 
-    np.save('A_sub_old.npy', A_sub)
-    np.save('A_main_old.npy', A_diag)
-    np.save('A_sup_old.npy', A_sup)
-    sys.exit()
-
     # Array to hold one timestep, to avoid allocating too much memory
     C_now  = np.zeros_like(C0)
     C_now[:] = C0.copy()
@@ -530,7 +525,6 @@ t_end = 6*3600
 NN = int((t_end - t_start)/dt)
 
 
-
 ##################################
 ####   Diffusivity profiles   ####
 ##################################
@@ -579,11 +573,19 @@ for diffusivity_profile, label in zip((K_A,), ('A',)):
 
     # Concentration array for all cells and time levels
     # Case 3 starts with no oil submerged, hence we do not initialise concentrations
-    C0 = np.zeros([NJ, NK], order='F')
+    C0 = np.ones([NJ, NK], order='F')
+
+    # Normal distribution with mean mu and standard deviation sigma
+    sigma_IC = 4
+    mu_IC = 20
+    pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*np.pi))
+    C0[:,:] = pdf_IC(z_cell)[:,None] * mass_fractions[None,:]
+
+    np.save(f'../debug/C0_case3_Nclasses={Nclasses}_NJ={NJ}_old.npy', C0)
 
     start = time.time()
     c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, z_cell, z_face, dz, NJ, NK, NN, dt, N_sub, sub_cells, gamma)
     end = time.time()
     print(f'Running simulation with {Nclasses:>3} classes... | {"#" * 50} | Elapsed: {(end-start):.2f} seconds')
 
-    np.save(f'../testresults/Case3_K_{label}_block_Nclasses={Nclasses}_NJ={NJ}_dt={dt}_old_code.npy', c)
+    np.save(f'../debug/Case3_K_{label}_block_Nclasses={Nclasses}_NJ={NJ}_dt={dt}_old.npy', np.transpose(c, axes = (1,2,0)))

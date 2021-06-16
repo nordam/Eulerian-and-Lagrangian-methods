@@ -122,6 +122,7 @@ class EulerianSystemParameters():
                 self.mass_fractions[j] = romb(self.speed_distribution(evaluation_points), dx = dx)
             # Normalise mass fractions
             self.mass_fractions = self.mass_fractions / np.sum(self.mass_fractions)
+            self.speeds = -self.speeds
         else:
             assert speeds is not None
             assert mass_fractions is not None
@@ -303,11 +304,11 @@ def setup_FL_matrices(params, v_minus, v_plus, c, return_both = True):
 
     # Return diagonal sparse matrices
     if return_both:
-        L_FL = 0.5*diags([ sup,  diag,  sub], offsets = [1, 0, -1])
-        R_FL = 0.5*diags([-sup, -diag, -sub], offsets = [1, 0, -1])
+        L_FL = 0.5*diags([-sup, -diag, -sub], offsets = [1, 0, -1])
+        R_FL = 0.5*diags([ sup,  diag,  sub], offsets = [1, 0, -1])
         return L_FL, R_FL
     else:
-        L_FL = 0.5*diags([ sup,  diag,  sub], offsets = [1, 0, -1])
+        L_FL = 0.5*diags([-sup, -diag, -sub], offsets = [1, 0, -1])
         return L_FL
 
 
@@ -362,19 +363,29 @@ def add_sparse(*matrices):
                 result.setdiag(result.diagonal(offset) + m.diagonal(offset), offset)
     return result
 
+def check_diagonal_dominance(m):
+    assert len(m.offsets) == 3
+    sup  = np.abs(m.diagonal( 1))
+    main = np.abs(m.diagonal( 0))
+    sub  = np.abs(m.diagonal(-1))
+    if sup[0] >= main[0]:
+        return False
+    elif np.any((sup[1:] + sub[:-1]) >= main[1:-1]):
+        return False
+    elif sub[-1] >= main[-1]:
+        return False
+    else:
+        return True
+
 #@profile
 def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
 
     # Make a copy, to avoid overwriting input
     c_now = C0.copy()
 
-    # Max number of iterations
-    maxiter = 20
-    # Tolerance
-    tol = 1e-12
-
     # Set up flux-limeter matrices
     L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, c_now)
+
 
     # Set up coagulation reaction matrices
     if params.coagulate:
@@ -384,33 +395,37 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         R = add_sparse(R_AD, R_FL)
 
     # Calculate right-hand side (does not change with iterations)
-    RHS = (R).dot(C0.flatten())
+    RHS = (R).dot(c_now.flatten())
 
-    # Reaction term for oil entrainment, for current time
-    if params.gamma > 0:
-        reaction_term_now = 0.5*params.dt*entrainment_reaction_term_function(params, C0)
-        RHS += reaction_term_now.flatten()
+    # Max number of iterations
+    maxiter = 50
+    # Tolerance
+    tol = 1e-9
+    # List to store norms for later comparison
+    norms = []
 
+    # Preconditioner (updated only in the first iteration)
     ILU = None
-    # Iterate up to kappa_max times
+
     for n in range(maxiter):
 
-        # Compute new approximation of solution c[:, n+1] for new iteration, for each component
+        # If there is entrainment, calculate reaction term
         if params.gamma > 0:
-            reaction_term_next = 0.5*params.dt*entrainment_reaction_term_function(params, c_now)
+            reaction_term_next = (0.5*params.dt*entrainment_reaction_term_function(params, c_now)).flatten()
         else:
-            reaction_term_next = np.array([0.0])
+            reaction_term_next = 0.0
 
+        # If there is coagulation, take that into account
         if params.coagulate:
-            #L = L_AD + L_FL + L_Co
-            L = L_Co
-            for d in [-1, 0, 1]:
-                L.setdiag(L_Co.diagonal(d) + L_AD.diagonal(d) + L_FL.diagonal(d), d)
+            # Add together matrices on left-hand side
+            L = add_sparse(L_AD, L_FL, L_Co)
             if ILU is None:
                 # Create preconditioner only once, since it is anyway only an
                 # approximate inverse of L. This saves a lot of time.
                 ILU = spilu(csc_matrix(L))
                 preconditioner = LinearOperator(L.shape, lambda x : ILU.solve(x))
+
+            # Solve with iterative solver
             c_next, status = bicgstab(L, RHS + reaction_term_next.flatten(), x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
             if status != 0:
                 print(f'Bicgstab failed, with error: {status}, switching to GMRES')
@@ -420,20 +435,27 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
                     sys.exit()
             c_next = c_next.reshape((params.Nclasses, params.Nz))
         else:
-            #L = L_AD + L_FL
-            L = L_FL
-            for d in [-1, 0, 1]:
-                L.setdiag(L_AD.diagonal(d) + L_FL.diagonal(d), d)
-            c_next = thomas(L, RHS + reaction_term_next.flatten()).reshape((params.Nclasses, params.Nz))
+            # Add together matrices on left-hand side
+            L = add_sparse(L_AD, L_FL)
+            c_next = thomas(L, RHS + reaction_term_next).reshape((params.Nclasses, params.Nz))
+
 
         # Calculate norm
-        norm = np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0)))
-        if norm < tol:
-            break
+        if n == 0:
+            first_guess = c_next.copy()
+        elif n == 1:
+            # Calculate norm
+            norms.append( np.amax(np.sqrt(params.dz*np.sum((first_guess - c_next)**2, axis=0))) )
+        else:
+            # Calculate norm
+            norms.append( np.amax(np.sqrt(params.dz*np.sum((c_now - c_next)**2, axis=0))) )
+            # Exit iterative loop if tolerance is met, or if norm is unchanged from previous iteration
+            if len(norms) >= 2:
+                if (norms[-1] < tol*norms[0]) or np.any(norms[-1] >= norms[:-1]) or (n >= (maxiter - 1)):
+                    break
 
         # Recalculate the left-hand side flux-limiter matrix using new concentration estimate
         L_FL = setup_FL_matrices(params, v_minus, v_plus, c_next, return_both = False)
-
         # Recalculate concentration-dependent coagulation matrix
         if params.coagulate:
             L_Co = setup_coagulation_matrices(params, c_next, return_both = False)
@@ -441,7 +463,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Copy concentration
         c_now[:] = c_next.copy()
 
-    #print(f'{n} iterations')
+    print(n, ' iterations')
     return c_next
 
 #@profile
@@ -457,10 +479,10 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     # (these are tri-diagonal, and constant in time)
     L_AD, R_AD = setup_AD_matrices(params, K_vec, v_minus, v_plus)
 
-    np.save('A_sub_new.npy', L_AD.diagonal(-1))
-    np.save('A_main_new.npy', L_AD.diagonal(0))
-    np.save('A_sup_new.npy', L_AD.diagonal( 1))
-    sys.exit()
+    #DEBUG np.save('A_sub_new.npy', L_AD.diagonal(-1))
+    #DEBUG np.save('A_main_new.npy', L_AD.diagonal(0))
+    #DEBUG np.save('A_sup_new.npy', L_AD.diagonal( 1))
+    #sys.exit()
 
     # Shorthand variables
     NJ = params.Nz
@@ -481,8 +503,6 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
         if n % N_skip == 0:
             i = int(n / N_skip)
             C_out[i,:,:] = C_now[:]
-            if outputfilename is not None and (params.checkpoint or params.Nclasses == 512):
-                np.save(outputfilename, C_out)
 
         # Iterative procedure
         C_now = Iterative_Solver(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus)

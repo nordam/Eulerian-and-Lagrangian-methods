@@ -37,14 +37,14 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 240*3600
+Tmax = 6*3600
 
 # For this case, we use a speed distribution directly, taken from
 # Table 3 in Sundby (1983).
 # Mean speed = 0.96 mm/s
 # Standard deviation = 0.38 mm/s
 # Truncated at +/- 2*sigma
-mean_speed = -0.96 * 1e-3
+mean_speed = 0.96 * 1e-3
 std_dev_speed = 0.38 * 1e-3
 Vmin = mean_speed - 2*std_dev_speed
 Vmax = mean_speed + 2*std_dev_speed
@@ -62,7 +62,7 @@ pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*
 ##################################
 
 # Constant diffusivity
-K_A = lambda z: 1e-2*np.ones(len(z))
+K_A = lambda z: 1e-5*np.ones(len(z))
 
 # Fitted to results of GOTM simulation
 alpha, beta, zeta, z0 = (0.00636, 0.088, 1.54, 1.3)
@@ -85,7 +85,6 @@ params = EulerianSystemParameters(
         checkpoint = args.checkpoint, # save results underway?
     )
 
-
 #########################################################
 ####    Run simulation for one diffusivity profile   ####
 #########################################################
@@ -100,8 +99,10 @@ else:
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
+np.save(f'../debug/C0_case1_Nclasses={params.Nclasses}_NJ={params.Nz}.npy', C0)
+
 datafolder = '/work6/torn/EulerLagrange'
-#datafolder = '../results/'
+datafolder = '../debug/'
 outputfilename = os.path.join(datafolder, f'Case1_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
 
