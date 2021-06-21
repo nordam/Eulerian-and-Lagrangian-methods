@@ -400,7 +400,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     # Max number of iterations
     maxiter = 50
     # Tolerance
-    tol = 1e-9
+    tol = 1e-6
     # List to store norms for later comparison
     norms = []
 
