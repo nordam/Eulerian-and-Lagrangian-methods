@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#Importing packages
+# Importing standard packages
 import os
 import time
-import numpy as np
 import argparse
 
-# import stuff from .py files in notebooks folder
+# Numerical packages
+import numpy as np
+
+# import stuff from .py files in local folder
 import sys
 sys.path.append('.')
 from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_advection_diffusion_reaction
@@ -65,7 +67,7 @@ def entrainmentrate(windspeed, Tp, Hs, rho, ift):
 parser = argparse.ArgumentParser()
 parser.add_argument('--dt', dest = 'dt', type = float, default = 60, help = 'Timestep')
 parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
-parser.add_argument('--NK', dest = 'NK', type = int, default = 32, help = 'Number of speed classes')
+parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
 parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 args = parser.parse_args()
@@ -79,7 +81,8 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 6*3600
+Tmax = 12*3600
+
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)
 mu     = 1.51
@@ -113,8 +116,8 @@ mass_fractions = mass_fractions / np.sum(mass_fractions)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
-sigma_IC = 2
-mu_IC = 1
+sigma_IC = 4
+mu_IC = 20
 pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*np.pi))
 
 
@@ -168,15 +171,10 @@ else:
 
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
-np.save('C0_new.npy', C0)
 
-#datafolder = '/work6/torn/EulerLagrange'
-datafolder = '../testresults/'
+datafolder = '/work6/torn/EulerLagrange'
 outputfilename = os.path.join(datafolder, f'Case3_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
-#if os.path.exists(outputfilename):
-#    print('File exists, exiting: ', outputfilename)
-#else:
 tic = time.time()
 c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename)
 toc = time.time()

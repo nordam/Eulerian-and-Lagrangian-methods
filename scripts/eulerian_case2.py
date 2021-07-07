@@ -21,7 +21,7 @@ from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_
 ####################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = float, default = 600, help = 'Timestep')
+parser.add_argument('--dt', dest = 'dt', type = float, default = 60, help = 'Timestep')
 parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
 parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
@@ -149,12 +149,11 @@ else:
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
 datafolder = '/work6/torn/EulerLagrange'
-#datafolder = '../results/'
 outputfilename = os.path.join(datafolder, f'Case2_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
 
 tic = time.time()
-c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename)
+c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename, save_dt = 720)
 toc = time.time()
 print(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}')
 

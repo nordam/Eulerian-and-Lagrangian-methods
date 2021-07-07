@@ -394,6 +394,12 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     else:
         R = add_sparse(R_AD, R_FL)
 
+    # If there is entrainment, calculate reaction term
+    if params.gamma > 0:
+        reaction_term_now = (0.5*params.dt*entrainment_reaction_term_function(params, c_now)).flatten()
+    else:
+        reaction_term_now = 0.0
+
     # Calculate right-hand side (does not change with iterations)
     RHS = (R).dot(c_now.flatten())
 
@@ -426,18 +432,27 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
                 preconditioner = LinearOperator(L.shape, lambda x : ILU.solve(x))
 
             # Solve with iterative solver
-            c_next, status = bicgstab(L, RHS + reaction_term_next.flatten(), x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
+            c_next, status = bicgstab(L, RHS + reaction_term_next + reaction_term_now, x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
             if status != 0:
                 print(f'Bicgstab failed, with error: {status}, switching to GMRES')
-                c_next, status = gmres(L, RHS + reaction_term_next.flatten(), x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
+                c_next, status = gmres(L, RHS + reaction_term_next + reaction_term_now, x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
                 if status != 0:
                     print(f'GMRES failed, with error {status}, stopping')
                     sys.exit()
             c_next = c_next.reshape((params.Nclasses, params.Nz))
         else:
-            # Add together matrices on left-hand side
-            L = add_sparse(L_AD, L_FL)
-            c_next = thomas(L, RHS + reaction_term_next).reshape((params.Nclasses, params.Nz))
+            keep_FL_on_left = False
+            if keep_FL_on_left:
+                # Add together matrices on left-hand side
+                L = add_sparse(L_AD, L_FL)
+                c_next = thomas(L, RHS + reaction_term_next + reaction_term_now).reshape((params.Nclasses, params.Nz))
+            else:
+                # In cases where the full left-hand matrix isn't diagonally dominant,
+                # we cannot use the thomas algorithm.
+                # Hence, we move the flux-limiter part to the RHS.
+                L = L_AD
+                FL_RHS = L_FL.dot(c_now.flatten())
+                c_next = thomas(L, RHS - FL_RHS + reaction_term_next + reaction_term_now).reshape((params.Nclasses, params.Nz))
 
 
         # Calculate norm
@@ -463,11 +478,11 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Copy concentration
         c_now[:] = c_next.copy()
 
-    print(n, ' iterations')
+    #print(n, ' iterations')
     return c_next
 
 #@profile
-def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = None):
+def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = None, save_dt = 1800):
 
     # Evaluate diffusivity function at cell faces
     K_vec = K(params.z_face)
@@ -491,8 +506,8 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     # Array to hold one timestep, to avoid allocating too much memory
     C_now  = np.zeros_like(C0)
     C_now[:] = C0.copy()
-    # Array for output, store once every 3600 seconds
-    N_skip = int(1800/params.dt)
+    # Array for output, store once every 900 seconds
+    N_skip = int(save_dt/params.dt)
     N_out = 1 + int(params.Nt / N_skip)
     C_out = np.zeros((N_out, NK, NJ))
 

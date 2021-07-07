@@ -18,7 +18,7 @@ module load anaconda3
 
 cd $SLURM_SUBMIT_DIR
 
-cat args.txt | xargs -n8 -P10 python eulerian_case1.py
+cat args_case1.txt | xargs -n8 -P10 python eulerian_case1.py
 
 wait
 exit 0
