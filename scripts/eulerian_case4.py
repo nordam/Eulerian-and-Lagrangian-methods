@@ -124,16 +124,16 @@ else:
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
-datafolder = '/work6/torn/EulerLagrange'
+#datafolder = '/work6/torn/EulerLagrange'
 datafolder = '../results/'
-datafolder = '../testresults_umist/'
 outputfilename = os.path.join(datafolder, f'Case4_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
+if not os.path.exists(outputfilename):
+    tic = time.time()
+    c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename)
+    toc = time.time()
+    print(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}')
 
-tic = time.time()
-c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename)
-toc = time.time()
-print(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}')
-
-np.save(outputfilename, c)
-
+    np.save(outputfilename, c)
+else:
+    print(f'File exists, skipping: {outputfilename}')

@@ -8,7 +8,8 @@ from numba import njit
 import argparse
 from scipy.integrate import romb
 from scipy.sparse import diags, csc_matrix, dia_matrix
-from scipy.sparse.linalg import spilu, LinearOperator, bicgstab
+from scipy.sparse.linalg import spilu, LinearOperator, bicgstab, gmres
+import datetime
 
 # Progress bar
 from tqdm import trange
@@ -355,7 +356,8 @@ def setup_coagulation_matrices(params, C_now, return_both = True):
         return Lr
 
 def add_sparse(*matrices):
-    result = matrices[0].copy()
+    #result = matrices[0].copy()
+    result = matrices[0]
     if len(matrices) > 1:
         for m in matrices[1:]:
             assert type(m) == dia_matrix
@@ -390,7 +392,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     # Set up coagulation reaction matrices
     if params.coagulate:
         L_Co, R_Co = setup_coagulation_matrices(params, c_now)
-        R = add_sparse(R_AD, R_FL, R_Co)
+        R = add_sparse(R_Co, R_AD, R_FL)
     else:
         R = add_sparse(R_AD, R_FL)
 
@@ -424,7 +426,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # If there is coagulation, take that into account
         if params.coagulate:
             # Add together matrices on left-hand side
-            L = add_sparse(L_AD, L_FL, L_Co)
+            L = add_sparse(L_Co, L_AD, L_FL)
             if ILU is None:
                 # Create preconditioner only once, since it is anyway only an
                 # approximate inverse of L. This saves a lot of time.
@@ -434,10 +436,12 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
             # Solve with iterative solver
             c_next, status = bicgstab(L, RHS + reaction_term_next + reaction_term_now, x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
             if status != 0:
-                print(f'Bicgstab failed, with error: {status}, switching to GMRES')
+                print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, Bicgstab failed, with error: {status}, switching to GMRES')
+                sys.stdout.flush()
                 c_next, status = gmres(L, RHS + reaction_term_next + reaction_term_now, x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
                 if status != 0:
-                    print(f'GMRES failed, with error {status}, stopping')
+                    print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, GMRES failed, with error {status}, stopping')
+                    sys.stdout.flush()
                     sys.exit()
             c_next = c_next.reshape((params.Nclasses, params.Nz))
         else:
@@ -478,7 +482,8 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # Copy concentration
         c_now[:] = c_next.copy()
 
-    #print(n, ' iterations')
+    print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, iterations = {n}')
+    sys.stdout.flush()
     return c_next
 
 #@profile
@@ -526,7 +531,12 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
         if (n > 1) and (n % N_skip == 0):
             toc = time()
             ETA = ((toc - tic) / n) * (params.Nt - n)
-            print(f'dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, ETA = {ETA:.4f} seconds')
+            if outputfilename is not None:
+                label = outputfilename.split('_')[-5]
+            else:
+                label = '-'
+            print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, profile = {label}, ETA = {ETA:.4f} seconds')
+            sys.stdout.flush()
 
     # Finally, store last timestep to output array
     C_out[-1,:,:] = C_now
