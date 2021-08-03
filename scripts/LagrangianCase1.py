@@ -3,6 +3,7 @@
 
 from collections import namedtuple
 import numpy as np
+from tqdm import trange
 
 ############################
 #### Physical constants ####
@@ -149,6 +150,7 @@ def settle(z, v, zmax):
 #### Main function to run a simulation ####
 ###########################################
 
+@profile
 def experiment(Z0, V0, Tmax, dt, bins, Zmax, K, surfacing=False, settling=False):
     '''
     Run the model.
@@ -176,7 +178,7 @@ def experiment(Z0, V0, Tmax, dt, bins, Zmax, K, surfacing=False, settling=False)
 
     # Time loop
     t = 0
-    for i in range(Nt):
+    for i in trange(Nt):
         # Store histogram
         H[i,:] = np.histogram(Z, bins)[0]
         # Store first moment
@@ -213,11 +215,11 @@ def experiment(Z0, V0, Tmax, dt, bins, Zmax, K, surfacing=False, settling=False)
 ##############################
 
 # Number of runs
-Nruns  = 100
+Nruns  = 1
 # Number of particles
-Np     = 100000
+Np     = 10000
 # Total duration of the simulation in seconds
-Tmax   = 8*3600
+Tmax   = 240*3600
 # timestep in seconds
 dt     = 30
 # Max depth
@@ -272,6 +274,6 @@ for i in range(Nruns):
         H, M, Z = experiment(Z0, V0, Tmax, dt, bins, Zmax, diffusivityprofile, surfacing=False, settling=False)
 
         # Save output
-        np.save(f'../../data/Case1_K_{label}_Lagrangian_concentration_Np={Np}_dt={dt}_{i:04}.npy', H)
-        np.save(f'../../data/Case1_K_{label}_Lagrangian_moment_Np={Np}_dt={dt}_{i:04}.npy', M)
-        np.save(f'../../data/Case1_K_{label}_Lagrangian_positions_Np={Np}_dt={dt}_{i:04}.npy', Z)
+        np.save(f'../results/Case1_K_{label}_Lagrangian_concentration_Np={Np}_dt={dt}_{i:04}.npy', H)
+        np.save(f'../results/Case1_K_{label}_Lagrangian_moment_Np={Np}_dt={dt}_{i:04}.npy', M)
+        np.save(f'../results/Case1_K_{label}_Lagrangian_positions_Np={Np}_dt={dt}_{i:04}.npy', Z)

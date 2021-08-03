@@ -91,17 +91,16 @@ def rise_speed(d, rho):
 #### Utility functions ####
 ###########################
 
-def advect(z, dt, d, rho):
+def advect(z, v, dt):
     '''
     Return the rise in meters due to buoyancy, 
     assuming constant speed (at least within a timestep).
 
     z: current droplet depth (m)
+    v: droplet speed, positive downwards (m/s)
     dt: timestep (s)
-    d: droplet diameter (m)
-    rho: droplet density (kg/m**3)
     '''
-    return z - dt*rise_speed(d, rho)
+    return z + dt*v
 
 def reflect(z):
     '''
@@ -122,5 +121,19 @@ def surface(z, d):
     z: current droplet depth (m)
     d: droplet diameter (m)
     '''
+    # Keep only particles at depths greater than 0
     mask = z >= 0.0
+    return z[mask], d[mask]
+
+def settle(z, d, Zmax):
+    '''
+    Remove elements that settle to the bottom.
+    This method shortens the array by removing settled particles.
+
+    z: current droplet depth (m)
+    d: droplet diameter (m)
+    Zmax: Maximal depth
+    '''
+    # Keep only particles at depths smaller than Zmax
+    mask = z <= Zmax
     return z[mask], d[mask]
