@@ -22,7 +22,7 @@ from particlefunctions import *
 #### Main function to run a simulation ####
 ###########################################
 
-def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep):
+def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = None):
     '''
     Run the model. 
     Returns the number of submerged particles, the histograms (concentration profile),
@@ -48,9 +48,15 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep):
     # Array to store output
     Z_out = np.zeros((N_out, Np)) - 999
 
+    # Use trange (progress bar) if instructed
+    iterator = range
+    if args is not None:
+        if args.progress:
+            iterator = trange
+
     # Time loop
     t = 0
-    for n in range(Nt):
+    for n in iterator(Nt):
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
@@ -75,11 +81,12 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep):
 ##############################
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = int, default = 30, help = 'Timestep')
+parser.add_argument('--dt', dest = 'dt', type = int, default = 10, help = 'Timestep')
 parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 1800, help = 'Interval at which to save results')
-parser.add_argument('--Np', dest = 'Np', type = int, default = 10000, help = 'Number of particles')
+parser.add_argument('--Np', dest = 'Np', type = int, default = 100000, help = 'Number of particles')
 parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help = 'Run ID (used to differentiate runs when saving')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
+parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')
 #parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 args = parser.parse_args()
 
@@ -107,6 +114,8 @@ Tmax = 6*3600
 #### Initial conditions ####
 ############################
 
+Np = args.Np
+i  = args.run_id
 # Rising/settling speeds, read from files
 Nfibres = int(Np * 0.485 / (0.485 + 0.465))
 Nnonfibres = Np - Nfibres
@@ -154,11 +163,11 @@ else:
     K = K_B
     label = 'B'
 
-datafolder = '../results/'
+#datafolder = '../results/'
 datafolder = '/work6/torn/EulerLagrange/'
 
 tic = time.time()
-Z_out = experiment_case2(Z0, V0, args.Np, Tmax, args.dt, args.save_dt, K, correctstep)
+Z_out = experiment_case2(Z0, V0, args.Np, Zmax, Tmax, args.dt, args.save_dt, K, correctstep, args)
 toc = time.time()
 print(f'Simulation took {toc - tic:.1f} seconds, Case 2, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}, profile = {label}')
 
