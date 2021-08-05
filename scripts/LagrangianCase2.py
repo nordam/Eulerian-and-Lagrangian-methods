@@ -272,8 +272,8 @@ for i in trange(Nruns):
     Nfibres = int(Np * 0.485 / (0.485 + 0.465))
     Nnonfibres = Np - Nfibres
     V0 = np.zeros(Np)
-    V0[:Nfibres] = np.load(f'../notebooks/speeds_fibre_{i:04}.npy')[:Nfibres]
-    V0[Nfibres:] = np.load(f'../notebooks/speeds_nonfibre_{i:04}.npy')[:Nnonfibres]
+    V0[:Nfibres] = np.random.choice(np.load(f'../data/speeds_fibre_{i:04}.npy'), size = Nfibres)
+    V0[Nfibres:] = np.random.choice(np.load(f'../data/speeds_nonfibre_{i:04}.npy'), size = Nnonfibres)
 
     for diffusivityprofile, label in zip( (K_A, K_B), ('A', 'B')):
 

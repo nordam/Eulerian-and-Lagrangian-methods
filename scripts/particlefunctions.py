@@ -125,15 +125,15 @@ def surface(z, d):
     mask = z >= 0.0
     return z[mask], d[mask]
 
-def settle(z, d, Zmax):
+def settle(z, arr, Zmax):
     '''
     Remove elements that settle to the bottom.
     This method shortens the array by removing settled particles.
 
     z: current droplet depth (m)
-    d: droplet diameter (m)
+    arr: droplet diameter, settling speed, or other per-particle property
     Zmax: Maximal depth
     '''
     # Keep only particles at depths smaller than Zmax
     mask = z <= Zmax
-    return z[mask], d[mask]
+    return z[mask], arr[mask]

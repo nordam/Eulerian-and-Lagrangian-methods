@@ -5,7 +5,7 @@
 import os
 import time
 import argparse
-#from tqdm import trange
+from tqdm import trange
 
 # Numerical packages
 from scipy import stats
@@ -22,7 +22,7 @@ from particlefunctions import *
 #### Main function to run a simulation ####
 ###########################################
 
-def experiment_case1(Z0, V0, Np, Tmax, dt, save_dt, K, randomstep):
+def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep):
     '''
     Run the model. 
     Returns the number of submerged particles, the histograms (concentration profile),
@@ -59,18 +59,20 @@ def experiment_case1(Z0, V0, Np, Tmax, dt, save_dt, K, randomstep):
         Z = randomstep(K, Z, t, dt)
         # Reflect from surface
         Z = reflect(Z)
-        # Rise due to buoyancy
+        # Rise/sink due to buoyancy
         Z = advect(Z, V, dt)
-        # Ensure fish eggs are not above the surface
+        # Remove sinking particles that reached the sea floor
+        Z, V = settle(Z, V, Zmax = Zmax)
+        # Ensure buoyant particles are not above the surface
         Z = np.maximum(0.0, Z)
         # Increment time
         t = dt*i
     return Z_out
 
 
-####################################
-####   Command line arguments   ####
-####################################
+##############################
+#### Numerical parameters ####
+##############################
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dt', dest = 'dt', type = int, default = 30, help = 'Timestep')
@@ -80,6 +82,8 @@ parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help =
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
 #parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 args = parser.parse_args()
+
+
 
 # Consistency check of arguments
 
@@ -96,29 +100,20 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 6*3600
 
 
 ############################
 #### Initial conditions ####
 ############################
 
-# For this case, we use a speed distribution directly, taken from
-# Table 3 in Sundby (1983).
-# Mean speed = 0.96 mm/s
-# Standard deviation = 0.38 mm/s
-# Truncated at +/- 2*sigma
-mean_speed = -0.96 * 1e-3
-std_dev_speed = 0.38 * 1e-3
-Vmin = mean_speed - 2*std_dev_speed
-Vmax = mean_speed + 2*std_dev_speed
-speed_distribution = stats.norm(loc = mean_speed, scale = std_dev_speed)
-V0 = speed_distribution.rvs(size = args.Np)
-# Re-draw until all samples are within bounds
-mask = (V0 < Vmin) | (Vmax < V0)
-while np.any(mask):
-    V0[mask] = speed_distribution.rvs(size = sum(mask))
-    mask = (V0 < Vmin) | (Vmax < V0)
+# Rising/settling speeds, read from files
+Nfibres = int(Np * 0.485 / (0.485 + 0.465))
+Nnonfibres = Np - Nfibres
+V0 = np.zeros(Np)
+V0[:Nfibres] = np.random.choice(np.load(f'../data/speeds_fibre_{i:04}.npy'), size = Nfibres)
+V0[Nfibres:] = np.random.choice(np.load(f'../data/speeds_nonfibre_{i:04}.npy'), size = Nnonfibres)
+
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
@@ -133,17 +128,19 @@ while np.any(mask):
     mask = (Z0 < 0.0) | (Zmax < Z0)
 
 
-
-##################################
-####   Diffusivity profiles   ####
-##################################
+##############################
+#### Diffusivity profiles ####
+##############################
 
 # Constant diffusivity
-K_A = lambda z, t: 1e-2*np.ones(len(z))
+K0  = 1e-2
+K_A = lambda z, t: K0 * np.ones_like(z)
 
-# Fitted to results of GOTM simulation
-alpha, beta, zeta, z0 = (0.00636, 0.088, 1.54, 1.3)
-K_B = lambda z, t: alpha*(z+z0)*np.exp(-(beta*(z+z0))**zeta)
+# Analytical function which has been fitted to
+# simulation results from the GOTM turbulence model
+# with a wind stress corresponding to wind speed of about 9 m/s.
+a, b, c, z0 = (0.00636, 0.088, 1.54, 1.3)
+K_B = lambda z, t: a*(z+z0)*np.exp(-(b*(z+z0))**c)
 
 
 #########################################################
@@ -161,10 +158,9 @@ datafolder = '../results/'
 datafolder = '/work6/torn/EulerLagrange/'
 
 tic = time.time()
-Z_out = experiment_case1(Z0, V0, args.Np, Tmax, args.dt, args.save_dt, K, correctstep)
+Z_out = experiment_case2(Z0, V0, args.Np, Tmax, args.dt, args.save_dt, K, correctstep)
 toc = time.time()
-print(f'Simulation took {toc - tic:.1f} seconds, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}')
+print(f'Simulation took {toc - tic:.1f} seconds, Case 2, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}, profile = {label}')
 
-outputfilename = os.path.join(datafolder, f'Case1_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
+outputfilename = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
 np.save(outputfilename, Z_out)
-
