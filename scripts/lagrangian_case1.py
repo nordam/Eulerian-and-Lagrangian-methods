@@ -5,7 +5,7 @@
 import os
 import time
 import argparse
-from tqdm import trange
+#from tqdm import trange
 
 # Numerical packages
 from scipy import stats
@@ -22,14 +22,13 @@ from particlefunctions import *
 #### Main function to run a simulation ####
 ###########################################
 
-def experiment(Z0, D0, V0, Np, Tmax, dt, save_dt, K, randomstep):
+def experiment_case1(Z0, V0, Np, Tmax, dt, save_dt, K, randomstep):
     '''
     Run the model. 
     Returns the number of submerged particles, the histograms (concentration profile),
     the depth and diameters of the particles.
     
     Z0: initial depth of particles, positive downwards (m)
-    D0: initial diameter of particles (m)
     V0: initial rising/settling speed of particles, positive downwards (m/s)
     Np: Maximum number of particles
     Tmax: total duration of the simulation (s)
@@ -42,23 +41,20 @@ def experiment(Z0, D0, V0, Np, Tmax, dt, save_dt, K, randomstep):
     Nt = int(Tmax / dt)
     # Arrays for z-position (depth) and droplet size
     Z  = Z0.copy()
-    D  = D0.copy()
     V  = V0.copy()
     # Calculate size of output arrays
     N_skip = int(save_dt/dt)
     N_out = 1 + int(Nt / N_skip)
-    # Arrays to store output
+    # Array to store output
     Z_out = np.zeros((N_out, Np)) - 999
-    D_out = np.zeros((N_out, Np)) - 999
 
     # Time loop
     t = 0
-    for n in trange(Nt):
+    for n in range(Nt):
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
             Z_out[i,:len(Z)] = Z
-            D_out[i,:len(D)] = D
         # Random displacement
         Z = randomstep(K, Z, t, dt)
         # Reflect from surface
@@ -69,7 +65,7 @@ def experiment(Z0, D0, V0, Np, Tmax, dt, save_dt, K, randomstep):
         Z = np.maximum(0.0, Z)
         # Increment time
         t = dt*i
-    return Z_out, D_out
+    return Z_out
 
 
 ####################################
@@ -100,7 +96,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 240*3600
+Tmax = 12*3600
 
 # For this case, we use a speed distribution directly, taken from
 # Table 3 in Sundby (1983).
@@ -118,9 +114,6 @@ mask = (V0 < Vmin) | (Vmax < V0)
 while np.any(mask):
     V0[mask] = speed_distribution.rvs(size = sum(mask))
     mask = (V0 < Vmin) | (Vmax < V0)
-
-# Particle size isn't used in this case
-D0 = np.ones(args.Np)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
@@ -160,14 +153,13 @@ else:
     label = 'B'
 
 datafolder = '../results/'
+datafolder = '/work6/torn/EulerLagrange/'
 
 tic = time.time()
-Z_out, D_out = experiment(Z0, D0, V0, args.Np, Tmax, args.dt, args.save_dt, K, correctstep)
+Z_out = experiment_case1(Z0, V0, args.Np, Tmax, args.dt, args.save_dt, K, correctstep)
 toc = time.time()
 print(f'Simulation took {toc - tic:.1f} seconds, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}')
 
 outputfilename = os.path.join(datafolder, f'Case1_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
 np.save(outputfilename, Z_out)
-outputfilename = os.path.join(datafolder, f'Case1_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_D_{args.run_id:04}.npy')
-np.save(outputfilename, D_out)
 
