@@ -137,3 +137,121 @@ def settle(z, arr, Zmax):
     # Keep only particles at depths smaller than Zmax
     mask = z <= Zmax
     return z[mask], arr[mask]
+
+
+#######################################
+#### Entrainment related functions ####
+#######################################
+
+def entrainmentrate(windspeed, Tp, Hs, rho, ift):
+    '''
+    Entrainment rate (s**-1).
+    See Li et al. (2017) for details.
+
+    windspeed: windspeed (m/s)
+    Tp: wave period (s)
+    Hs: wave height (m)
+    rho: density of oil (kg/m**3)
+    ift: oil-water interfacial tension (N/m)
+    '''
+    # Physical constants
+    g = CONST.g         # Acceleration of gravity (m/s**2)
+    rho_w = CONST.rho_w # Density of seawater (kg/m**3)
+
+    # Model parameters (empirical constants from Li et al. (2017))
+    a = 4.604 * 1e-10
+    b = 1.805
+    c = -1.023
+    # Rayleigh-Taylor instability maximum diameter:
+    d0 = 4 * np.sqrt(ift / ((rho_w - rho)*g))
+    # Ohnesorge number
+    Oh = mu / np.sqrt(rho * ift * d0)
+    # Weber number
+    We = d0 * rho_w * g * Hs / ift
+    return a * (We**b) * (Oh**c) * Fbw(windspeed, Tp)
+
+
+def weber_natural_dispersion(rho, mu, ift, Hs, h):
+    '''
+    Weber natural dispersion model. Predicts median droplet size D50 (m).
+    Johansen, 2015.
+
+    rho: oil density (kg/m**3)
+    mu: dynamic viscosity of oil (kg/m/s)
+    ift: oil-water interfacial tension (N/m, kg/s**2)
+    Hs: free-fall height or wave amplitude (m)
+    h: oil film thickness (m)
+    '''
+    # Physical parameters
+    g = 9.81     # Acceleration of gravity (m/s**2)
+
+    # Model parameters from Johansen 2015 (fitted to experiment)
+    A = 2.251
+    Bm = 0.027
+    a = 0.6
+
+    # Velocity scale
+    U = np.sqrt(2*g*Hs)
+
+    # Calculate relevant dimensionless numbers for given parameters
+    We = rho * U**2 * h / ift
+    # Note that Vi = We/Re
+    Vi = mu * U / ift
+
+    # Calculate D, characteristic (median) droplet size predicted by WMD model
+    WeMod = We / (1 + Bm * Vi**a)**(1/a)
+    D50n = h * A / WeMod**a
+
+    return D50n
+
+def entrain(z, d, v, Np, dt, windspeed, h, mu, rho, ift):
+    '''
+    Entrainment of droplets.
+    This function calculates the number of particles to submerged,
+    finds new depths and droplet sizes for those particles, and
+    appends these to the input arrays of depth and droplet size
+    for the currently submerged particles.
+
+    Number of particles to entrain is found from the entrainment rate
+    due to Li et al. (2017), intrusion depth is calculated according
+    to Delvigne and Sveeney (1988) and the droplet size distribution
+    from the weber natural dispersion model (Johansen 2015).
+
+    z: current array of particle depths (m)
+    d: current array of droplet diameters (m)
+    dt: timestep (s)
+    windspeed: windspeed (m/s)
+    h: oil film thickness (m)
+    mu: dynamic viscosity of oil (kg/m/s)
+    rho: oil density (kg/m**3)
+    ift: oil-water interfacial tension (N/m)
+
+    returns:
+    z: array of particle depths with newly entrained particles appended
+    d: array of droplet diameters with newly entrained particles appended
+    '''
+    # Significant wave height and peak wave period
+    Hs, Tp = jonswap(windspeed)
+    # Calculate lifetime from entrainment rate
+    tau = 1/entrainmentrate(windspeed, Tp, Hs, rho, ift)
+    # Probability for a droplet to be entrained
+    p = 1 - np.exp(-dt/tau)
+    R = np.random.random(Np - len(z))
+    # Number of entrained droplets
+    N = np.sum(R < p)
+    # According to Delvigne & Sweeney (1988), droplets are distributed
+    # in the interval (1.5 - 0.35)*Hs to (1.5 + 0.35)*Hs
+    znew = np.random.uniform(low = Hs*(1.5-0.35), high = Hs*(1.5+0.35), size = N)
+    # Assign new sizes from Johansen distribution
+    sigma = 0.4 * np.log(10)
+    D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h)
+
+    D50v  = np.exp(np.log(D50n) + 3*sigma**2)
+    dnew  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = N)
+    vnew  = rise_speed(dnew, rho)
+    # Append newly entrained droplets to existing arrays
+    z = np.concatenate((z, znew))
+    d = np.concatenate((d, dnew))
+    v = np.concatenate((d, vnew))
+    return z, d, v
+
