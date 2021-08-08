@@ -23,7 +23,7 @@ from wavefunctions import *
 #### Main function to run a simulation ####
 ###########################################
 
-def experiment_case3(Z0, D0, Np, Tmax, dt, bins, K, windspeed, h0, mu, ift, rho, randomstep, surfacing = True, entrainment = True, args = None):
+def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, rho, randomstep, surfacing = True, entrainment = True, args = None):
     '''
     Run the model. 
     Returns the number of submerged particles, the histograms (concentration profile),
@@ -34,7 +34,7 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, bins, K, windspeed, h0, mu, ift, rho,
     Np: Maximum number of particles
     Tmax: total duration of the simulation (s)
     dt: timestep (s)
-    bins: bins for histograms (concentration profiles)
+    save_dt: time interval between saves (s)
     K: diffusivity-function on form K(z, t)
     windspeed: windspeed (m/s)
     h0: initial oil film thickness (m)
@@ -64,7 +64,7 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, bins, K, windspeed, h0, mu, ift, rho,
 
     # Time loop
     t = 0
-    for i in iterator(Nt):
+    for n in iterator(Nt):
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
@@ -89,10 +89,10 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, bins, K, windspeed, h0, mu, ift, rho,
             # Calculate oil film thickness
             h = h0 * (Np - len(Z)) / Np
             # Entrain
-            Z, D, V = entrain(Z, D, V, Np, dt, windspeed, h, mu, rho, ift)
+            Z, D, V = entrain(Z, D, V, Np, dt, windspeed, h, mu, ift, rho)
 
         # Increment time
-        t = dt*i
+        t = dt*n
     return Z_out
 
 ##############################
@@ -144,18 +144,10 @@ windspeed = 9
 # Significant wave height and peak wave period
 Hs, Tp = jonswap(windspeed, fetch = 143233)
 
-# Size distribution parameters
-sigma = 0.4 * np.log(10)
-D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
-D50v  = np.exp(np.log(D50n) + 3*sigma**2)
-
 
 ############################
 #### Initial conditions ####
 ############################
-
-Np = args.Np
-i  = args.run_id
 
 
 # Initial condition:
@@ -169,6 +161,13 @@ mask = (Z0 < 0.0) | (Zmax < Z0)
 while np.any(mask):
     Z0[mask] = position_distribution.rvs(size = sum(mask))
     mask = (Z0 < 0.0) | (Zmax < Z0)
+
+
+# Size distribution parameters
+sigma = 0.4 * np.log(10)
+D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
+D50v  = np.exp(np.log(D50n) + 3*sigma**2)
+D0  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = args.Np)
 
 
 ##############################
@@ -197,13 +196,13 @@ else:
     K = K_B
     label = 'B'
 
-#datafolder = '../results/'
-datafolder = '/work6/torn/EulerLagrange/'
+datafolder = '../results/'
+#datafolder = '/work6/torn/EulerLagrange/'
 
 tic = time.time()
-Z_out = experiment_case2(Z0, V0, args.Np, Zmax, Tmax, args.dt, args.save_dt, K, correctstep, args)
+Z_out = experiment_case3(Z0, D0, args.Np, Tmax, args.dt, args.save_dt, K, windspeed, h0, mu, ift, rho, correctstep, surfacing = True, entrainment = True, args = args)
 toc = time.time()
 print(f'Simulation took {toc - tic:.1f} seconds, Case 2, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}, profile = {label}')
 
-outputfilename = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
+outputfilename = os.path.join(datafolder, f'Case3_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
 np.save(outputfilename, Z_out)

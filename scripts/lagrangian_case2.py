@@ -33,7 +33,6 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = 
     Np: Maximum number of particles
     Tmax: total duration of the simulation (s)
     dt: timestep (s)
-    bins: bins for histograms (concentration profiles)
     K: diffusivity-function on form K(z, t)
     randomstep: random walk scheme
     '''
@@ -72,7 +71,7 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = 
         # Ensure buoyant particles are not above the surface
         Z = np.maximum(0.0, Z)
         # Increment time
-        t = dt*i
+        t = dt*n
     return Z_out
 
 

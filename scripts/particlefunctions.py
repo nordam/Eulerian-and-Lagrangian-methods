@@ -4,6 +4,10 @@
 import numpy as np
 from collections import namedtuple
 
+import sys
+sys.path.append('.')
+from wavefunctions import *
+
 
 ############################
 #### Physical constants ####
@@ -84,7 +88,7 @@ def rise_speed(d, rho):
     else:
         w1    = d**2 * g_ / (18*nu)
         w2    = np.sqrt(d*abs(g_)) * pref * (g_/np.abs(g_)) # Last bracket sets sign
-        return w1*w2/(w1+w2)
+        return -w1*w2/(w1+w2)
 
 
 ###########################
@@ -113,7 +117,7 @@ def reflect(z):
     z = np.abs(z)
     return z
 
-def surface(z, d):
+def surface(z, d, v):
     '''
     Remove surfaced elements.
     This method shortens the array by removing surfaced particles.
@@ -123,7 +127,7 @@ def surface(z, d):
     '''
     # Keep only particles at depths greater than 0
     mask = z >= 0.0
-    return z[mask], d[mask]
+    return z[mask], d[mask], v[mask]
 
 def settle(z, arr, Zmax):
     '''
@@ -143,7 +147,7 @@ def settle(z, arr, Zmax):
 #### Entrainment related functions ####
 #######################################
 
-def entrainmentrate(windspeed, Tp, Hs, rho, ift):
+def entrainmentrate(windspeed, Tp, Hs, mu, ift, rho):
     '''
     Entrainment rate (s**-1).
     See Li et al. (2017) for details.
@@ -171,7 +175,7 @@ def entrainmentrate(windspeed, Tp, Hs, rho, ift):
     return a * (We**b) * (Oh**c) * Fbw(windspeed, Tp)
 
 
-def weber_natural_dispersion(rho, mu, ift, Hs, h):
+def weber_natural_dispersion(Hs, h, mu, ift, rho):
     '''
     Weber natural dispersion model. Predicts median droplet size D50 (m).
     Johansen, 2015.
@@ -182,6 +186,13 @@ def weber_natural_dispersion(rho, mu, ift, Hs, h):
     Hs: free-fall height or wave amplitude (m)
     h: oil film thickness (m)
     '''
+
+    # If h=0, there is no surface oil, and hence no entrainment.
+    # This function should only be called if h > 0
+    if h <= 0:
+        print(f'Something went wrong, calling weber_natural_dispersion with h = {h}')
+        return 1.0
+
     # Physical parameters
     g = 9.81     # Acceleration of gravity (m/s**2)
 
@@ -204,7 +215,7 @@ def weber_natural_dispersion(rho, mu, ift, Hs, h):
 
     return D50n
 
-def entrain(z, d, v, Np, dt, windspeed, h, mu, rho, ift):
+def entrain(z, d, v, Np, dt, windspeed, h, mu, ift, rho):
     '''
     Entrainment of droplets.
     This function calculates the number of particles to submerged,
@@ -230,10 +241,15 @@ def entrain(z, d, v, Np, dt, windspeed, h, mu, rho, ift):
     z: array of particle depths with newly entrained particles appended
     d: array of droplet diameters with newly entrained particles appended
     '''
+
+    # if h == 0, there is no surface oil, and hence no entrainment
+    if h == 0:
+        return z, d, v
+
     # Significant wave height and peak wave period
     Hs, Tp = jonswap(windspeed)
     # Calculate lifetime from entrainment rate
-    tau = 1/entrainmentrate(windspeed, Tp, Hs, rho, ift)
+    tau = 1/entrainmentrate(windspeed, Tp, Hs, mu, ift, rho)
     # Probability for a droplet to be entrained
     p = 1 - np.exp(-dt/tau)
     R = np.random.random(Np - len(z))
@@ -244,7 +260,7 @@ def entrain(z, d, v, Np, dt, windspeed, h, mu, rho, ift):
     znew = np.random.uniform(low = Hs*(1.5-0.35), high = Hs*(1.5+0.35), size = N)
     # Assign new sizes from Johansen distribution
     sigma = 0.4 * np.log(10)
-    D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h)
+    D50n  = weber_natural_dispersion(Hs, h, mu, ift, rho)
 
     D50v  = np.exp(np.log(D50n) + 3*sigma**2)
     dnew  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = N)
@@ -252,6 +268,6 @@ def entrain(z, d, v, Np, dt, windspeed, h, mu, rho, ift):
     # Append newly entrained droplets to existing arrays
     z = np.concatenate((z, znew))
     d = np.concatenate((d, dnew))
-    v = np.concatenate((d, vnew))
+    v = np.concatenate((v, vnew))
     return z, d, v
 
