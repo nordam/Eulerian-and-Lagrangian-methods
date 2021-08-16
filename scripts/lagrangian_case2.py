@@ -62,12 +62,12 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = 
             Z_out[i,:len(Z)] = Z
         # Random displacement
         Z = randomstep(K, Z, t, dt)
-        # Reflect from surface
-        Z = reflect(Z)
+        # Reflect from surface and sea floor
+        Z = reflect(Z, zmax = Zmax)
         # Rise/sink due to buoyancy
         Z = advect(Z, V, dt)
         # Remove sinking particles that reached the sea floor
-        Z, V = settle(Z, V, Zmax = Zmax)
+        Z, V = settle(Z, V, zmax = Zmax)
         # Ensure buoyant particles are not above the surface
         Z = np.maximum(0.0, Z)
         # Increment time

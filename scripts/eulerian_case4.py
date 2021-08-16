@@ -28,7 +28,9 @@ parser.add_argument('--dt', dest = 'dt', type = float, default = 600, help = 'Ti
 parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
 parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
-parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
+parser.add_argument('--checkpoint', dest = 'checkpoint', action = 'store_true', help = 'Save results for checkpointing at every output timestep?')
+parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')
+parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
 args = parser.parse_args()
 
 
@@ -69,8 +71,9 @@ for j in range(args.NK):
 mass_fractions = mass_fractions / np.sum(mass_fractions)
 
 # Speed class centers
-speeds = -rise_speed(2*Rc, rho)
+speeds = rise_speed(2*Rc, rho)
 
+print(speeds)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
@@ -128,9 +131,9 @@ C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 datafolder = '../results/'
 outputfilename = os.path.join(datafolder, f'Case4_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
-if not os.path.exists(outputfilename):
+if (not os.path.exists(outputfilename)) or args.overwrite:
     tic = time.time()
-    c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename)
+    c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename, args = args)
     toc = time.time()
     print(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}')
 

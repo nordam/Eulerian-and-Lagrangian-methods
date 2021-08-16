@@ -18,6 +18,9 @@ from time import time
 from webernaturaldispersion import weber_natural_dispersion
 from coagulation_functions import get_new_classes_and_weights, coagulation_rate_prefactor
 
+def callback(x):
+    print('#', end = '')
+    sys.stdout.flush()
 
 # Based on Wikipedia article about TDMA, written by Tor Nordam
 @njit
@@ -426,19 +429,38 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
         # If there is coagulation, take that into account
         if params.coagulate:
             # Add together matrices on left-hand side
-            L = add_sparse(L_Co, L_AD, L_FL)
-            if ILU is None:
+            L = add_sparse(L_Co, L_AD)
+            #if ILU is None:
                 # Create preconditioner only once, since it is anyway only an
                 # approximate inverse of L. This saves a lot of time.
+            print('Creating preconditioner...')
+            tic = time()
+            try:
                 ILU = spilu(csc_matrix(L))
+                toc = time()
+                print(f'Creating preconditioner took {toc - tic:.4f} seconds')
                 preconditioner = LinearOperator(L.shape, lambda x : ILU.solve(x))
+            except RuntimeError as e:
+                print('Creating preconditioner failed with error:')
+                print(e)
+                print('Trying a simple Jacobi-preconditioner instead')
+                diag = L.diagonal()
+                preconditioner = LinearOperator(L.shape,  lambda x: np.where(diag != 0, 1/diag, 0) * x)
 
+            FL_RHS = L_FL.dot(c_now.flatten())
             # Solve with iterative solver
-            c_next, status = bicgstab(L, RHS + reaction_term_next + reaction_term_now, x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
+            print('Solving with bicgstab...')
+            tic = time()
+
+            c_next, status = bicgstab(L, RHS - FL_RHS + reaction_term_next + reaction_term_now, x0 = c_now.flatten(), tol = 1e-9, M = preconditioner, callback = callback, maxiter = 1000)
+            toc = time()
+            print()
+            print(f'Solving with bicgstab {toc - tic:.4f} seconds')
             if status != 0:
                 print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, Bicgstab failed, with error: {status}, switching to GMRES')
                 sys.stdout.flush()
-                c_next, status = gmres(L, RHS + reaction_term_next + reaction_term_now, x0 = c_now.flatten(), tol = 1e-12, M = preconditioner)
+                c_next, status = gmres(L, RHS - FL_RHS + reaction_term_next + reaction_term_now, x0 = c_now.flatten(), tol = 1e-9, M = preconditioner, callback = callback, maxiter = 1000)
+                print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, GMRES finished with status {status}')
                 if status != 0:
                     print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, GMRES failed, with error {status}, stopping')
                     sys.stdout.flush()
@@ -487,7 +509,7 @@ def Iterative_Solver(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus):
     return c_next
 
 #@profile
-def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = None, save_dt = 1800):
+def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = None, save_dt = 1800, args = None):
 
     # Evaluate diffusivity function at cell faces
     K_vec = K(params.z_face)
@@ -514,29 +536,40 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     # Array for output, store once every 900 seconds
     N_skip = int(save_dt/params.dt)
     N_out = 1 + int(params.Nt / N_skip)
-    C_out = np.zeros((N_out, NK, NJ))
+    C_out = np.zeros((N_out, NK, NJ)) - 999
+
+    # Use trange (progress bar) if instructed
+    iterator = range
+    if args is not None:
+        if args.progress:
+            iterator = trange
 
     tic = time()
-    for n in range(0, params.Nt):
+    for n in iterator(0, params.Nt):
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
             C_out[i,:,:] = C_now[:]
+            if args.checkpoint:
+                if outputfilename is not None:
+                    print('Saving temporary results to file: ', outputfilename)
+                    np.save(outputfilename, C_out)
 
         # Iterative procedure
         C_now = Iterative_Solver(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus)
 
         # Print status
-        if (n > 1) and (n % N_skip == 0):
-            toc = time()
-            ETA = ((toc - tic) / n) * (params.Nt - n)
-            if outputfilename is not None:
-                label = outputfilename.split('_')[-5]
-            else:
-                label = '-'
-            print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, profile = {label}, ETA = {ETA:.4f} seconds')
-            sys.stdout.flush()
+        if iterator == range:
+            if (n > 1) and (n % N_skip == 0):
+                toc = time()
+                ETA = ((toc - tic) / n) * (params.Nt - n)
+                if outputfilename is not None:
+                    label = outputfilename.split('_')[-5]
+                else:
+                    label = '-'
+                print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, profile = {label}, ETA = {ETA:.4f} seconds')
+                sys.stdout.flush()
 
     # Finally, store last timestep to output array
     C_out[-1,:,:] = C_now

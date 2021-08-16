@@ -106,7 +106,7 @@ def advect(z, v, dt):
     '''
     return z + dt*v
 
-def reflect(z):
+def reflect(z, zmax = None):
     '''
     Reflect from surface.
     Depth is positive downwards.
@@ -115,6 +115,8 @@ def reflect(z):
     '''
     # Reflect from surface
     z = np.abs(z)
+    if zmax is not None:
+        z = np.where(z > zmax, 2*zmax - z, z)
     return z
 
 def surface(z, d, v):
@@ -129,17 +131,17 @@ def surface(z, d, v):
     mask = z >= 0.0
     return z[mask], d[mask], v[mask]
 
-def settle(z, arr, Zmax):
+def settle(z, arr, zmax):
     '''
     Remove elements that settle to the bottom.
     This method shortens the array by removing settled particles.
 
     z: current droplet depth (m)
     arr: droplet diameter, settling speed, or other per-particle property
-    Zmax: Maximal depth
+    zmax: Maximal depth
     '''
     # Keep only particles at depths smaller than Zmax
-    mask = z <= Zmax
+    mask = z <= zmax
     return z[mask], arr[mask]
 
 
