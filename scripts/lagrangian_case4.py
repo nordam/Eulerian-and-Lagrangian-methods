@@ -231,7 +231,7 @@ if (not os.path.exists(outputfilename_Z)) or args.overwrite:
     Z_out, D_out = experiment_case4(Z0, D0, args.Np, Zmax, Tmax, args.dt, args.save_dt, K, rho, correctstep, Nbins = args.Nbins, args = args)
     toc = time.time()
     np.save(outputfilename_Z, Z_out)
-    np.save(outputfilename_Z, D_out)
+    np.save(outputfilename_D, D_out)
     logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename_Z} and {outputfilename_D}', args, error = True)
 else:
     logger(f'File exists, skipping: {outputfilename_Z}', args, error = True)
