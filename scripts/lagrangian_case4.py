@@ -83,7 +83,7 @@ def experiment_case4(Z0, D0, Np, Zmax, Tmax, dt, save_dt, K, rho, randomstep, Nb
     '''
 
     # Number of timesteps
-    Nt = int(Tmax / dt)
+    Nt = int(Tmax / dt) + 1
     # Calculate size of output arrays
     N_skip = int(save_dt/dt)
     N_out = 1 + int(Nt / N_skip)
