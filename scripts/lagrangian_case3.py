@@ -197,12 +197,17 @@ else:
     label = 'B'
 
 datafolder = '../results/'
-#datafolder = '/work6/torn/EulerLagrange/'
+datafolder = '/work6/torn/EulerLagrange/'
+outputfilename = os.path.join(datafolder, f'Case3_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
+
+if os.path.exists(outputfilename):
+    print(f'File {outputfilename} already exists, skipping')
+    sys.exit()
+
 
 tic = time.time()
 Z_out = experiment_case3(Z0, D0, args.Np, Tmax, args.dt, args.save_dt, K, windspeed, h0, mu, ift, rho, correctstep, surfacing = True, entrainment = True, args = args)
 toc = time.time()
 print(f'Simulation took {toc - tic:.1f} seconds, Case 2, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}, profile = {label}')
 
-outputfilename = os.path.join(datafolder, f'Case3_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
 np.save(outputfilename, Z_out)

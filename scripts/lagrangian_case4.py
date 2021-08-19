@@ -120,7 +120,7 @@ def experiment_case4(Z0, D0, Np, Zmax, Tmax, dt, save_dt, K, rho, randomstep, Nb
         # Reflect from surface and sea floor
         Z = reflect(Z, zmax = Zmax)
         # Rise or sink due to buoyancy
-        V = rise_speed(D, rho)
+        V = rise_speed(2*D, rho)
         Z = advect(Z, V, dt)
         # Settle onto seabed
         Z, D = settle(Z, D, Zmax)
@@ -221,7 +221,7 @@ else:
     label = 'B'
 
 datafolder = '../results/'
-#datafolder = '/work6/torn/EulerLagrange/'
+datafolder = '/work6/torn/EulerLagrange/'
 
 outputfilename_Z = os.path.join(datafolder, f'Case4_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
 outputfilename_D = os.path.join(datafolder, f'Case4_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_D_{args.run_id:04}.npy')
