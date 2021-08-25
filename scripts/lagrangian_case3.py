@@ -66,6 +66,9 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
     t = 0
     for n in iterator(Nt):
 
+        # print center of gravity, for debugging
+        print(f't = {n*dt}, mean(Z) = {np.mean(z)}')
+
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
