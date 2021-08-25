@@ -81,7 +81,7 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dt', dest = 'dt', type = int, default = 10, help = 'Timestep')
-parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 1800, help = 'Interval at which to save results')
+parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 720, help = 'Interval at which to save results')
 parser.add_argument('--Np', dest = 'Np', type = int, default = 100000, help = 'Number of particles')
 parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help = 'Run ID (used to differentiate runs when saving')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')

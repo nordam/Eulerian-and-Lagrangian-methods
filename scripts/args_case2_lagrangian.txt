@@ -6,7 +6,6 @@
 --dt 60 --Np 300000 --profile A --run_id 0
 --dt 180 --Np 300000 --profile A --run_id 0
 --dt 360 --Np 300000 --profile A --run_id 0
---dt 2 --Np 3000000 --profile A --run_id 0
 --dt 2 --Np 300000 --profile A --run_id 0
 --dt 2 --Np 100000 --profile A --run_id 0
 --dt 2 --Np 30000 --profile A --run_id 0
@@ -23,7 +22,6 @@
 --dt 60 --Np 300000 --profile B --run_id 0
 --dt 180 --Np 300000 --profile B --run_id 0
 --dt 360 --Np 300000 --profile B --run_id 0
---dt 2 --Np 3000000 --profile B --run_id 0
 --dt 2 --Np 300000 --profile B --run_id 0
 --dt 2 --Np 100000 --profile B --run_id 0
 --dt 2 --Np 30000 --profile B --run_id 0
@@ -40,7 +38,6 @@
 --dt 60 --Np 300000 --profile A --run_id 1
 --dt 180 --Np 300000 --profile A --run_id 1
 --dt 360 --Np 300000 --profile A --run_id 1
---dt 2 --Np 3000000 --profile A --run_id 1
 --dt 2 --Np 300000 --profile A --run_id 1
 --dt 2 --Np 100000 --profile A --run_id 1
 --dt 2 --Np 30000 --profile A --run_id 1
@@ -57,7 +54,6 @@
 --dt 60 --Np 300000 --profile B --run_id 1
 --dt 180 --Np 300000 --profile B --run_id 1
 --dt 360 --Np 300000 --profile B --run_id 1
---dt 2 --Np 3000000 --profile B --run_id 1
 --dt 2 --Np 300000 --profile B --run_id 1
 --dt 2 --Np 100000 --profile B --run_id 1
 --dt 2 --Np 30000 --profile B --run_id 1
@@ -74,7 +70,6 @@
 --dt 60 --Np 300000 --profile A --run_id 2
 --dt 180 --Np 300000 --profile A --run_id 2
 --dt 360 --Np 300000 --profile A --run_id 2
---dt 2 --Np 3000000 --profile A --run_id 2
 --dt 2 --Np 300000 --profile A --run_id 2
 --dt 2 --Np 100000 --profile A --run_id 2
 --dt 2 --Np 30000 --profile A --run_id 2
@@ -91,7 +86,6 @@
 --dt 60 --Np 300000 --profile B --run_id 2
 --dt 180 --Np 300000 --profile B --run_id 2
 --dt 360 --Np 300000 --profile B --run_id 2
---dt 2 --Np 3000000 --profile B --run_id 2
 --dt 2 --Np 300000 --profile B --run_id 2
 --dt 2 --Np 100000 --profile B --run_id 2
 --dt 2 --Np 30000 --profile B --run_id 2
@@ -108,7 +102,6 @@
 --dt 60 --Np 300000 --profile A --run_id 3
 --dt 180 --Np 300000 --profile A --run_id 3
 --dt 360 --Np 300000 --profile A --run_id 3
---dt 2 --Np 3000000 --profile A --run_id 3
 --dt 2 --Np 300000 --profile A --run_id 3
 --dt 2 --Np 100000 --profile A --run_id 3
 --dt 2 --Np 30000 --profile A --run_id 3
@@ -125,7 +118,6 @@
 --dt 60 --Np 300000 --profile B --run_id 3
 --dt 180 --Np 300000 --profile B --run_id 3
 --dt 360 --Np 300000 --profile B --run_id 3
---dt 2 --Np 3000000 --profile B --run_id 3
 --dt 2 --Np 300000 --profile B --run_id 3
 --dt 2 --Np 100000 --profile B --run_id 3
 --dt 2 --Np 30000 --profile B --run_id 3
@@ -142,7 +134,6 @@
 --dt 60 --Np 300000 --profile A --run_id 4
 --dt 180 --Np 300000 --profile A --run_id 4
 --dt 360 --Np 300000 --profile A --run_id 4
---dt 2 --Np 3000000 --profile A --run_id 4
 --dt 2 --Np 300000 --profile A --run_id 4
 --dt 2 --Np 100000 --profile A --run_id 4
 --dt 2 --Np 30000 --profile A --run_id 4
@@ -159,7 +150,6 @@
 --dt 60 --Np 300000 --profile B --run_id 4
 --dt 180 --Np 300000 --profile B --run_id 4
 --dt 360 --Np 300000 --profile B --run_id 4
---dt 2 --Np 3000000 --profile B --run_id 4
 --dt 2 --Np 300000 --profile B --run_id 4
 --dt 2 --Np 100000 --profile B --run_id 4
 --dt 2 --Np 30000 --profile B --run_id 4
@@ -176,7 +166,6 @@
 --dt 60 --Np 300000 --profile A --run_id 5
 --dt 180 --Np 300000 --profile A --run_id 5
 --dt 360 --Np 300000 --profile A --run_id 5
---dt 2 --Np 3000000 --profile A --run_id 5
 --dt 2 --Np 300000 --profile A --run_id 5
 --dt 2 --Np 100000 --profile A --run_id 5
 --dt 2 --Np 30000 --profile A --run_id 5
@@ -193,7 +182,6 @@
 --dt 60 --Np 300000 --profile B --run_id 5
 --dt 180 --Np 300000 --profile B --run_id 5
 --dt 360 --Np 300000 --profile B --run_id 5
---dt 2 --Np 3000000 --profile B --run_id 5
 --dt 2 --Np 300000 --profile B --run_id 5
 --dt 2 --Np 100000 --profile B --run_id 5
 --dt 2 --Np 30000 --profile B --run_id 5
@@ -210,7 +198,6 @@
 --dt 60 --Np 300000 --profile A --run_id 6
 --dt 180 --Np 300000 --profile A --run_id 6
 --dt 360 --Np 300000 --profile A --run_id 6
---dt 2 --Np 3000000 --profile A --run_id 6
 --dt 2 --Np 300000 --profile A --run_id 6
 --dt 2 --Np 100000 --profile A --run_id 6
 --dt 2 --Np 30000 --profile A --run_id 6
@@ -227,7 +214,6 @@
 --dt 60 --Np 300000 --profile B --run_id 6
 --dt 180 --Np 300000 --profile B --run_id 6
 --dt 360 --Np 300000 --profile B --run_id 6
---dt 2 --Np 3000000 --profile B --run_id 6
 --dt 2 --Np 300000 --profile B --run_id 6
 --dt 2 --Np 100000 --profile B --run_id 6
 --dt 2 --Np 30000 --profile B --run_id 6
@@ -244,7 +230,6 @@
 --dt 60 --Np 300000 --profile A --run_id 7
 --dt 180 --Np 300000 --profile A --run_id 7
 --dt 360 --Np 300000 --profile A --run_id 7
---dt 2 --Np 3000000 --profile A --run_id 7
 --dt 2 --Np 300000 --profile A --run_id 7
 --dt 2 --Np 100000 --profile A --run_id 7
 --dt 2 --Np 30000 --profile A --run_id 7
@@ -261,7 +246,6 @@
 --dt 60 --Np 300000 --profile B --run_id 7
 --dt 180 --Np 300000 --profile B --run_id 7
 --dt 360 --Np 300000 --profile B --run_id 7
---dt 2 --Np 3000000 --profile B --run_id 7
 --dt 2 --Np 300000 --profile B --run_id 7
 --dt 2 --Np 100000 --profile B --run_id 7
 --dt 2 --Np 30000 --profile B --run_id 7
@@ -278,7 +262,6 @@
 --dt 60 --Np 300000 --profile A --run_id 8
 --dt 180 --Np 300000 --profile A --run_id 8
 --dt 360 --Np 300000 --profile A --run_id 8
---dt 2 --Np 3000000 --profile A --run_id 8
 --dt 2 --Np 300000 --profile A --run_id 8
 --dt 2 --Np 100000 --profile A --run_id 8
 --dt 2 --Np 30000 --profile A --run_id 8
@@ -295,7 +278,6 @@
 --dt 60 --Np 300000 --profile B --run_id 8
 --dt 180 --Np 300000 --profile B --run_id 8
 --dt 360 --Np 300000 --profile B --run_id 8
---dt 2 --Np 3000000 --profile B --run_id 8
 --dt 2 --Np 300000 --profile B --run_id 8
 --dt 2 --Np 100000 --profile B --run_id 8
 --dt 2 --Np 30000 --profile B --run_id 8
@@ -312,7 +294,6 @@
 --dt 60 --Np 300000 --profile A --run_id 9
 --dt 180 --Np 300000 --profile A --run_id 9
 --dt 360 --Np 300000 --profile A --run_id 9
---dt 2 --Np 3000000 --profile A --run_id 9
 --dt 2 --Np 300000 --profile A --run_id 9
 --dt 2 --Np 100000 --profile A --run_id 9
 --dt 2 --Np 30000 --profile A --run_id 9
@@ -329,7 +310,6 @@
 --dt 60 --Np 300000 --profile B --run_id 9
 --dt 180 --Np 300000 --profile B --run_id 9
 --dt 360 --Np 300000 --profile B --run_id 9
---dt 2 --Np 3000000 --profile B --run_id 9
 --dt 2 --Np 300000 --profile B --run_id 9
 --dt 2 --Np 100000 --profile B --run_id 9
 --dt 2 --Np 30000 --profile B --run_id 9
@@ -346,7 +326,6 @@
 --dt 60 --Np 300000 --profile A --run_id 10
 --dt 180 --Np 300000 --profile A --run_id 10
 --dt 360 --Np 300000 --profile A --run_id 10
---dt 2 --Np 3000000 --profile A --run_id 10
 --dt 2 --Np 300000 --profile A --run_id 10
 --dt 2 --Np 100000 --profile A --run_id 10
 --dt 2 --Np 30000 --profile A --run_id 10
@@ -363,7 +342,6 @@
 --dt 60 --Np 300000 --profile B --run_id 10
 --dt 180 --Np 300000 --profile B --run_id 10
 --dt 360 --Np 300000 --profile B --run_id 10
---dt 2 --Np 3000000 --profile B --run_id 10
 --dt 2 --Np 300000 --profile B --run_id 10
 --dt 2 --Np 100000 --profile B --run_id 10
 --dt 2 --Np 30000 --profile B --run_id 10
@@ -380,7 +358,6 @@
 --dt 60 --Np 300000 --profile A --run_id 11
 --dt 180 --Np 300000 --profile A --run_id 11
 --dt 360 --Np 300000 --profile A --run_id 11
---dt 2 --Np 3000000 --profile A --run_id 11
 --dt 2 --Np 300000 --profile A --run_id 11
 --dt 2 --Np 100000 --profile A --run_id 11
 --dt 2 --Np 30000 --profile A --run_id 11
@@ -397,7 +374,6 @@
 --dt 60 --Np 300000 --profile B --run_id 11
 --dt 180 --Np 300000 --profile B --run_id 11
 --dt 360 --Np 300000 --profile B --run_id 11
---dt 2 --Np 3000000 --profile B --run_id 11
 --dt 2 --Np 300000 --profile B --run_id 11
 --dt 2 --Np 100000 --profile B --run_id 11
 --dt 2 --Np 30000 --profile B --run_id 11
@@ -414,7 +390,6 @@
 --dt 60 --Np 300000 --profile A --run_id 12
 --dt 180 --Np 300000 --profile A --run_id 12
 --dt 360 --Np 300000 --profile A --run_id 12
---dt 2 --Np 3000000 --profile A --run_id 12
 --dt 2 --Np 300000 --profile A --run_id 12
 --dt 2 --Np 100000 --profile A --run_id 12
 --dt 2 --Np 30000 --profile A --run_id 12
@@ -431,7 +406,6 @@
 --dt 60 --Np 300000 --profile B --run_id 12
 --dt 180 --Np 300000 --profile B --run_id 12
 --dt 360 --Np 300000 --profile B --run_id 12
---dt 2 --Np 3000000 --profile B --run_id 12
 --dt 2 --Np 300000 --profile B --run_id 12
 --dt 2 --Np 100000 --profile B --run_id 12
 --dt 2 --Np 30000 --profile B --run_id 12
@@ -448,7 +422,6 @@
 --dt 60 --Np 300000 --profile A --run_id 13
 --dt 180 --Np 300000 --profile A --run_id 13
 --dt 360 --Np 300000 --profile A --run_id 13
---dt 2 --Np 3000000 --profile A --run_id 13
 --dt 2 --Np 300000 --profile A --run_id 13
 --dt 2 --Np 100000 --profile A --run_id 13
 --dt 2 --Np 30000 --profile A --run_id 13
@@ -465,7 +438,6 @@
 --dt 60 --Np 300000 --profile B --run_id 13
 --dt 180 --Np 300000 --profile B --run_id 13
 --dt 360 --Np 300000 --profile B --run_id 13
---dt 2 --Np 3000000 --profile B --run_id 13
 --dt 2 --Np 300000 --profile B --run_id 13
 --dt 2 --Np 100000 --profile B --run_id 13
 --dt 2 --Np 30000 --profile B --run_id 13
@@ -482,7 +454,6 @@
 --dt 60 --Np 300000 --profile A --run_id 14
 --dt 180 --Np 300000 --profile A --run_id 14
 --dt 360 --Np 300000 --profile A --run_id 14
---dt 2 --Np 3000000 --profile A --run_id 14
 --dt 2 --Np 300000 --profile A --run_id 14
 --dt 2 --Np 100000 --profile A --run_id 14
 --dt 2 --Np 30000 --profile A --run_id 14
@@ -499,7 +470,6 @@
 --dt 60 --Np 300000 --profile B --run_id 14
 --dt 180 --Np 300000 --profile B --run_id 14
 --dt 360 --Np 300000 --profile B --run_id 14
---dt 2 --Np 3000000 --profile B --run_id 14
 --dt 2 --Np 300000 --profile B --run_id 14
 --dt 2 --Np 100000 --profile B --run_id 14
 --dt 2 --Np 30000 --profile B --run_id 14
@@ -516,7 +486,6 @@
 --dt 60 --Np 300000 --profile A --run_id 15
 --dt 180 --Np 300000 --profile A --run_id 15
 --dt 360 --Np 300000 --profile A --run_id 15
---dt 2 --Np 3000000 --profile A --run_id 15
 --dt 2 --Np 300000 --profile A --run_id 15
 --dt 2 --Np 100000 --profile A --run_id 15
 --dt 2 --Np 30000 --profile A --run_id 15
@@ -533,7 +502,6 @@
 --dt 60 --Np 300000 --profile B --run_id 15
 --dt 180 --Np 300000 --profile B --run_id 15
 --dt 360 --Np 300000 --profile B --run_id 15
---dt 2 --Np 3000000 --profile B --run_id 15
 --dt 2 --Np 300000 --profile B --run_id 15
 --dt 2 --Np 100000 --profile B --run_id 15
 --dt 2 --Np 30000 --profile B --run_id 15
@@ -550,7 +518,6 @@
 --dt 60 --Np 300000 --profile A --run_id 16
 --dt 180 --Np 300000 --profile A --run_id 16
 --dt 360 --Np 300000 --profile A --run_id 16
---dt 2 --Np 3000000 --profile A --run_id 16
 --dt 2 --Np 300000 --profile A --run_id 16
 --dt 2 --Np 100000 --profile A --run_id 16
 --dt 2 --Np 30000 --profile A --run_id 16
@@ -567,7 +534,6 @@
 --dt 60 --Np 300000 --profile B --run_id 16
 --dt 180 --Np 300000 --profile B --run_id 16
 --dt 360 --Np 300000 --profile B --run_id 16
---dt 2 --Np 3000000 --profile B --run_id 16
 --dt 2 --Np 300000 --profile B --run_id 16
 --dt 2 --Np 100000 --profile B --run_id 16
 --dt 2 --Np 30000 --profile B --run_id 16
@@ -584,7 +550,6 @@
 --dt 60 --Np 300000 --profile A --run_id 17
 --dt 180 --Np 300000 --profile A --run_id 17
 --dt 360 --Np 300000 --profile A --run_id 17
---dt 2 --Np 3000000 --profile A --run_id 17
 --dt 2 --Np 300000 --profile A --run_id 17
 --dt 2 --Np 100000 --profile A --run_id 17
 --dt 2 --Np 30000 --profile A --run_id 17
@@ -601,7 +566,6 @@
 --dt 60 --Np 300000 --profile B --run_id 17
 --dt 180 --Np 300000 --profile B --run_id 17
 --dt 360 --Np 300000 --profile B --run_id 17
---dt 2 --Np 3000000 --profile B --run_id 17
 --dt 2 --Np 300000 --profile B --run_id 17
 --dt 2 --Np 100000 --profile B --run_id 17
 --dt 2 --Np 30000 --profile B --run_id 17
@@ -618,7 +582,6 @@
 --dt 60 --Np 300000 --profile A --run_id 18
 --dt 180 --Np 300000 --profile A --run_id 18
 --dt 360 --Np 300000 --profile A --run_id 18
---dt 2 --Np 3000000 --profile A --run_id 18
 --dt 2 --Np 300000 --profile A --run_id 18
 --dt 2 --Np 100000 --profile A --run_id 18
 --dt 2 --Np 30000 --profile A --run_id 18
@@ -635,7 +598,6 @@
 --dt 60 --Np 300000 --profile B --run_id 18
 --dt 180 --Np 300000 --profile B --run_id 18
 --dt 360 --Np 300000 --profile B --run_id 18
---dt 2 --Np 3000000 --profile B --run_id 18
 --dt 2 --Np 300000 --profile B --run_id 18
 --dt 2 --Np 100000 --profile B --run_id 18
 --dt 2 --Np 30000 --profile B --run_id 18
@@ -652,7 +614,6 @@
 --dt 60 --Np 300000 --profile A --run_id 19
 --dt 180 --Np 300000 --profile A --run_id 19
 --dt 360 --Np 300000 --profile A --run_id 19
---dt 2 --Np 3000000 --profile A --run_id 19
 --dt 2 --Np 300000 --profile A --run_id 19
 --dt 2 --Np 100000 --profile A --run_id 19
 --dt 2 --Np 30000 --profile A --run_id 19
@@ -669,7 +630,6 @@
 --dt 60 --Np 300000 --profile B --run_id 19
 --dt 180 --Np 300000 --profile B --run_id 19
 --dt 360 --Np 300000 --profile B --run_id 19
---dt 2 --Np 3000000 --profile B --run_id 19
 --dt 2 --Np 300000 --profile B --run_id 19
 --dt 2 --Np 100000 --profile B --run_id 19
 --dt 2 --Np 30000 --profile B --run_id 19
@@ -686,7 +646,6 @@
 --dt 60 --Np 300000 --profile A --run_id 20
 --dt 180 --Np 300000 --profile A --run_id 20
 --dt 360 --Np 300000 --profile A --run_id 20
---dt 2 --Np 3000000 --profile A --run_id 20
 --dt 2 --Np 300000 --profile A --run_id 20
 --dt 2 --Np 100000 --profile A --run_id 20
 --dt 2 --Np 30000 --profile A --run_id 20
@@ -703,7 +662,6 @@
 --dt 60 --Np 300000 --profile B --run_id 20
 --dt 180 --Np 300000 --profile B --run_id 20
 --dt 360 --Np 300000 --profile B --run_id 20
---dt 2 --Np 3000000 --profile B --run_id 20
 --dt 2 --Np 300000 --profile B --run_id 20
 --dt 2 --Np 100000 --profile B --run_id 20
 --dt 2 --Np 30000 --profile B --run_id 20
@@ -720,7 +678,6 @@
 --dt 60 --Np 300000 --profile A --run_id 21
 --dt 180 --Np 300000 --profile A --run_id 21
 --dt 360 --Np 300000 --profile A --run_id 21
---dt 2 --Np 3000000 --profile A --run_id 21
 --dt 2 --Np 300000 --profile A --run_id 21
 --dt 2 --Np 100000 --profile A --run_id 21
 --dt 2 --Np 30000 --profile A --run_id 21
@@ -737,7 +694,6 @@
 --dt 60 --Np 300000 --profile B --run_id 21
 --dt 180 --Np 300000 --profile B --run_id 21
 --dt 360 --Np 300000 --profile B --run_id 21
---dt 2 --Np 3000000 --profile B --run_id 21
 --dt 2 --Np 300000 --profile B --run_id 21
 --dt 2 --Np 100000 --profile B --run_id 21
 --dt 2 --Np 30000 --profile B --run_id 21
@@ -754,7 +710,6 @@
 --dt 60 --Np 300000 --profile A --run_id 22
 --dt 180 --Np 300000 --profile A --run_id 22
 --dt 360 --Np 300000 --profile A --run_id 22
---dt 2 --Np 3000000 --profile A --run_id 22
 --dt 2 --Np 300000 --profile A --run_id 22
 --dt 2 --Np 100000 --profile A --run_id 22
 --dt 2 --Np 30000 --profile A --run_id 22
@@ -771,7 +726,6 @@
 --dt 60 --Np 300000 --profile B --run_id 22
 --dt 180 --Np 300000 --profile B --run_id 22
 --dt 360 --Np 300000 --profile B --run_id 22
---dt 2 --Np 3000000 --profile B --run_id 22
 --dt 2 --Np 300000 --profile B --run_id 22
 --dt 2 --Np 100000 --profile B --run_id 22
 --dt 2 --Np 30000 --profile B --run_id 22
@@ -788,7 +742,6 @@
 --dt 60 --Np 300000 --profile A --run_id 23
 --dt 180 --Np 300000 --profile A --run_id 23
 --dt 360 --Np 300000 --profile A --run_id 23
---dt 2 --Np 3000000 --profile A --run_id 23
 --dt 2 --Np 300000 --profile A --run_id 23
 --dt 2 --Np 100000 --profile A --run_id 23
 --dt 2 --Np 30000 --profile A --run_id 23
@@ -805,7 +758,6 @@
 --dt 60 --Np 300000 --profile B --run_id 23
 --dt 180 --Np 300000 --profile B --run_id 23
 --dt 360 --Np 300000 --profile B --run_id 23
---dt 2 --Np 3000000 --profile B --run_id 23
 --dt 2 --Np 300000 --profile B --run_id 23
 --dt 2 --Np 100000 --profile B --run_id 23
 --dt 2 --Np 30000 --profile B --run_id 23
@@ -822,7 +774,6 @@
 --dt 60 --Np 300000 --profile A --run_id 24
 --dt 180 --Np 300000 --profile A --run_id 24
 --dt 360 --Np 300000 --profile A --run_id 24
---dt 2 --Np 3000000 --profile A --run_id 24
 --dt 2 --Np 300000 --profile A --run_id 24
 --dt 2 --Np 100000 --profile A --run_id 24
 --dt 2 --Np 30000 --profile A --run_id 24
@@ -839,7 +790,6 @@
 --dt 60 --Np 300000 --profile B --run_id 24
 --dt 180 --Np 300000 --profile B --run_id 24
 --dt 360 --Np 300000 --profile B --run_id 24
---dt 2 --Np 3000000 --profile B --run_id 24
 --dt 2 --Np 300000 --profile B --run_id 24
 --dt 2 --Np 100000 --profile B --run_id 24
 --dt 2 --Np 30000 --profile B --run_id 24
@@ -856,7 +806,6 @@
 --dt 60 --Np 300000 --profile A --run_id 25
 --dt 180 --Np 300000 --profile A --run_id 25
 --dt 360 --Np 300000 --profile A --run_id 25
---dt 2 --Np 3000000 --profile A --run_id 25
 --dt 2 --Np 300000 --profile A --run_id 25
 --dt 2 --Np 100000 --profile A --run_id 25
 --dt 2 --Np 30000 --profile A --run_id 25
@@ -873,7 +822,6 @@
 --dt 60 --Np 300000 --profile B --run_id 25
 --dt 180 --Np 300000 --profile B --run_id 25
 --dt 360 --Np 300000 --profile B --run_id 25
---dt 2 --Np 3000000 --profile B --run_id 25
 --dt 2 --Np 300000 --profile B --run_id 25
 --dt 2 --Np 100000 --profile B --run_id 25
 --dt 2 --Np 30000 --profile B --run_id 25
@@ -890,7 +838,6 @@
 --dt 60 --Np 300000 --profile A --run_id 26
 --dt 180 --Np 300000 --profile A --run_id 26
 --dt 360 --Np 300000 --profile A --run_id 26
---dt 2 --Np 3000000 --profile A --run_id 26
 --dt 2 --Np 300000 --profile A --run_id 26
 --dt 2 --Np 100000 --profile A --run_id 26
 --dt 2 --Np 30000 --profile A --run_id 26
@@ -907,7 +854,6 @@
 --dt 60 --Np 300000 --profile B --run_id 26
 --dt 180 --Np 300000 --profile B --run_id 26
 --dt 360 --Np 300000 --profile B --run_id 26
---dt 2 --Np 3000000 --profile B --run_id 26
 --dt 2 --Np 300000 --profile B --run_id 26
 --dt 2 --Np 100000 --profile B --run_id 26
 --dt 2 --Np 30000 --profile B --run_id 26
@@ -924,7 +870,6 @@
 --dt 60 --Np 300000 --profile A --run_id 27
 --dt 180 --Np 300000 --profile A --run_id 27
 --dt 360 --Np 300000 --profile A --run_id 27
---dt 2 --Np 3000000 --profile A --run_id 27
 --dt 2 --Np 300000 --profile A --run_id 27
 --dt 2 --Np 100000 --profile A --run_id 27
 --dt 2 --Np 30000 --profile A --run_id 27
@@ -941,7 +886,6 @@
 --dt 60 --Np 300000 --profile B --run_id 27
 --dt 180 --Np 300000 --profile B --run_id 27
 --dt 360 --Np 300000 --profile B --run_id 27
---dt 2 --Np 3000000 --profile B --run_id 27
 --dt 2 --Np 300000 --profile B --run_id 27
 --dt 2 --Np 100000 --profile B --run_id 27
 --dt 2 --Np 30000 --profile B --run_id 27
@@ -958,7 +902,6 @@
 --dt 60 --Np 300000 --profile A --run_id 28
 --dt 180 --Np 300000 --profile A --run_id 28
 --dt 360 --Np 300000 --profile A --run_id 28
---dt 2 --Np 3000000 --profile A --run_id 28
 --dt 2 --Np 300000 --profile A --run_id 28
 --dt 2 --Np 100000 --profile A --run_id 28
 --dt 2 --Np 30000 --profile A --run_id 28
@@ -975,7 +918,6 @@
 --dt 60 --Np 300000 --profile B --run_id 28
 --dt 180 --Np 300000 --profile B --run_id 28
 --dt 360 --Np 300000 --profile B --run_id 28
---dt 2 --Np 3000000 --profile B --run_id 28
 --dt 2 --Np 300000 --profile B --run_id 28
 --dt 2 --Np 100000 --profile B --run_id 28
 --dt 2 --Np 30000 --profile B --run_id 28
@@ -992,7 +934,6 @@
 --dt 60 --Np 300000 --profile A --run_id 29
 --dt 180 --Np 300000 --profile A --run_id 29
 --dt 360 --Np 300000 --profile A --run_id 29
---dt 2 --Np 3000000 --profile A --run_id 29
 --dt 2 --Np 300000 --profile A --run_id 29
 --dt 2 --Np 100000 --profile A --run_id 29
 --dt 2 --Np 30000 --profile A --run_id 29
@@ -1009,7 +950,6 @@
 --dt 60 --Np 300000 --profile B --run_id 29
 --dt 180 --Np 300000 --profile B --run_id 29
 --dt 360 --Np 300000 --profile B --run_id 29
---dt 2 --Np 3000000 --profile B --run_id 29
 --dt 2 --Np 300000 --profile B --run_id 29
 --dt 2 --Np 100000 --profile B --run_id 29
 --dt 2 --Np 30000 --profile B --run_id 29
@@ -1026,7 +966,6 @@
 --dt 60 --Np 300000 --profile A --run_id 30
 --dt 180 --Np 300000 --profile A --run_id 30
 --dt 360 --Np 300000 --profile A --run_id 30
---dt 2 --Np 3000000 --profile A --run_id 30
 --dt 2 --Np 300000 --profile A --run_id 30
 --dt 2 --Np 100000 --profile A --run_id 30
 --dt 2 --Np 30000 --profile A --run_id 30
@@ -1043,7 +982,6 @@
 --dt 60 --Np 300000 --profile B --run_id 30
 --dt 180 --Np 300000 --profile B --run_id 30
 --dt 360 --Np 300000 --profile B --run_id 30
---dt 2 --Np 3000000 --profile B --run_id 30
 --dt 2 --Np 300000 --profile B --run_id 30
 --dt 2 --Np 100000 --profile B --run_id 30
 --dt 2 --Np 30000 --profile B --run_id 30
@@ -1060,7 +998,6 @@
 --dt 60 --Np 300000 --profile A --run_id 31
 --dt 180 --Np 300000 --profile A --run_id 31
 --dt 360 --Np 300000 --profile A --run_id 31
---dt 2 --Np 3000000 --profile A --run_id 31
 --dt 2 --Np 300000 --profile A --run_id 31
 --dt 2 --Np 100000 --profile A --run_id 31
 --dt 2 --Np 30000 --profile A --run_id 31
@@ -1077,7 +1014,6 @@
 --dt 60 --Np 300000 --profile B --run_id 31
 --dt 180 --Np 300000 --profile B --run_id 31
 --dt 360 --Np 300000 --profile B --run_id 31
---dt 2 --Np 3000000 --profile B --run_id 31
 --dt 2 --Np 300000 --profile B --run_id 31
 --dt 2 --Np 100000 --profile B --run_id 31
 --dt 2 --Np 30000 --profile B --run_id 31
@@ -1094,7 +1030,6 @@
 --dt 60 --Np 300000 --profile A --run_id 32
 --dt 180 --Np 300000 --profile A --run_id 32
 --dt 360 --Np 300000 --profile A --run_id 32
---dt 2 --Np 3000000 --profile A --run_id 32
 --dt 2 --Np 300000 --profile A --run_id 32
 --dt 2 --Np 100000 --profile A --run_id 32
 --dt 2 --Np 30000 --profile A --run_id 32
@@ -1111,7 +1046,6 @@
 --dt 60 --Np 300000 --profile B --run_id 32
 --dt 180 --Np 300000 --profile B --run_id 32
 --dt 360 --Np 300000 --profile B --run_id 32
---dt 2 --Np 3000000 --profile B --run_id 32
 --dt 2 --Np 300000 --profile B --run_id 32
 --dt 2 --Np 100000 --profile B --run_id 32
 --dt 2 --Np 30000 --profile B --run_id 32
@@ -1128,7 +1062,6 @@
 --dt 60 --Np 300000 --profile A --run_id 33
 --dt 180 --Np 300000 --profile A --run_id 33
 --dt 360 --Np 300000 --profile A --run_id 33
---dt 2 --Np 3000000 --profile A --run_id 33
 --dt 2 --Np 300000 --profile A --run_id 33
 --dt 2 --Np 100000 --profile A --run_id 33
 --dt 2 --Np 30000 --profile A --run_id 33
@@ -1145,7 +1078,6 @@
 --dt 60 --Np 300000 --profile B --run_id 33
 --dt 180 --Np 300000 --profile B --run_id 33
 --dt 360 --Np 300000 --profile B --run_id 33
---dt 2 --Np 3000000 --profile B --run_id 33
 --dt 2 --Np 300000 --profile B --run_id 33
 --dt 2 --Np 100000 --profile B --run_id 33
 --dt 2 --Np 30000 --profile B --run_id 33
@@ -1162,7 +1094,6 @@
 --dt 60 --Np 300000 --profile A --run_id 34
 --dt 180 --Np 300000 --profile A --run_id 34
 --dt 360 --Np 300000 --profile A --run_id 34
---dt 2 --Np 3000000 --profile A --run_id 34
 --dt 2 --Np 300000 --profile A --run_id 34
 --dt 2 --Np 100000 --profile A --run_id 34
 --dt 2 --Np 30000 --profile A --run_id 34
@@ -1179,7 +1110,6 @@
 --dt 60 --Np 300000 --profile B --run_id 34
 --dt 180 --Np 300000 --profile B --run_id 34
 --dt 360 --Np 300000 --profile B --run_id 34
---dt 2 --Np 3000000 --profile B --run_id 34
 --dt 2 --Np 300000 --profile B --run_id 34
 --dt 2 --Np 100000 --profile B --run_id 34
 --dt 2 --Np 30000 --profile B --run_id 34
@@ -1196,7 +1126,6 @@
 --dt 60 --Np 300000 --profile A --run_id 35
 --dt 180 --Np 300000 --profile A --run_id 35
 --dt 360 --Np 300000 --profile A --run_id 35
---dt 2 --Np 3000000 --profile A --run_id 35
 --dt 2 --Np 300000 --profile A --run_id 35
 --dt 2 --Np 100000 --profile A --run_id 35
 --dt 2 --Np 30000 --profile A --run_id 35
@@ -1213,7 +1142,6 @@
 --dt 60 --Np 300000 --profile B --run_id 35
 --dt 180 --Np 300000 --profile B --run_id 35
 --dt 360 --Np 300000 --profile B --run_id 35
---dt 2 --Np 3000000 --profile B --run_id 35
 --dt 2 --Np 300000 --profile B --run_id 35
 --dt 2 --Np 100000 --profile B --run_id 35
 --dt 2 --Np 30000 --profile B --run_id 35
@@ -1230,7 +1158,6 @@
 --dt 60 --Np 300000 --profile A --run_id 36
 --dt 180 --Np 300000 --profile A --run_id 36
 --dt 360 --Np 300000 --profile A --run_id 36
---dt 2 --Np 3000000 --profile A --run_id 36
 --dt 2 --Np 300000 --profile A --run_id 36
 --dt 2 --Np 100000 --profile A --run_id 36
 --dt 2 --Np 30000 --profile A --run_id 36
@@ -1247,7 +1174,6 @@
 --dt 60 --Np 300000 --profile B --run_id 36
 --dt 180 --Np 300000 --profile B --run_id 36
 --dt 360 --Np 300000 --profile B --run_id 36
---dt 2 --Np 3000000 --profile B --run_id 36
 --dt 2 --Np 300000 --profile B --run_id 36
 --dt 2 --Np 100000 --profile B --run_id 36
 --dt 2 --Np 30000 --profile B --run_id 36
@@ -1264,7 +1190,6 @@
 --dt 60 --Np 300000 --profile A --run_id 37
 --dt 180 --Np 300000 --profile A --run_id 37
 --dt 360 --Np 300000 --profile A --run_id 37
---dt 2 --Np 3000000 --profile A --run_id 37
 --dt 2 --Np 300000 --profile A --run_id 37
 --dt 2 --Np 100000 --profile A --run_id 37
 --dt 2 --Np 30000 --profile A --run_id 37
@@ -1281,7 +1206,6 @@
 --dt 60 --Np 300000 --profile B --run_id 37
 --dt 180 --Np 300000 --profile B --run_id 37
 --dt 360 --Np 300000 --profile B --run_id 37
---dt 2 --Np 3000000 --profile B --run_id 37
 --dt 2 --Np 300000 --profile B --run_id 37
 --dt 2 --Np 100000 --profile B --run_id 37
 --dt 2 --Np 30000 --profile B --run_id 37
@@ -1298,7 +1222,6 @@
 --dt 60 --Np 300000 --profile A --run_id 38
 --dt 180 --Np 300000 --profile A --run_id 38
 --dt 360 --Np 300000 --profile A --run_id 38
---dt 2 --Np 3000000 --profile A --run_id 38
 --dt 2 --Np 300000 --profile A --run_id 38
 --dt 2 --Np 100000 --profile A --run_id 38
 --dt 2 --Np 30000 --profile A --run_id 38
@@ -1315,7 +1238,6 @@
 --dt 60 --Np 300000 --profile B --run_id 38
 --dt 180 --Np 300000 --profile B --run_id 38
 --dt 360 --Np 300000 --profile B --run_id 38
---dt 2 --Np 3000000 --profile B --run_id 38
 --dt 2 --Np 300000 --profile B --run_id 38
 --dt 2 --Np 100000 --profile B --run_id 38
 --dt 2 --Np 30000 --profile B --run_id 38
@@ -1332,7 +1254,6 @@
 --dt 60 --Np 300000 --profile A --run_id 39
 --dt 180 --Np 300000 --profile A --run_id 39
 --dt 360 --Np 300000 --profile A --run_id 39
---dt 2 --Np 3000000 --profile A --run_id 39
 --dt 2 --Np 300000 --profile A --run_id 39
 --dt 2 --Np 100000 --profile A --run_id 39
 --dt 2 --Np 30000 --profile A --run_id 39
@@ -1349,7 +1270,6 @@
 --dt 60 --Np 300000 --profile B --run_id 39
 --dt 180 --Np 300000 --profile B --run_id 39
 --dt 360 --Np 300000 --profile B --run_id 39
---dt 2 --Np 3000000 --profile B --run_id 39
 --dt 2 --Np 300000 --profile B --run_id 39
 --dt 2 --Np 100000 --profile B --run_id 39
 --dt 2 --Np 30000 --profile B --run_id 39
@@ -1366,7 +1286,6 @@
 --dt 60 --Np 300000 --profile A --run_id 40
 --dt 180 --Np 300000 --profile A --run_id 40
 --dt 360 --Np 300000 --profile A --run_id 40
---dt 2 --Np 3000000 --profile A --run_id 40
 --dt 2 --Np 300000 --profile A --run_id 40
 --dt 2 --Np 100000 --profile A --run_id 40
 --dt 2 --Np 30000 --profile A --run_id 40
@@ -1383,7 +1302,6 @@
 --dt 60 --Np 300000 --profile B --run_id 40
 --dt 180 --Np 300000 --profile B --run_id 40
 --dt 360 --Np 300000 --profile B --run_id 40
---dt 2 --Np 3000000 --profile B --run_id 40
 --dt 2 --Np 300000 --profile B --run_id 40
 --dt 2 --Np 100000 --profile B --run_id 40
 --dt 2 --Np 30000 --profile B --run_id 40
@@ -1400,7 +1318,6 @@
 --dt 60 --Np 300000 --profile A --run_id 41
 --dt 180 --Np 300000 --profile A --run_id 41
 --dt 360 --Np 300000 --profile A --run_id 41
---dt 2 --Np 3000000 --profile A --run_id 41
 --dt 2 --Np 300000 --profile A --run_id 41
 --dt 2 --Np 100000 --profile A --run_id 41
 --dt 2 --Np 30000 --profile A --run_id 41
@@ -1417,7 +1334,6 @@
 --dt 60 --Np 300000 --profile B --run_id 41
 --dt 180 --Np 300000 --profile B --run_id 41
 --dt 360 --Np 300000 --profile B --run_id 41
---dt 2 --Np 3000000 --profile B --run_id 41
 --dt 2 --Np 300000 --profile B --run_id 41
 --dt 2 --Np 100000 --profile B --run_id 41
 --dt 2 --Np 30000 --profile B --run_id 41
@@ -1434,7 +1350,6 @@
 --dt 60 --Np 300000 --profile A --run_id 42
 --dt 180 --Np 300000 --profile A --run_id 42
 --dt 360 --Np 300000 --profile A --run_id 42
---dt 2 --Np 3000000 --profile A --run_id 42
 --dt 2 --Np 300000 --profile A --run_id 42
 --dt 2 --Np 100000 --profile A --run_id 42
 --dt 2 --Np 30000 --profile A --run_id 42
@@ -1451,7 +1366,6 @@
 --dt 60 --Np 300000 --profile B --run_id 42
 --dt 180 --Np 300000 --profile B --run_id 42
 --dt 360 --Np 300000 --profile B --run_id 42
---dt 2 --Np 3000000 --profile B --run_id 42
 --dt 2 --Np 300000 --profile B --run_id 42
 --dt 2 --Np 100000 --profile B --run_id 42
 --dt 2 --Np 30000 --profile B --run_id 42
@@ -1468,7 +1382,6 @@
 --dt 60 --Np 300000 --profile A --run_id 43
 --dt 180 --Np 300000 --profile A --run_id 43
 --dt 360 --Np 300000 --profile A --run_id 43
---dt 2 --Np 3000000 --profile A --run_id 43
 --dt 2 --Np 300000 --profile A --run_id 43
 --dt 2 --Np 100000 --profile A --run_id 43
 --dt 2 --Np 30000 --profile A --run_id 43
@@ -1485,7 +1398,6 @@
 --dt 60 --Np 300000 --profile B --run_id 43
 --dt 180 --Np 300000 --profile B --run_id 43
 --dt 360 --Np 300000 --profile B --run_id 43
---dt 2 --Np 3000000 --profile B --run_id 43
 --dt 2 --Np 300000 --profile B --run_id 43
 --dt 2 --Np 100000 --profile B --run_id 43
 --dt 2 --Np 30000 --profile B --run_id 43
@@ -1502,7 +1414,6 @@
 --dt 60 --Np 300000 --profile A --run_id 44
 --dt 180 --Np 300000 --profile A --run_id 44
 --dt 360 --Np 300000 --profile A --run_id 44
---dt 2 --Np 3000000 --profile A --run_id 44
 --dt 2 --Np 300000 --profile A --run_id 44
 --dt 2 --Np 100000 --profile A --run_id 44
 --dt 2 --Np 30000 --profile A --run_id 44
@@ -1519,7 +1430,6 @@
 --dt 60 --Np 300000 --profile B --run_id 44
 --dt 180 --Np 300000 --profile B --run_id 44
 --dt 360 --Np 300000 --profile B --run_id 44
---dt 2 --Np 3000000 --profile B --run_id 44
 --dt 2 --Np 300000 --profile B --run_id 44
 --dt 2 --Np 100000 --profile B --run_id 44
 --dt 2 --Np 30000 --profile B --run_id 44
@@ -1536,7 +1446,6 @@
 --dt 60 --Np 300000 --profile A --run_id 45
 --dt 180 --Np 300000 --profile A --run_id 45
 --dt 360 --Np 300000 --profile A --run_id 45
---dt 2 --Np 3000000 --profile A --run_id 45
 --dt 2 --Np 300000 --profile A --run_id 45
 --dt 2 --Np 100000 --profile A --run_id 45
 --dt 2 --Np 30000 --profile A --run_id 45
@@ -1553,7 +1462,6 @@
 --dt 60 --Np 300000 --profile B --run_id 45
 --dt 180 --Np 300000 --profile B --run_id 45
 --dt 360 --Np 300000 --profile B --run_id 45
---dt 2 --Np 3000000 --profile B --run_id 45
 --dt 2 --Np 300000 --profile B --run_id 45
 --dt 2 --Np 100000 --profile B --run_id 45
 --dt 2 --Np 30000 --profile B --run_id 45
@@ -1570,7 +1478,6 @@
 --dt 60 --Np 300000 --profile A --run_id 46
 --dt 180 --Np 300000 --profile A --run_id 46
 --dt 360 --Np 300000 --profile A --run_id 46
---dt 2 --Np 3000000 --profile A --run_id 46
 --dt 2 --Np 300000 --profile A --run_id 46
 --dt 2 --Np 100000 --profile A --run_id 46
 --dt 2 --Np 30000 --profile A --run_id 46
@@ -1587,7 +1494,6 @@
 --dt 60 --Np 300000 --profile B --run_id 46
 --dt 180 --Np 300000 --profile B --run_id 46
 --dt 360 --Np 300000 --profile B --run_id 46
---dt 2 --Np 3000000 --profile B --run_id 46
 --dt 2 --Np 300000 --profile B --run_id 46
 --dt 2 --Np 100000 --profile B --run_id 46
 --dt 2 --Np 30000 --profile B --run_id 46
@@ -1604,7 +1510,6 @@
 --dt 60 --Np 300000 --profile A --run_id 47
 --dt 180 --Np 300000 --profile A --run_id 47
 --dt 360 --Np 300000 --profile A --run_id 47
---dt 2 --Np 3000000 --profile A --run_id 47
 --dt 2 --Np 300000 --profile A --run_id 47
 --dt 2 --Np 100000 --profile A --run_id 47
 --dt 2 --Np 30000 --profile A --run_id 47
@@ -1621,7 +1526,6 @@
 --dt 60 --Np 300000 --profile B --run_id 47
 --dt 180 --Np 300000 --profile B --run_id 47
 --dt 360 --Np 300000 --profile B --run_id 47
---dt 2 --Np 3000000 --profile B --run_id 47
 --dt 2 --Np 300000 --profile B --run_id 47
 --dt 2 --Np 100000 --profile B --run_id 47
 --dt 2 --Np 30000 --profile B --run_id 47
@@ -1638,7 +1542,6 @@
 --dt 60 --Np 300000 --profile A --run_id 48
 --dt 180 --Np 300000 --profile A --run_id 48
 --dt 360 --Np 300000 --profile A --run_id 48
---dt 2 --Np 3000000 --profile A --run_id 48
 --dt 2 --Np 300000 --profile A --run_id 48
 --dt 2 --Np 100000 --profile A --run_id 48
 --dt 2 --Np 30000 --profile A --run_id 48
@@ -1655,7 +1558,6 @@
 --dt 60 --Np 300000 --profile B --run_id 48
 --dt 180 --Np 300000 --profile B --run_id 48
 --dt 360 --Np 300000 --profile B --run_id 48
---dt 2 --Np 3000000 --profile B --run_id 48
 --dt 2 --Np 300000 --profile B --run_id 48
 --dt 2 --Np 100000 --profile B --run_id 48
 --dt 2 --Np 30000 --profile B --run_id 48
@@ -1672,7 +1574,6 @@
 --dt 60 --Np 300000 --profile A --run_id 49
 --dt 180 --Np 300000 --profile A --run_id 49
 --dt 360 --Np 300000 --profile A --run_id 49
---dt 2 --Np 3000000 --profile A --run_id 49
 --dt 2 --Np 300000 --profile A --run_id 49
 --dt 2 --Np 100000 --profile A --run_id 49
 --dt 2 --Np 30000 --profile A --run_id 49
@@ -1689,7 +1590,6 @@
 --dt 60 --Np 300000 --profile B --run_id 49
 --dt 180 --Np 300000 --profile B --run_id 49
 --dt 360 --Np 300000 --profile B --run_id 49
---dt 2 --Np 3000000 --profile B --run_id 49
 --dt 2 --Np 300000 --profile B --run_id 49
 --dt 2 --Np 100000 --profile B --run_id 49
 --dt 2 --Np 30000 --profile B --run_id 49
@@ -1706,7 +1606,6 @@
 --dt 60 --Np 300000 --profile A --run_id 50
 --dt 180 --Np 300000 --profile A --run_id 50
 --dt 360 --Np 300000 --profile A --run_id 50
---dt 2 --Np 3000000 --profile A --run_id 50
 --dt 2 --Np 300000 --profile A --run_id 50
 --dt 2 --Np 100000 --profile A --run_id 50
 --dt 2 --Np 30000 --profile A --run_id 50
@@ -1723,7 +1622,6 @@
 --dt 60 --Np 300000 --profile B --run_id 50
 --dt 180 --Np 300000 --profile B --run_id 50
 --dt 360 --Np 300000 --profile B --run_id 50
---dt 2 --Np 3000000 --profile B --run_id 50
 --dt 2 --Np 300000 --profile B --run_id 50
 --dt 2 --Np 100000 --profile B --run_id 50
 --dt 2 --Np 30000 --profile B --run_id 50
@@ -1740,7 +1638,6 @@
 --dt 60 --Np 300000 --profile A --run_id 51
 --dt 180 --Np 300000 --profile A --run_id 51
 --dt 360 --Np 300000 --profile A --run_id 51
---dt 2 --Np 3000000 --profile A --run_id 51
 --dt 2 --Np 300000 --profile A --run_id 51
 --dt 2 --Np 100000 --profile A --run_id 51
 --dt 2 --Np 30000 --profile A --run_id 51
@@ -1757,7 +1654,6 @@
 --dt 60 --Np 300000 --profile B --run_id 51
 --dt 180 --Np 300000 --profile B --run_id 51
 --dt 360 --Np 300000 --profile B --run_id 51
---dt 2 --Np 3000000 --profile B --run_id 51
 --dt 2 --Np 300000 --profile B --run_id 51
 --dt 2 --Np 100000 --profile B --run_id 51
 --dt 2 --Np 30000 --profile B --run_id 51
@@ -1774,7 +1670,6 @@
 --dt 60 --Np 300000 --profile A --run_id 52
 --dt 180 --Np 300000 --profile A --run_id 52
 --dt 360 --Np 300000 --profile A --run_id 52
---dt 2 --Np 3000000 --profile A --run_id 52
 --dt 2 --Np 300000 --profile A --run_id 52
 --dt 2 --Np 100000 --profile A --run_id 52
 --dt 2 --Np 30000 --profile A --run_id 52
@@ -1791,7 +1686,6 @@
 --dt 60 --Np 300000 --profile B --run_id 52
 --dt 180 --Np 300000 --profile B --run_id 52
 --dt 360 --Np 300000 --profile B --run_id 52
---dt 2 --Np 3000000 --profile B --run_id 52
 --dt 2 --Np 300000 --profile B --run_id 52
 --dt 2 --Np 100000 --profile B --run_id 52
 --dt 2 --Np 30000 --profile B --run_id 52
@@ -1808,7 +1702,6 @@
 --dt 60 --Np 300000 --profile A --run_id 53
 --dt 180 --Np 300000 --profile A --run_id 53
 --dt 360 --Np 300000 --profile A --run_id 53
---dt 2 --Np 3000000 --profile A --run_id 53
 --dt 2 --Np 300000 --profile A --run_id 53
 --dt 2 --Np 100000 --profile A --run_id 53
 --dt 2 --Np 30000 --profile A --run_id 53
@@ -1825,7 +1718,6 @@
 --dt 60 --Np 300000 --profile B --run_id 53
 --dt 180 --Np 300000 --profile B --run_id 53
 --dt 360 --Np 300000 --profile B --run_id 53
---dt 2 --Np 3000000 --profile B --run_id 53
 --dt 2 --Np 300000 --profile B --run_id 53
 --dt 2 --Np 100000 --profile B --run_id 53
 --dt 2 --Np 30000 --profile B --run_id 53
@@ -1842,7 +1734,6 @@
 --dt 60 --Np 300000 --profile A --run_id 54
 --dt 180 --Np 300000 --profile A --run_id 54
 --dt 360 --Np 300000 --profile A --run_id 54
---dt 2 --Np 3000000 --profile A --run_id 54
 --dt 2 --Np 300000 --profile A --run_id 54
 --dt 2 --Np 100000 --profile A --run_id 54
 --dt 2 --Np 30000 --profile A --run_id 54
@@ -1859,7 +1750,6 @@
 --dt 60 --Np 300000 --profile B --run_id 54
 --dt 180 --Np 300000 --profile B --run_id 54
 --dt 360 --Np 300000 --profile B --run_id 54
---dt 2 --Np 3000000 --profile B --run_id 54
 --dt 2 --Np 300000 --profile B --run_id 54
 --dt 2 --Np 100000 --profile B --run_id 54
 --dt 2 --Np 30000 --profile B --run_id 54
@@ -1876,7 +1766,6 @@
 --dt 60 --Np 300000 --profile A --run_id 55
 --dt 180 --Np 300000 --profile A --run_id 55
 --dt 360 --Np 300000 --profile A --run_id 55
---dt 2 --Np 3000000 --profile A --run_id 55
 --dt 2 --Np 300000 --profile A --run_id 55
 --dt 2 --Np 100000 --profile A --run_id 55
 --dt 2 --Np 30000 --profile A --run_id 55
@@ -1893,7 +1782,6 @@
 --dt 60 --Np 300000 --profile B --run_id 55
 --dt 180 --Np 300000 --profile B --run_id 55
 --dt 360 --Np 300000 --profile B --run_id 55
---dt 2 --Np 3000000 --profile B --run_id 55
 --dt 2 --Np 300000 --profile B --run_id 55
 --dt 2 --Np 100000 --profile B --run_id 55
 --dt 2 --Np 30000 --profile B --run_id 55
@@ -1910,7 +1798,6 @@
 --dt 60 --Np 300000 --profile A --run_id 56
 --dt 180 --Np 300000 --profile A --run_id 56
 --dt 360 --Np 300000 --profile A --run_id 56
---dt 2 --Np 3000000 --profile A --run_id 56
 --dt 2 --Np 300000 --profile A --run_id 56
 --dt 2 --Np 100000 --profile A --run_id 56
 --dt 2 --Np 30000 --profile A --run_id 56
@@ -1927,7 +1814,6 @@
 --dt 60 --Np 300000 --profile B --run_id 56
 --dt 180 --Np 300000 --profile B --run_id 56
 --dt 360 --Np 300000 --profile B --run_id 56
---dt 2 --Np 3000000 --profile B --run_id 56
 --dt 2 --Np 300000 --profile B --run_id 56
 --dt 2 --Np 100000 --profile B --run_id 56
 --dt 2 --Np 30000 --profile B --run_id 56
@@ -1944,7 +1830,6 @@
 --dt 60 --Np 300000 --profile A --run_id 57
 --dt 180 --Np 300000 --profile A --run_id 57
 --dt 360 --Np 300000 --profile A --run_id 57
---dt 2 --Np 3000000 --profile A --run_id 57
 --dt 2 --Np 300000 --profile A --run_id 57
 --dt 2 --Np 100000 --profile A --run_id 57
 --dt 2 --Np 30000 --profile A --run_id 57
@@ -1961,7 +1846,6 @@
 --dt 60 --Np 300000 --profile B --run_id 57
 --dt 180 --Np 300000 --profile B --run_id 57
 --dt 360 --Np 300000 --profile B --run_id 57
---dt 2 --Np 3000000 --profile B --run_id 57
 --dt 2 --Np 300000 --profile B --run_id 57
 --dt 2 --Np 100000 --profile B --run_id 57
 --dt 2 --Np 30000 --profile B --run_id 57
@@ -1978,7 +1862,6 @@
 --dt 60 --Np 300000 --profile A --run_id 58
 --dt 180 --Np 300000 --profile A --run_id 58
 --dt 360 --Np 300000 --profile A --run_id 58
---dt 2 --Np 3000000 --profile A --run_id 58
 --dt 2 --Np 300000 --profile A --run_id 58
 --dt 2 --Np 100000 --profile A --run_id 58
 --dt 2 --Np 30000 --profile A --run_id 58
@@ -1995,7 +1878,6 @@
 --dt 60 --Np 300000 --profile B --run_id 58
 --dt 180 --Np 300000 --profile B --run_id 58
 --dt 360 --Np 300000 --profile B --run_id 58
---dt 2 --Np 3000000 --profile B --run_id 58
 --dt 2 --Np 300000 --profile B --run_id 58
 --dt 2 --Np 100000 --profile B --run_id 58
 --dt 2 --Np 30000 --profile B --run_id 58
@@ -2012,7 +1894,6 @@
 --dt 60 --Np 300000 --profile A --run_id 59
 --dt 180 --Np 300000 --profile A --run_id 59
 --dt 360 --Np 300000 --profile A --run_id 59
---dt 2 --Np 3000000 --profile A --run_id 59
 --dt 2 --Np 300000 --profile A --run_id 59
 --dt 2 --Np 100000 --profile A --run_id 59
 --dt 2 --Np 30000 --profile A --run_id 59
@@ -2029,7 +1910,6 @@
 --dt 60 --Np 300000 --profile B --run_id 59
 --dt 180 --Np 300000 --profile B --run_id 59
 --dt 360 --Np 300000 --profile B --run_id 59
---dt 2 --Np 3000000 --profile B --run_id 59
 --dt 2 --Np 300000 --profile B --run_id 59
 --dt 2 --Np 100000 --profile B --run_id 59
 --dt 2 --Np 30000 --profile B --run_id 59
@@ -2046,7 +1926,6 @@
 --dt 60 --Np 300000 --profile A --run_id 60
 --dt 180 --Np 300000 --profile A --run_id 60
 --dt 360 --Np 300000 --profile A --run_id 60
---dt 2 --Np 3000000 --profile A --run_id 60
 --dt 2 --Np 300000 --profile A --run_id 60
 --dt 2 --Np 100000 --profile A --run_id 60
 --dt 2 --Np 30000 --profile A --run_id 60
@@ -2063,7 +1942,6 @@
 --dt 60 --Np 300000 --profile B --run_id 60
 --dt 180 --Np 300000 --profile B --run_id 60
 --dt 360 --Np 300000 --profile B --run_id 60
---dt 2 --Np 3000000 --profile B --run_id 60
 --dt 2 --Np 300000 --profile B --run_id 60
 --dt 2 --Np 100000 --profile B --run_id 60
 --dt 2 --Np 30000 --profile B --run_id 60
@@ -2080,7 +1958,6 @@
 --dt 60 --Np 300000 --profile A --run_id 61
 --dt 180 --Np 300000 --profile A --run_id 61
 --dt 360 --Np 300000 --profile A --run_id 61
---dt 2 --Np 3000000 --profile A --run_id 61
 --dt 2 --Np 300000 --profile A --run_id 61
 --dt 2 --Np 100000 --profile A --run_id 61
 --dt 2 --Np 30000 --profile A --run_id 61
@@ -2097,7 +1974,6 @@
 --dt 60 --Np 300000 --profile B --run_id 61
 --dt 180 --Np 300000 --profile B --run_id 61
 --dt 360 --Np 300000 --profile B --run_id 61
---dt 2 --Np 3000000 --profile B --run_id 61
 --dt 2 --Np 300000 --profile B --run_id 61
 --dt 2 --Np 100000 --profile B --run_id 61
 --dt 2 --Np 30000 --profile B --run_id 61
@@ -2114,7 +1990,6 @@
 --dt 60 --Np 300000 --profile A --run_id 62
 --dt 180 --Np 300000 --profile A --run_id 62
 --dt 360 --Np 300000 --profile A --run_id 62
---dt 2 --Np 3000000 --profile A --run_id 62
 --dt 2 --Np 300000 --profile A --run_id 62
 --dt 2 --Np 100000 --profile A --run_id 62
 --dt 2 --Np 30000 --profile A --run_id 62
@@ -2131,7 +2006,6 @@
 --dt 60 --Np 300000 --profile B --run_id 62
 --dt 180 --Np 300000 --profile B --run_id 62
 --dt 360 --Np 300000 --profile B --run_id 62
---dt 2 --Np 3000000 --profile B --run_id 62
 --dt 2 --Np 300000 --profile B --run_id 62
 --dt 2 --Np 100000 --profile B --run_id 62
 --dt 2 --Np 30000 --profile B --run_id 62
@@ -2148,7 +2022,6 @@
 --dt 60 --Np 300000 --profile A --run_id 63
 --dt 180 --Np 300000 --profile A --run_id 63
 --dt 360 --Np 300000 --profile A --run_id 63
---dt 2 --Np 3000000 --profile A --run_id 63
 --dt 2 --Np 300000 --profile A --run_id 63
 --dt 2 --Np 100000 --profile A --run_id 63
 --dt 2 --Np 30000 --profile A --run_id 63
@@ -2165,7 +2038,6 @@
 --dt 60 --Np 300000 --profile B --run_id 63
 --dt 180 --Np 300000 --profile B --run_id 63
 --dt 360 --Np 300000 --profile B --run_id 63
---dt 2 --Np 3000000 --profile B --run_id 63
 --dt 2 --Np 300000 --profile B --run_id 63
 --dt 2 --Np 100000 --profile B --run_id 63
 --dt 2 --Np 30000 --profile B --run_id 63
@@ -2182,7 +2054,6 @@
 --dt 60 --Np 300000 --profile A --run_id 64
 --dt 180 --Np 300000 --profile A --run_id 64
 --dt 360 --Np 300000 --profile A --run_id 64
---dt 2 --Np 3000000 --profile A --run_id 64
 --dt 2 --Np 300000 --profile A --run_id 64
 --dt 2 --Np 100000 --profile A --run_id 64
 --dt 2 --Np 30000 --profile A --run_id 64
@@ -2199,7 +2070,6 @@
 --dt 60 --Np 300000 --profile B --run_id 64
 --dt 180 --Np 300000 --profile B --run_id 64
 --dt 360 --Np 300000 --profile B --run_id 64
---dt 2 --Np 3000000 --profile B --run_id 64
 --dt 2 --Np 300000 --profile B --run_id 64
 --dt 2 --Np 100000 --profile B --run_id 64
 --dt 2 --Np 30000 --profile B --run_id 64
@@ -2216,7 +2086,6 @@
 --dt 60 --Np 300000 --profile A --run_id 65
 --dt 180 --Np 300000 --profile A --run_id 65
 --dt 360 --Np 300000 --profile A --run_id 65
---dt 2 --Np 3000000 --profile A --run_id 65
 --dt 2 --Np 300000 --profile A --run_id 65
 --dt 2 --Np 100000 --profile A --run_id 65
 --dt 2 --Np 30000 --profile A --run_id 65
@@ -2233,7 +2102,6 @@
 --dt 60 --Np 300000 --profile B --run_id 65
 --dt 180 --Np 300000 --profile B --run_id 65
 --dt 360 --Np 300000 --profile B --run_id 65
---dt 2 --Np 3000000 --profile B --run_id 65
 --dt 2 --Np 300000 --profile B --run_id 65
 --dt 2 --Np 100000 --profile B --run_id 65
 --dt 2 --Np 30000 --profile B --run_id 65
@@ -2250,7 +2118,6 @@
 --dt 60 --Np 300000 --profile A --run_id 66
 --dt 180 --Np 300000 --profile A --run_id 66
 --dt 360 --Np 300000 --profile A --run_id 66
---dt 2 --Np 3000000 --profile A --run_id 66
 --dt 2 --Np 300000 --profile A --run_id 66
 --dt 2 --Np 100000 --profile A --run_id 66
 --dt 2 --Np 30000 --profile A --run_id 66
@@ -2267,7 +2134,6 @@
 --dt 60 --Np 300000 --profile B --run_id 66
 --dt 180 --Np 300000 --profile B --run_id 66
 --dt 360 --Np 300000 --profile B --run_id 66
---dt 2 --Np 3000000 --profile B --run_id 66
 --dt 2 --Np 300000 --profile B --run_id 66
 --dt 2 --Np 100000 --profile B --run_id 66
 --dt 2 --Np 30000 --profile B --run_id 66
@@ -2284,7 +2150,6 @@
 --dt 60 --Np 300000 --profile A --run_id 67
 --dt 180 --Np 300000 --profile A --run_id 67
 --dt 360 --Np 300000 --profile A --run_id 67
---dt 2 --Np 3000000 --profile A --run_id 67
 --dt 2 --Np 300000 --profile A --run_id 67
 --dt 2 --Np 100000 --profile A --run_id 67
 --dt 2 --Np 30000 --profile A --run_id 67
@@ -2301,7 +2166,6 @@
 --dt 60 --Np 300000 --profile B --run_id 67
 --dt 180 --Np 300000 --profile B --run_id 67
 --dt 360 --Np 300000 --profile B --run_id 67
---dt 2 --Np 3000000 --profile B --run_id 67
 --dt 2 --Np 300000 --profile B --run_id 67
 --dt 2 --Np 100000 --profile B --run_id 67
 --dt 2 --Np 30000 --profile B --run_id 67
@@ -2318,7 +2182,6 @@
 --dt 60 --Np 300000 --profile A --run_id 68
 --dt 180 --Np 300000 --profile A --run_id 68
 --dt 360 --Np 300000 --profile A --run_id 68
---dt 2 --Np 3000000 --profile A --run_id 68
 --dt 2 --Np 300000 --profile A --run_id 68
 --dt 2 --Np 100000 --profile A --run_id 68
 --dt 2 --Np 30000 --profile A --run_id 68
@@ -2335,7 +2198,6 @@
 --dt 60 --Np 300000 --profile B --run_id 68
 --dt 180 --Np 300000 --profile B --run_id 68
 --dt 360 --Np 300000 --profile B --run_id 68
---dt 2 --Np 3000000 --profile B --run_id 68
 --dt 2 --Np 300000 --profile B --run_id 68
 --dt 2 --Np 100000 --profile B --run_id 68
 --dt 2 --Np 30000 --profile B --run_id 68
@@ -2352,7 +2214,6 @@
 --dt 60 --Np 300000 --profile A --run_id 69
 --dt 180 --Np 300000 --profile A --run_id 69
 --dt 360 --Np 300000 --profile A --run_id 69
---dt 2 --Np 3000000 --profile A --run_id 69
 --dt 2 --Np 300000 --profile A --run_id 69
 --dt 2 --Np 100000 --profile A --run_id 69
 --dt 2 --Np 30000 --profile A --run_id 69
@@ -2369,7 +2230,6 @@
 --dt 60 --Np 300000 --profile B --run_id 69
 --dt 180 --Np 300000 --profile B --run_id 69
 --dt 360 --Np 300000 --profile B --run_id 69
---dt 2 --Np 3000000 --profile B --run_id 69
 --dt 2 --Np 300000 --profile B --run_id 69
 --dt 2 --Np 100000 --profile B --run_id 69
 --dt 2 --Np 30000 --profile B --run_id 69
@@ -2386,7 +2246,6 @@
 --dt 60 --Np 300000 --profile A --run_id 70
 --dt 180 --Np 300000 --profile A --run_id 70
 --dt 360 --Np 300000 --profile A --run_id 70
---dt 2 --Np 3000000 --profile A --run_id 70
 --dt 2 --Np 300000 --profile A --run_id 70
 --dt 2 --Np 100000 --profile A --run_id 70
 --dt 2 --Np 30000 --profile A --run_id 70
@@ -2403,7 +2262,6 @@
 --dt 60 --Np 300000 --profile B --run_id 70
 --dt 180 --Np 300000 --profile B --run_id 70
 --dt 360 --Np 300000 --profile B --run_id 70
---dt 2 --Np 3000000 --profile B --run_id 70
 --dt 2 --Np 300000 --profile B --run_id 70
 --dt 2 --Np 100000 --profile B --run_id 70
 --dt 2 --Np 30000 --profile B --run_id 70
@@ -2420,7 +2278,6 @@
 --dt 60 --Np 300000 --profile A --run_id 71
 --dt 180 --Np 300000 --profile A --run_id 71
 --dt 360 --Np 300000 --profile A --run_id 71
---dt 2 --Np 3000000 --profile A --run_id 71
 --dt 2 --Np 300000 --profile A --run_id 71
 --dt 2 --Np 100000 --profile A --run_id 71
 --dt 2 --Np 30000 --profile A --run_id 71
@@ -2437,7 +2294,6 @@
 --dt 60 --Np 300000 --profile B --run_id 71
 --dt 180 --Np 300000 --profile B --run_id 71
 --dt 360 --Np 300000 --profile B --run_id 71
---dt 2 --Np 3000000 --profile B --run_id 71
 --dt 2 --Np 300000 --profile B --run_id 71
 --dt 2 --Np 100000 --profile B --run_id 71
 --dt 2 --Np 30000 --profile B --run_id 71
@@ -2454,7 +2310,6 @@
 --dt 60 --Np 300000 --profile A --run_id 72
 --dt 180 --Np 300000 --profile A --run_id 72
 --dt 360 --Np 300000 --profile A --run_id 72
---dt 2 --Np 3000000 --profile A --run_id 72
 --dt 2 --Np 300000 --profile A --run_id 72
 --dt 2 --Np 100000 --profile A --run_id 72
 --dt 2 --Np 30000 --profile A --run_id 72
@@ -2471,7 +2326,6 @@
 --dt 60 --Np 300000 --profile B --run_id 72
 --dt 180 --Np 300000 --profile B --run_id 72
 --dt 360 --Np 300000 --profile B --run_id 72
---dt 2 --Np 3000000 --profile B --run_id 72
 --dt 2 --Np 300000 --profile B --run_id 72
 --dt 2 --Np 100000 --profile B --run_id 72
 --dt 2 --Np 30000 --profile B --run_id 72
@@ -2488,7 +2342,6 @@
 --dt 60 --Np 300000 --profile A --run_id 73
 --dt 180 --Np 300000 --profile A --run_id 73
 --dt 360 --Np 300000 --profile A --run_id 73
---dt 2 --Np 3000000 --profile A --run_id 73
 --dt 2 --Np 300000 --profile A --run_id 73
 --dt 2 --Np 100000 --profile A --run_id 73
 --dt 2 --Np 30000 --profile A --run_id 73
@@ -2505,7 +2358,6 @@
 --dt 60 --Np 300000 --profile B --run_id 73
 --dt 180 --Np 300000 --profile B --run_id 73
 --dt 360 --Np 300000 --profile B --run_id 73
---dt 2 --Np 3000000 --profile B --run_id 73
 --dt 2 --Np 300000 --profile B --run_id 73
 --dt 2 --Np 100000 --profile B --run_id 73
 --dt 2 --Np 30000 --profile B --run_id 73
@@ -2522,7 +2374,6 @@
 --dt 60 --Np 300000 --profile A --run_id 74
 --dt 180 --Np 300000 --profile A --run_id 74
 --dt 360 --Np 300000 --profile A --run_id 74
---dt 2 --Np 3000000 --profile A --run_id 74
 --dt 2 --Np 300000 --profile A --run_id 74
 --dt 2 --Np 100000 --profile A --run_id 74
 --dt 2 --Np 30000 --profile A --run_id 74
@@ -2539,7 +2390,6 @@
 --dt 60 --Np 300000 --profile B --run_id 74
 --dt 180 --Np 300000 --profile B --run_id 74
 --dt 360 --Np 300000 --profile B --run_id 74
---dt 2 --Np 3000000 --profile B --run_id 74
 --dt 2 --Np 300000 --profile B --run_id 74
 --dt 2 --Np 100000 --profile B --run_id 74
 --dt 2 --Np 30000 --profile B --run_id 74
@@ -2556,7 +2406,6 @@
 --dt 60 --Np 300000 --profile A --run_id 75
 --dt 180 --Np 300000 --profile A --run_id 75
 --dt 360 --Np 300000 --profile A --run_id 75
---dt 2 --Np 3000000 --profile A --run_id 75
 --dt 2 --Np 300000 --profile A --run_id 75
 --dt 2 --Np 100000 --profile A --run_id 75
 --dt 2 --Np 30000 --profile A --run_id 75
@@ -2573,7 +2422,6 @@
 --dt 60 --Np 300000 --profile B --run_id 75
 --dt 180 --Np 300000 --profile B --run_id 75
 --dt 360 --Np 300000 --profile B --run_id 75
---dt 2 --Np 3000000 --profile B --run_id 75
 --dt 2 --Np 300000 --profile B --run_id 75
 --dt 2 --Np 100000 --profile B --run_id 75
 --dt 2 --Np 30000 --profile B --run_id 75
@@ -2590,7 +2438,6 @@
 --dt 60 --Np 300000 --profile A --run_id 76
 --dt 180 --Np 300000 --profile A --run_id 76
 --dt 360 --Np 300000 --profile A --run_id 76
---dt 2 --Np 3000000 --profile A --run_id 76
 --dt 2 --Np 300000 --profile A --run_id 76
 --dt 2 --Np 100000 --profile A --run_id 76
 --dt 2 --Np 30000 --profile A --run_id 76
@@ -2607,7 +2454,6 @@
 --dt 60 --Np 300000 --profile B --run_id 76
 --dt 180 --Np 300000 --profile B --run_id 76
 --dt 360 --Np 300000 --profile B --run_id 76
---dt 2 --Np 3000000 --profile B --run_id 76
 --dt 2 --Np 300000 --profile B --run_id 76
 --dt 2 --Np 100000 --profile B --run_id 76
 --dt 2 --Np 30000 --profile B --run_id 76
@@ -2624,7 +2470,6 @@
 --dt 60 --Np 300000 --profile A --run_id 77
 --dt 180 --Np 300000 --profile A --run_id 77
 --dt 360 --Np 300000 --profile A --run_id 77
---dt 2 --Np 3000000 --profile A --run_id 77
 --dt 2 --Np 300000 --profile A --run_id 77
 --dt 2 --Np 100000 --profile A --run_id 77
 --dt 2 --Np 30000 --profile A --run_id 77
@@ -2641,7 +2486,6 @@
 --dt 60 --Np 300000 --profile B --run_id 77
 --dt 180 --Np 300000 --profile B --run_id 77
 --dt 360 --Np 300000 --profile B --run_id 77
---dt 2 --Np 3000000 --profile B --run_id 77
 --dt 2 --Np 300000 --profile B --run_id 77
 --dt 2 --Np 100000 --profile B --run_id 77
 --dt 2 --Np 30000 --profile B --run_id 77
@@ -2658,7 +2502,6 @@
 --dt 60 --Np 300000 --profile A --run_id 78
 --dt 180 --Np 300000 --profile A --run_id 78
 --dt 360 --Np 300000 --profile A --run_id 78
---dt 2 --Np 3000000 --profile A --run_id 78
 --dt 2 --Np 300000 --profile A --run_id 78
 --dt 2 --Np 100000 --profile A --run_id 78
 --dt 2 --Np 30000 --profile A --run_id 78
@@ -2675,7 +2518,6 @@
 --dt 60 --Np 300000 --profile B --run_id 78
 --dt 180 --Np 300000 --profile B --run_id 78
 --dt 360 --Np 300000 --profile B --run_id 78
---dt 2 --Np 3000000 --profile B --run_id 78
 --dt 2 --Np 300000 --profile B --run_id 78
 --dt 2 --Np 100000 --profile B --run_id 78
 --dt 2 --Np 30000 --profile B --run_id 78
@@ -2692,7 +2534,6 @@
 --dt 60 --Np 300000 --profile A --run_id 79
 --dt 180 --Np 300000 --profile A --run_id 79
 --dt 360 --Np 300000 --profile A --run_id 79
---dt 2 --Np 3000000 --profile A --run_id 79
 --dt 2 --Np 300000 --profile A --run_id 79
 --dt 2 --Np 100000 --profile A --run_id 79
 --dt 2 --Np 30000 --profile A --run_id 79
@@ -2709,7 +2550,6 @@
 --dt 60 --Np 300000 --profile B --run_id 79
 --dt 180 --Np 300000 --profile B --run_id 79
 --dt 360 --Np 300000 --profile B --run_id 79
---dt 2 --Np 3000000 --profile B --run_id 79
 --dt 2 --Np 300000 --profile B --run_id 79
 --dt 2 --Np 100000 --profile B --run_id 79
 --dt 2 --Np 30000 --profile B --run_id 79
@@ -2726,7 +2566,6 @@
 --dt 60 --Np 300000 --profile A --run_id 80
 --dt 180 --Np 300000 --profile A --run_id 80
 --dt 360 --Np 300000 --profile A --run_id 80
---dt 2 --Np 3000000 --profile A --run_id 80
 --dt 2 --Np 300000 --profile A --run_id 80
 --dt 2 --Np 100000 --profile A --run_id 80
 --dt 2 --Np 30000 --profile A --run_id 80
@@ -2743,7 +2582,6 @@
 --dt 60 --Np 300000 --profile B --run_id 80
 --dt 180 --Np 300000 --profile B --run_id 80
 --dt 360 --Np 300000 --profile B --run_id 80
---dt 2 --Np 3000000 --profile B --run_id 80
 --dt 2 --Np 300000 --profile B --run_id 80
 --dt 2 --Np 100000 --profile B --run_id 80
 --dt 2 --Np 30000 --profile B --run_id 80
@@ -2760,7 +2598,6 @@
 --dt 60 --Np 300000 --profile A --run_id 81
 --dt 180 --Np 300000 --profile A --run_id 81
 --dt 360 --Np 300000 --profile A --run_id 81
---dt 2 --Np 3000000 --profile A --run_id 81
 --dt 2 --Np 300000 --profile A --run_id 81
 --dt 2 --Np 100000 --profile A --run_id 81
 --dt 2 --Np 30000 --profile A --run_id 81
@@ -2777,7 +2614,6 @@
 --dt 60 --Np 300000 --profile B --run_id 81
 --dt 180 --Np 300000 --profile B --run_id 81
 --dt 360 --Np 300000 --profile B --run_id 81
---dt 2 --Np 3000000 --profile B --run_id 81
 --dt 2 --Np 300000 --profile B --run_id 81
 --dt 2 --Np 100000 --profile B --run_id 81
 --dt 2 --Np 30000 --profile B --run_id 81
@@ -2794,7 +2630,6 @@
 --dt 60 --Np 300000 --profile A --run_id 82
 --dt 180 --Np 300000 --profile A --run_id 82
 --dt 360 --Np 300000 --profile A --run_id 82
---dt 2 --Np 3000000 --profile A --run_id 82
 --dt 2 --Np 300000 --profile A --run_id 82
 --dt 2 --Np 100000 --profile A --run_id 82
 --dt 2 --Np 30000 --profile A --run_id 82
@@ -2811,7 +2646,6 @@
 --dt 60 --Np 300000 --profile B --run_id 82
 --dt 180 --Np 300000 --profile B --run_id 82
 --dt 360 --Np 300000 --profile B --run_id 82
---dt 2 --Np 3000000 --profile B --run_id 82
 --dt 2 --Np 300000 --profile B --run_id 82
 --dt 2 --Np 100000 --profile B --run_id 82
 --dt 2 --Np 30000 --profile B --run_id 82
@@ -2828,7 +2662,6 @@
 --dt 60 --Np 300000 --profile A --run_id 83
 --dt 180 --Np 300000 --profile A --run_id 83
 --dt 360 --Np 300000 --profile A --run_id 83
---dt 2 --Np 3000000 --profile A --run_id 83
 --dt 2 --Np 300000 --profile A --run_id 83
 --dt 2 --Np 100000 --profile A --run_id 83
 --dt 2 --Np 30000 --profile A --run_id 83
@@ -2845,7 +2678,6 @@
 --dt 60 --Np 300000 --profile B --run_id 83
 --dt 180 --Np 300000 --profile B --run_id 83
 --dt 360 --Np 300000 --profile B --run_id 83
---dt 2 --Np 3000000 --profile B --run_id 83
 --dt 2 --Np 300000 --profile B --run_id 83
 --dt 2 --Np 100000 --profile B --run_id 83
 --dt 2 --Np 30000 --profile B --run_id 83
@@ -2862,7 +2694,6 @@
 --dt 60 --Np 300000 --profile A --run_id 84
 --dt 180 --Np 300000 --profile A --run_id 84
 --dt 360 --Np 300000 --profile A --run_id 84
---dt 2 --Np 3000000 --profile A --run_id 84
 --dt 2 --Np 300000 --profile A --run_id 84
 --dt 2 --Np 100000 --profile A --run_id 84
 --dt 2 --Np 30000 --profile A --run_id 84
@@ -2879,7 +2710,6 @@
 --dt 60 --Np 300000 --profile B --run_id 84
 --dt 180 --Np 300000 --profile B --run_id 84
 --dt 360 --Np 300000 --profile B --run_id 84
---dt 2 --Np 3000000 --profile B --run_id 84
 --dt 2 --Np 300000 --profile B --run_id 84
 --dt 2 --Np 100000 --profile B --run_id 84
 --dt 2 --Np 30000 --profile B --run_id 84
@@ -2896,7 +2726,6 @@
 --dt 60 --Np 300000 --profile A --run_id 85
 --dt 180 --Np 300000 --profile A --run_id 85
 --dt 360 --Np 300000 --profile A --run_id 85
---dt 2 --Np 3000000 --profile A --run_id 85
 --dt 2 --Np 300000 --profile A --run_id 85
 --dt 2 --Np 100000 --profile A --run_id 85
 --dt 2 --Np 30000 --profile A --run_id 85
@@ -2913,7 +2742,6 @@
 --dt 60 --Np 300000 --profile B --run_id 85
 --dt 180 --Np 300000 --profile B --run_id 85
 --dt 360 --Np 300000 --profile B --run_id 85
---dt 2 --Np 3000000 --profile B --run_id 85
 --dt 2 --Np 300000 --profile B --run_id 85
 --dt 2 --Np 100000 --profile B --run_id 85
 --dt 2 --Np 30000 --profile B --run_id 85
@@ -2930,7 +2758,6 @@
 --dt 60 --Np 300000 --profile A --run_id 86
 --dt 180 --Np 300000 --profile A --run_id 86
 --dt 360 --Np 300000 --profile A --run_id 86
---dt 2 --Np 3000000 --profile A --run_id 86
 --dt 2 --Np 300000 --profile A --run_id 86
 --dt 2 --Np 100000 --profile A --run_id 86
 --dt 2 --Np 30000 --profile A --run_id 86
@@ -2947,7 +2774,6 @@
 --dt 60 --Np 300000 --profile B --run_id 86
 --dt 180 --Np 300000 --profile B --run_id 86
 --dt 360 --Np 300000 --profile B --run_id 86
---dt 2 --Np 3000000 --profile B --run_id 86
 --dt 2 --Np 300000 --profile B --run_id 86
 --dt 2 --Np 100000 --profile B --run_id 86
 --dt 2 --Np 30000 --profile B --run_id 86
@@ -2964,7 +2790,6 @@
 --dt 60 --Np 300000 --profile A --run_id 87
 --dt 180 --Np 300000 --profile A --run_id 87
 --dt 360 --Np 300000 --profile A --run_id 87
---dt 2 --Np 3000000 --profile A --run_id 87
 --dt 2 --Np 300000 --profile A --run_id 87
 --dt 2 --Np 100000 --profile A --run_id 87
 --dt 2 --Np 30000 --profile A --run_id 87
@@ -2981,7 +2806,6 @@
 --dt 60 --Np 300000 --profile B --run_id 87
 --dt 180 --Np 300000 --profile B --run_id 87
 --dt 360 --Np 300000 --profile B --run_id 87
---dt 2 --Np 3000000 --profile B --run_id 87
 --dt 2 --Np 300000 --profile B --run_id 87
 --dt 2 --Np 100000 --profile B --run_id 87
 --dt 2 --Np 30000 --profile B --run_id 87
@@ -2998,7 +2822,6 @@
 --dt 60 --Np 300000 --profile A --run_id 88
 --dt 180 --Np 300000 --profile A --run_id 88
 --dt 360 --Np 300000 --profile A --run_id 88
---dt 2 --Np 3000000 --profile A --run_id 88
 --dt 2 --Np 300000 --profile A --run_id 88
 --dt 2 --Np 100000 --profile A --run_id 88
 --dt 2 --Np 30000 --profile A --run_id 88
@@ -3015,7 +2838,6 @@
 --dt 60 --Np 300000 --profile B --run_id 88
 --dt 180 --Np 300000 --profile B --run_id 88
 --dt 360 --Np 300000 --profile B --run_id 88
---dt 2 --Np 3000000 --profile B --run_id 88
 --dt 2 --Np 300000 --profile B --run_id 88
 --dt 2 --Np 100000 --profile B --run_id 88
 --dt 2 --Np 30000 --profile B --run_id 88
@@ -3032,7 +2854,6 @@
 --dt 60 --Np 300000 --profile A --run_id 89
 --dt 180 --Np 300000 --profile A --run_id 89
 --dt 360 --Np 300000 --profile A --run_id 89
---dt 2 --Np 3000000 --profile A --run_id 89
 --dt 2 --Np 300000 --profile A --run_id 89
 --dt 2 --Np 100000 --profile A --run_id 89
 --dt 2 --Np 30000 --profile A --run_id 89
@@ -3049,7 +2870,6 @@
 --dt 60 --Np 300000 --profile B --run_id 89
 --dt 180 --Np 300000 --profile B --run_id 89
 --dt 360 --Np 300000 --profile B --run_id 89
---dt 2 --Np 3000000 --profile B --run_id 89
 --dt 2 --Np 300000 --profile B --run_id 89
 --dt 2 --Np 100000 --profile B --run_id 89
 --dt 2 --Np 30000 --profile B --run_id 89
@@ -3066,7 +2886,6 @@
 --dt 60 --Np 300000 --profile A --run_id 90
 --dt 180 --Np 300000 --profile A --run_id 90
 --dt 360 --Np 300000 --profile A --run_id 90
---dt 2 --Np 3000000 --profile A --run_id 90
 --dt 2 --Np 300000 --profile A --run_id 90
 --dt 2 --Np 100000 --profile A --run_id 90
 --dt 2 --Np 30000 --profile A --run_id 90
@@ -3083,7 +2902,6 @@
 --dt 60 --Np 300000 --profile B --run_id 90
 --dt 180 --Np 300000 --profile B --run_id 90
 --dt 360 --Np 300000 --profile B --run_id 90
---dt 2 --Np 3000000 --profile B --run_id 90
 --dt 2 --Np 300000 --profile B --run_id 90
 --dt 2 --Np 100000 --profile B --run_id 90
 --dt 2 --Np 30000 --profile B --run_id 90
@@ -3100,7 +2918,6 @@
 --dt 60 --Np 300000 --profile A --run_id 91
 --dt 180 --Np 300000 --profile A --run_id 91
 --dt 360 --Np 300000 --profile A --run_id 91
---dt 2 --Np 3000000 --profile A --run_id 91
 --dt 2 --Np 300000 --profile A --run_id 91
 --dt 2 --Np 100000 --profile A --run_id 91
 --dt 2 --Np 30000 --profile A --run_id 91
@@ -3117,7 +2934,6 @@
 --dt 60 --Np 300000 --profile B --run_id 91
 --dt 180 --Np 300000 --profile B --run_id 91
 --dt 360 --Np 300000 --profile B --run_id 91
---dt 2 --Np 3000000 --profile B --run_id 91
 --dt 2 --Np 300000 --profile B --run_id 91
 --dt 2 --Np 100000 --profile B --run_id 91
 --dt 2 --Np 30000 --profile B --run_id 91
@@ -3134,7 +2950,6 @@
 --dt 60 --Np 300000 --profile A --run_id 92
 --dt 180 --Np 300000 --profile A --run_id 92
 --dt 360 --Np 300000 --profile A --run_id 92
---dt 2 --Np 3000000 --profile A --run_id 92
 --dt 2 --Np 300000 --profile A --run_id 92
 --dt 2 --Np 100000 --profile A --run_id 92
 --dt 2 --Np 30000 --profile A --run_id 92
@@ -3151,7 +2966,6 @@
 --dt 60 --Np 300000 --profile B --run_id 92
 --dt 180 --Np 300000 --profile B --run_id 92
 --dt 360 --Np 300000 --profile B --run_id 92
---dt 2 --Np 3000000 --profile B --run_id 92
 --dt 2 --Np 300000 --profile B --run_id 92
 --dt 2 --Np 100000 --profile B --run_id 92
 --dt 2 --Np 30000 --profile B --run_id 92
@@ -3168,7 +2982,6 @@
 --dt 60 --Np 300000 --profile A --run_id 93
 --dt 180 --Np 300000 --profile A --run_id 93
 --dt 360 --Np 300000 --profile A --run_id 93
---dt 2 --Np 3000000 --profile A --run_id 93
 --dt 2 --Np 300000 --profile A --run_id 93
 --dt 2 --Np 100000 --profile A --run_id 93
 --dt 2 --Np 30000 --profile A --run_id 93
@@ -3185,7 +2998,6 @@
 --dt 60 --Np 300000 --profile B --run_id 93
 --dt 180 --Np 300000 --profile B --run_id 93
 --dt 360 --Np 300000 --profile B --run_id 93
---dt 2 --Np 3000000 --profile B --run_id 93
 --dt 2 --Np 300000 --profile B --run_id 93
 --dt 2 --Np 100000 --profile B --run_id 93
 --dt 2 --Np 30000 --profile B --run_id 93
@@ -3202,7 +3014,6 @@
 --dt 60 --Np 300000 --profile A --run_id 94
 --dt 180 --Np 300000 --profile A --run_id 94
 --dt 360 --Np 300000 --profile A --run_id 94
---dt 2 --Np 3000000 --profile A --run_id 94
 --dt 2 --Np 300000 --profile A --run_id 94
 --dt 2 --Np 100000 --profile A --run_id 94
 --dt 2 --Np 30000 --profile A --run_id 94
@@ -3219,7 +3030,6 @@
 --dt 60 --Np 300000 --profile B --run_id 94
 --dt 180 --Np 300000 --profile B --run_id 94
 --dt 360 --Np 300000 --profile B --run_id 94
---dt 2 --Np 3000000 --profile B --run_id 94
 --dt 2 --Np 300000 --profile B --run_id 94
 --dt 2 --Np 100000 --profile B --run_id 94
 --dt 2 --Np 30000 --profile B --run_id 94
@@ -3236,7 +3046,6 @@
 --dt 60 --Np 300000 --profile A --run_id 95
 --dt 180 --Np 300000 --profile A --run_id 95
 --dt 360 --Np 300000 --profile A --run_id 95
---dt 2 --Np 3000000 --profile A --run_id 95
 --dt 2 --Np 300000 --profile A --run_id 95
 --dt 2 --Np 100000 --profile A --run_id 95
 --dt 2 --Np 30000 --profile A --run_id 95
@@ -3253,7 +3062,6 @@
 --dt 60 --Np 300000 --profile B --run_id 95
 --dt 180 --Np 300000 --profile B --run_id 95
 --dt 360 --Np 300000 --profile B --run_id 95
---dt 2 --Np 3000000 --profile B --run_id 95
 --dt 2 --Np 300000 --profile B --run_id 95
 --dt 2 --Np 100000 --profile B --run_id 95
 --dt 2 --Np 30000 --profile B --run_id 95
@@ -3270,7 +3078,6 @@
 --dt 60 --Np 300000 --profile A --run_id 96
 --dt 180 --Np 300000 --profile A --run_id 96
 --dt 360 --Np 300000 --profile A --run_id 96
---dt 2 --Np 3000000 --profile A --run_id 96
 --dt 2 --Np 300000 --profile A --run_id 96
 --dt 2 --Np 100000 --profile A --run_id 96
 --dt 2 --Np 30000 --profile A --run_id 96
@@ -3287,7 +3094,6 @@
 --dt 60 --Np 300000 --profile B --run_id 96
 --dt 180 --Np 300000 --profile B --run_id 96
 --dt 360 --Np 300000 --profile B --run_id 96
---dt 2 --Np 3000000 --profile B --run_id 96
 --dt 2 --Np 300000 --profile B --run_id 96
 --dt 2 --Np 100000 --profile B --run_id 96
 --dt 2 --Np 30000 --profile B --run_id 96
@@ -3304,7 +3110,6 @@
 --dt 60 --Np 300000 --profile A --run_id 97
 --dt 180 --Np 300000 --profile A --run_id 97
 --dt 360 --Np 300000 --profile A --run_id 97
---dt 2 --Np 3000000 --profile A --run_id 97
 --dt 2 --Np 300000 --profile A --run_id 97
 --dt 2 --Np 100000 --profile A --run_id 97
 --dt 2 --Np 30000 --profile A --run_id 97
@@ -3321,7 +3126,6 @@
 --dt 60 --Np 300000 --profile B --run_id 97
 --dt 180 --Np 300000 --profile B --run_id 97
 --dt 360 --Np 300000 --profile B --run_id 97
---dt 2 --Np 3000000 --profile B --run_id 97
 --dt 2 --Np 300000 --profile B --run_id 97
 --dt 2 --Np 100000 --profile B --run_id 97
 --dt 2 --Np 30000 --profile B --run_id 97
@@ -3338,7 +3142,6 @@
 --dt 60 --Np 300000 --profile A --run_id 98
 --dt 180 --Np 300000 --profile A --run_id 98
 --dt 360 --Np 300000 --profile A --run_id 98
---dt 2 --Np 3000000 --profile A --run_id 98
 --dt 2 --Np 300000 --profile A --run_id 98
 --dt 2 --Np 100000 --profile A --run_id 98
 --dt 2 --Np 30000 --profile A --run_id 98
@@ -3355,7 +3158,6 @@
 --dt 60 --Np 300000 --profile B --run_id 98
 --dt 180 --Np 300000 --profile B --run_id 98
 --dt 360 --Np 300000 --profile B --run_id 98
---dt 2 --Np 3000000 --profile B --run_id 98
 --dt 2 --Np 300000 --profile B --run_id 98
 --dt 2 --Np 100000 --profile B --run_id 98
 --dt 2 --Np 30000 --profile B --run_id 98
@@ -3372,7 +3174,6 @@
 --dt 60 --Np 300000 --profile A --run_id 99
 --dt 180 --Np 300000 --profile A --run_id 99
 --dt 360 --Np 300000 --profile A --run_id 99
---dt 2 --Np 3000000 --profile A --run_id 99
 --dt 2 --Np 300000 --profile A --run_id 99
 --dt 2 --Np 100000 --profile A --run_id 99
 --dt 2 --Np 30000 --profile A --run_id 99
@@ -3389,7 +3190,6 @@
 --dt 60 --Np 300000 --profile B --run_id 99
 --dt 180 --Np 300000 --profile B --run_id 99
 --dt 360 --Np 300000 --profile B --run_id 99
---dt 2 --Np 3000000 --profile B --run_id 99
 --dt 2 --Np 300000 --profile B --run_id 99
 --dt 2 --Np 100000 --profile B --run_id 99
 --dt 2 --Np 30000 --profile B --run_id 99
