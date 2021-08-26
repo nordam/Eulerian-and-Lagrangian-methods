@@ -67,7 +67,7 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
     for n in iterator(Nt):
 
         # print center of gravity, for debugging
-        print(f't = {n*dt}, mean(Z) = {np.mean(z)}')
+        print(f't = {n*dt}, mean(Z) = {np.mean(Z)}')
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
@@ -129,7 +129,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 1*3600
 
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)

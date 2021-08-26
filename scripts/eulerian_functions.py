@@ -547,6 +547,9 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     tic = time()
     for n in iterator(0, params.Nt):
 
+        Z_mean = np.sum(C_now*params.z_cell)*params.dz
+        print(f't = {n*params.dt} mean(Z) = {Z_mean}')
+
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)

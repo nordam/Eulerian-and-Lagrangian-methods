@@ -81,7 +81,7 @@ args = parser.parse_args()
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 1*3600
 
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)
