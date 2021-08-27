@@ -105,6 +105,8 @@ datafolder = '/work6/torn/EulerLagrange'
 #datafolder = '../debug/'
 outputfilename = os.path.join(datafolder, f'Case1_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
+print(params.speeds)
+sys.exit()
 
 tic = time.time()
 c = Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfilename = outputfilename)

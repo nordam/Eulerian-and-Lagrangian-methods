@@ -88,7 +88,7 @@ def rise_speed(d, rho):
     else:
         w1    = d**2 * g_ / (18*nu)
         w2    = np.sqrt(d*abs(g_)) * pref * (g_/np.abs(g_)) # Last bracket sets sign
-        return -w1*w2/(w1+w2)
+        return w1*w2/(w1+w2)
 
 
 ###########################

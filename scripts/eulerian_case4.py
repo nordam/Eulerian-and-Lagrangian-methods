@@ -118,7 +118,7 @@ def iterative_solver_case4(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args
     logger(f'Iterative solver finished with {n+1} iterations', args)
     return c_next
 
-#@profile
+
 def experiment_case4(C0, K, params, outputfilename, args):
 
     # Evaluate diffusivity function at cell faces
@@ -138,15 +138,16 @@ def experiment_case4(C0, K, params, outputfilename, args):
     # Array to hold one timestep, to avoid allocating too much memory
     C_now  = np.zeros_like(C0)
     C_now[:] = C0.copy()
-    # Array for output, store once every 900 seconds
+    # Array for output, store once every save_dt seconds
     N_skip = int(args.save_dt/params.dt)
     N_out = 1 + int(params.Nt / N_skip)
     C_out = np.zeros((N_out, NK, NJ)) - 999
 
     # Use trange (progress bar) if instructed
-    iterator = range
     if args.progress:
         iterator = trange
+    else:
+        iterator = range
 
     tic = time()
     for n in iterator(0, params.Nt):
@@ -164,7 +165,7 @@ def experiment_case4(C0, K, params, outputfilename, args):
         C_now = iterative_solver_case4(params, C_now, L_AD,  R_AD, K_vec, v_minus, v_plus, args)
 
         # Estimate remaining time
-        if n > 1:
+        if n >= 1:
             toc = time()
             ETA = ((toc - tic) / n) * (params.Nt - n)
             logger(f'ETA = {ETA:.4f}', args)
