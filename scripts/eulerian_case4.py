@@ -37,7 +37,7 @@ def iterative_solver_case4(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args
 
     # Set up coagulation reaction matrices
     L_Co, R_Co = setup_coagulation_matrices(params, c_now)
-    R = add_sparse(R_Co, R_AD, R_FL)
+    R = add_sparse(R_Co, R_AD, R_FL, overwrite = True)
 
     # Calculate right-hand side (does not change with iterations)
     RHS = (R).dot(c_now.flatten())
@@ -52,7 +52,7 @@ def iterative_solver_case4(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args
     for n in range(maxiter):
 
         # Add together matrices on left-hand side
-        L = add_sparse(L_Co, L_AD)
+        L = add_sparse(L_Co, L_AD, overwrite = True)
         if n == 0:
             # Create preconditioner only at first iteration, since it is anyway only an
             # approximate inverse of L. This can save a lot of time.

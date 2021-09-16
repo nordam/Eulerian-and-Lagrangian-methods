@@ -358,9 +358,11 @@ def setup_coagulation_matrices(params, C_now, return_both = True):
     else:
         return Lr
 
-def add_sparse(*matrices):
-    #result = matrices[0].copy()
-    result = matrices[0]
+def add_sparse(*matrices, overwrite = False):
+    if overwrite:
+        result = matrices[0]
+    else:
+        result = matrices[0].copy()
     if len(matrices) > 1:
         for m in matrices[1:]:
             assert type(m) == dia_matrix
