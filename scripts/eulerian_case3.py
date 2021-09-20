@@ -18,7 +18,7 @@ from particlefunctions import CONST, rise_speed
 from wavefunctions import jonswap
 from eulerian_functions import *
 from webernaturaldispersion import weber_natural_dispersion
-from logger import logger
+from logger import eulerian_logger as logger
 
 
 ############################################
@@ -37,7 +37,7 @@ def iterative_solver_case3(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args
     L_FL, R_FL = setup_FL_matrices(params, v_minus, v_plus, c_now)
 
     # Calculate right-hand side (does not change with iterations)
-    R = add_sparse(R_AD, R_FL)
+    R = add_sparse(R_FL, R_AD, overwrite = False)
     RHS = (R).dot(c_now.flatten())
 
     # Calculate reaction term for entrainment
@@ -83,8 +83,7 @@ def iterative_solver_case3(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args
         # Copy concentration
         c_now[:] = c_next.copy()
 
-    print(f'[{datetime.datetime.now()}] dt = {params.dt}, NK = {params.Nclasses}, NJ = {params.Nz}, iterations = {n}')
-    sys.stdout.flush()
+    logger(f'iterations = {n}', args)
     return c_next
 
 def experiment_case3(C0, K, params, outputfilename, args):
@@ -121,7 +120,7 @@ def experiment_case3(C0, K, params, outputfilename, args):
     for n in iterator(0, params.Nt):
 
         Z_mean = np.sum(C_now*params.z_cell)*params.dz
-        print(f't = {n*params.dt} mean(Z) = {Z_mean}')
+        print(f'{n*args.dt}, {Z_mean}')
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
@@ -216,7 +215,7 @@ if args.statusfilename is not None:
 
 # Consistency check of arguments
 if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
-    print('dt does not evenly divide save_dt, output times will not be as expected')
+    logger('dt does not evenly divide save_dt, output times will not be as expected', args, error = True)
     sys.exit()
 
 ########################################
@@ -227,7 +226,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 1*3600
+Tmax = 12*3600
 
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)
@@ -322,15 +321,13 @@ datafolder = '/work6/torn/EulerLagrange'
 datafolder = '../tmp_results'
 outputfilename = os.path.join(datafolder, f'Case3_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
-print(params.speeds)
-sys.exit()
 
 if (not os.path.exists(outputfilename)) or args.overwrite:
     tic = time()
     c = experiment_case3(C0, K, params, outputfilename, args)
     toc = time()
-    logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}', args, error = True)
     np.save(outputfilename, c)
+    logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}', args, error = True)
 else:
     logger(f'File exists, skipping: {outputfilename}', args, error = True)
 
