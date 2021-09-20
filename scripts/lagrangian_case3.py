@@ -16,7 +16,8 @@ from numba import jit
 import sys
 sys.path.append('.')
 from particlefunctions import *
-from wavefunctions import *
+from wavefunctions import jonswap
+from webernaturaldispersion import weber_natural_dispersion
 from logger import lagrangian_logger as logger
 
 
@@ -56,6 +57,8 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
     Z = Z0.copy()
     D = D0.copy()
     V = rise_speed(D, rho)
+
+    np.save('V.npy', V)
 
     # Use trange (progress bar) if instructed
     iterator = range

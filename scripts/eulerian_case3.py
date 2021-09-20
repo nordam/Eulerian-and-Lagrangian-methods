@@ -250,6 +250,8 @@ gamma = entrainmentrate(windspeed, Tp, Hs, rho, ift)
 sigma = 0.4 * np.log(10)
 D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
 D50v  = np.exp(np.log(D50n) + 3*sigma**2)
+
+
 # bin edges
 speed_class_edges = np.logspace(-6, 0, args.NK+1)
 fractionator = Fractionator(speed_class_edges, rho)
@@ -258,6 +260,9 @@ speeds = -fractionator.speeds
 mass_fractions = fractionator.evaluate(D50v, sigma)
 # Normalise mass fractions
 mass_fractions = mass_fractions / np.sum(mass_fractions)
+
+np.save('speeds_E.npy', speeds)
+np.save('fractions_E.npy', mass_fractions)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
