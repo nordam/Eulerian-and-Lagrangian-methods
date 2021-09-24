@@ -52,13 +52,12 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
     N_out = 1 + int(Nt / N_skip)
     # Array to store output
     Z_out = np.zeros((N_out, Np)) - 999
+    V_out = np.zeros((N_out, Np)) - 999
 
     # Arrays for z-position (depth) and droplet size
     Z = Z0.copy()
     D = D0.copy()
     V = rise_speed(D, rho)
-
-    np.save('V.npy', V)
 
     # Use trange (progress bar) if instructed
     iterator = range
@@ -71,17 +70,18 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
     for n in iterator(Nt):
 
         # print center of gravity, for debugging
-        print(f'{n*dt}, {np.mean(Z)}')
+        #print(f'{n*dt}, {np.mean(Z)}')
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
             Z_out[i,:len(Z)] = Z
+            V_out[i,:len(V)] = V
 
         # Random displacement
         Z = randomstep(K, Z, t, dt)
         # Reflect from surface
-        Z = reflect(Z)
+        Z = reflect(Z, zmax = 50)
         # Rise due to buoyancy
         Z = advect(Z, -V, dt)
 
@@ -100,7 +100,12 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
 
         # Increment time
         t = dt*n
-    return Z_out
+
+    # Store output also after final step
+    Z_out[-1,:len(Z)] = Z
+    V_out[-1,:len(V)] = V
+
+    return Z_out, V_out
 
 ##############################
 #### Numerical parameters ####
@@ -137,7 +142,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 2*3600
 
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)
@@ -180,6 +185,8 @@ D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
 D50v  = np.exp(np.log(D50n) + 3*sigma**2)
 D0  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = args.Np)
 
+Z0 = np.array([], dtype = np.float64)
+D0 = np.array([], dtype = np.float64)
 
 ##############################
 #### Diffusivity profiles ####
