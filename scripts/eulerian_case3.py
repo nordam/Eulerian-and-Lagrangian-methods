@@ -182,7 +182,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 2*3600
+Tmax = 12*3600
 
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)
@@ -274,7 +274,7 @@ else:
 
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
-C0 = np.zeros_like(C0)
+#C0 = np.zeros_like(C0)
 
 datafolder = '/work6/torn/EulerLagrange'
 datafolder = '../tmp_results'

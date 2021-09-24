@@ -142,7 +142,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 2*3600
+Tmax = 12*3600
 
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)
@@ -185,8 +185,8 @@ D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
 D50v  = np.exp(np.log(D50n) + 3*sigma**2)
 D0  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = args.Np)
 
-Z0 = np.array([], dtype = np.float64)
-D0 = np.array([], dtype = np.float64)
+#Z0 = np.array([], dtype = np.float64)
+#D0 = np.array([], dtype = np.float64)
 
 ##############################
 #### Diffusivity profiles ####
@@ -221,9 +221,10 @@ outputfilename = os.path.join(datafolder, f'Case3_K_{label}_lagrangian_Nparticle
 
 if (not os.path.exists(outputfilename)) or args.overwrite:
     tic = time.time()
-    Z_out = experiment_case3(Z0, D0, args.Np, Tmax, args.dt, args.save_dt, K, windspeed, h0, mu, ift, rho, correctstep, surfacing = True, entrainment = True, args = args)
+    Z_out, V_out = experiment_case3(Z0, D0, args.Np, Tmax, args.dt, args.save_dt, K, windspeed, h0, mu, ift, rho, correctstep, surfacing = True, entrainment = True, args = args)
     toc = time.time()
     np.save(outputfilename, Z_out)
+    np.save(outputfilename.replace('_Z_', '_V_'), V_out)
     logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}', args, error = True)
 
 else:
