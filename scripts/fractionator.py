@@ -16,7 +16,7 @@ class Fractionator():
     quasi-analytically from the log-normal distribution of sizes.
     '''
 
-    def __init__(self, speed_class_edges, rho, romberg = False, Nsub = 9):
+    def __init__(self, speed_class_edges, rho, romberg = True, Nsub = 2**5+1):
         '''
         Takes as input the bin edges for the speed classes.
         From this, the midpoints are calculated.
@@ -31,10 +31,10 @@ class Fractionator():
 
         # Use cubic splines to create numerical inverse
         # of rise speed function, to go from speed to size.
-        sizes   = np.logspace(-9, 2, 100000)
-        speeds  = rise_speed(sizes, rho)
+        sizes_tmp   = np.logspace(-9, 2, 100000)
+        speeds_tmp  = rise_speed(sizes_tmp, rho)
         # k gives degree, s=0 ensures no smoothing
-        inverse = UnivariateSpline(speeds, sizes, k=3, s=0)
+        inverse = UnivariateSpline(speeds_tmp, sizes_tmp, k=3, s=0)
 
         # Find bins in size distribution, from bins in speed distribution
         size_class_edges     = inverse(speed_class_edges)
@@ -48,10 +48,10 @@ class Fractionator():
             # Calculate the evaluation points here, and store for later use.
             # Note that romberg integration uses evaluations at the end points,
             # not at the midpoints, as is the case for a Riemann sum.
-            Nclasses = len(speed_class_edges)
-            evaluation_points = np.zeros((Nclasses-1, Nsub))
-            evaluation_widths = np.zeros( Nclasses-1 )
-            for i in range(Nclasses-1):
+            Nclasses = len(self.speeds)
+            evaluation_points = np.zeros((Nclasses, Nsub))
+            evaluation_widths = np.zeros( Nclasses )
+            for i in range(Nclasses):
                 evaluation_points[i,:] = np.linspace(size_class_edges[i], size_class_edges[i+1], Nsub)
                 evaluation_widths[i]   = evaluation_points[i,1] - evaluation_points[i,0]
 
@@ -62,10 +62,10 @@ class Fractionator():
             # by numerical integration (Riemann sum). Use a subdivision
             # of each class into Nsub intervals. Calculate the evaluation
             # points here, and store for later use.
-            Nclasses = len(speed_class_edges)
-            evaluation_points = np.zeros((Nclasses-1, Nsub))
-            evaluation_widths = np.zeros((Nclasses-1, Nsub))
-            for i in range(Nclasses-1):
+            Nclasses = len(self.speeds)
+            evaluation_points = np.zeros((Nclasses, Nsub))
+            evaluation_widths = np.zeros( Nclasses )
+            for i in range(Nclasses):
                 evaluation_point_edges = np.logspace(np.log10(size_class_edges[i]), np.log10(size_class_edges[i+1]), Nsub+1)
                 evaluation_points[i,:] = np.sqrt(evaluation_point_edges[1:]*evaluation_point_edges[:-1])
                 evaluation_widths[i,:] = evaluation_point_edges[1:] - evaluation_point_edges[:-1]

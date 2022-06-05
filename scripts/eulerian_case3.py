@@ -14,8 +14,10 @@ import sys
 sys.path.append('.')
 from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_advection_diffusion_reaction
 from fractionator import Fractionator
-from particlefunctions import CONST, rise_speed
-from wavefunctions import jonswap
+from particlefunctions import rise_speed
+from constants import CONST
+from wavefunctions import jonswap, Fbw
+from oilfunctions import entrainmentrate
 from eulerian_functions import *
 from webernaturaldispersion import weber_natural_dispersion
 from logger import eulerian_logger as logger
@@ -41,7 +43,9 @@ def iterative_solver_case3(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args
     RHS = (R).dot(c_now.flatten())
 
     # Calculate reaction term for entrainment
-    reaction_term_now = (0.5*params.dt*entrainment_reaction_term_function(params, c_now)).flatten()
+    #reaction_term_now = (0.5*params.dt*entrainment_reaction_term_function(params, c_now)).flatten()
+    reaction_term_now_tmp, fractions_now = entrainment_reaction_term_function(params, c_now)
+    reaction_term_now = (0.5*params.dt*reaction_term_now_tmp).flatten()
 
     # Max number of iterations
     maxiter = 50
@@ -53,7 +57,9 @@ def iterative_solver_case3(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args
     for n in range(maxiter):
 
         # Calculate reaction term for entrainment
-        reaction_term_next = (0.5*params.dt*entrainment_reaction_term_function(params, c_now)).flatten()
+        #reaction_term_next = (0.5*params.dt*entrainment_reaction_term_function(params, c_now)).flatten()
+        reaction_term_next_tmp, fractions_next = entrainment_reaction_term_function(params, c_now)
+        reaction_term_next = (0.5*params.dt*reaction_term_next_tmp).flatten()
 
         # In cases where the full left-hand matrix isn't diagonally dominant,
         # we cannot use the Thomas algorithm.
@@ -78,7 +84,6 @@ def iterative_solver_case3(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args
 
         # Recalculate the left-hand side flux-limiter matrix using new concentration estimate
         L_FL = setup_FL_matrices(params, v_minus, v_plus, c_next, return_both = False)
-        # Recalculate concentration-dependent coagulation matrix
 
         # Copy concentration
         c_now[:] = c_next.copy()
@@ -119,9 +124,6 @@ def experiment_case3(C0, K, params, outputfilename, args):
     tic = time()
     for n in iterator(0, params.Nt):
 
-        Z_mean = np.sum(C_now*params.z_cell)*params.dz / (np.sum(C_now)*params.dz)
-        print(f'{n*args.dt}, {Z_mean}')
-
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
@@ -143,52 +145,6 @@ def experiment_case3(C0, K, params, outputfilename, args):
     # Finally, store last timestep to output array
     C_out[-1,:,:] = C_now
     return C_out
-
-
-###########################################################
-#### Functions used once to calculate entrainment rate ####
-###########################################################
-
-def Fbw(windspeed, Tp):
-    '''
-    Fraction of breaking waves per second.
-    See Holthuijsen and Herbers (1986)
-    and Delvigne and Sweeney (1988) for details.
-
-    windspeed: windspeed (m/s)
-    Tp: wave period (s)
-    '''
-    if windspeed > 5:
-        return 0.032 * (windspeed - 5)/Tp
-    else:
-        return 0
-
-def entrainmentrate(windspeed, Tp, Hs, rho, ift):
-    '''
-    Entrainment rate (s**-1).
-    See Li et al. (2017) for details.
-
-    windspeed: windspeed (m/s)
-    Tp: wave period (s)
-    Hs: wave height (m)
-    rho: density of oil (kg/m**3)
-    ift: oil-water interfacial tension (N/m)
-    '''
-    # Physical constants
-    g = CONST.g         # Acceleration of gravity (m/s**2)
-    rho_w = CONST.rho_w # Density of seawater (kg/m**3)
-
-    # Model parameters (empirical constants from Li et al. (2017))
-    a = 4.604 * 1e-10
-    b = 1.805
-    c = -1.023
-    # Rayleigh-Taylor instability maximum diameter:
-    d0 = 4 * np.sqrt(ift / ((rho_w - rho)*g))
-    # Ohnesorge number
-    Oh = mu / np.sqrt(rho * ift * d0)
-    # Weber number
-    We = d0 * rho_w * g * Hs / ift
-    return a * (We**b) * (Oh**c) * Fbw(windspeed, Tp)
 
 
 ####################################
@@ -242,9 +198,9 @@ h0     = 3e-3
 ## Windspeed (m/s)
 windspeed = 9
 # Significant wave height and peak wave period
-Hs, Tp = jonswap(windspeed, fetch = 143233)
+Hs, Tp = jonswap(windspeed)
 # Entrainment rate
-gamma = entrainmentrate(windspeed, Tp, Hs, rho, ift)
+gamma = entrainmentrate(rho, mu, ift, Hs, Tp, windspeed)
 
 # Size distribution parameters
 sigma = 0.4 * np.log(10)
@@ -253,16 +209,13 @@ D50v  = np.exp(np.log(D50n) + 3*sigma**2)
 
 
 # bin edges
-speed_class_edges = np.logspace(-6, 0, args.NK+1)
+speed_class_edges = np.logspace(-10, 0, args.NK+1)
 fractionator = Fractionator(speed_class_edges, rho)
 speeds = -fractionator.speeds
 # Fractions
 mass_fractions = fractionator.evaluate(D50v, sigma)
 # Normalise mass fractions
 mass_fractions = mass_fractions / np.sum(mass_fractions)
-
-np.save('speeds_E.npy', speeds)
-np.save('fractions_E.npy', mass_fractions)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
@@ -321,6 +274,7 @@ else:
 
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
+#C0 = np.zeros_like(C0)
 
 datafolder = '/work6/torn/EulerLagrange'
 datafolder = '../tmp_results'

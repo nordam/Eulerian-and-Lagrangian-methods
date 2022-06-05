@@ -55,7 +55,7 @@ def waveheight(windspeed, fetch):
         waveheight = 0.0
     return waveheight
 
-def jonswap(windspeed, fetch = 170000):
+def jonswap(windspeed, fetch = 143233):
     '''
     Calculate wave height and wave period, from wind speed
     and fetch length. A large default fetch means assuming

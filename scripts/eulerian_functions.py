@@ -169,7 +169,7 @@ def entrainment_reaction_term_function(params, C):
         # Reaction term for the N_sub top cellss
         reaction_term[:,params.sub_cells] = params.gamma*surfaced_fraction*fractions/((params.N_sub*params.dz))
 
-    return reaction_term
+    return reaction_term, fractions[:,0]
 
 
 def velocity_vector_function(params):

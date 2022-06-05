@@ -8,16 +8,8 @@ import sys
 sys.path.append('.')
 from wavefunctions import *
 from webernaturaldispersion import weber_natural_dispersion
-
-
-############################
-#### Physical constants ####
-############################
-PhysicalConstants = namedtuple('PhysicalConstants', ('g', 'rho_w', 'nu'))
-CONST = PhysicalConstants(g=9.81,      # Acceleration due to gravity (m/s**2)
-                          rho_w=1025,  # Density of sea water (kg/m**3)
-                          nu=1.358e-6, # Kinematic viscosity of sea water (m**2/s)
-                         )
+from oilfunctions import entrainmentrate
+from constants import CONST
 
 
 ###############################
@@ -150,33 +142,6 @@ def settle(z, arr, zmax):
 #### Entrainment related functions ####
 #######################################
 
-def entrainmentrate(windspeed, Tp, Hs, mu, ift, rho):
-    '''
-    Entrainment rate (s**-1).
-    See Li et al. (2017) for details.
-
-    windspeed: windspeed (m/s)
-    Tp: wave period (s)
-    Hs: wave height (m)
-    rho: density of oil (kg/m**3)
-    ift: oil-water interfacial tension (N/m)
-    '''
-    # Physical constants
-    g = CONST.g         # Acceleration of gravity (m/s**2)
-    rho_w = CONST.rho_w # Density of seawater (kg/m**3)
-
-    # Model parameters (empirical constants from Li et al. (2017))
-    a = 4.604 * 1e-10
-    b = 1.805
-    c = -1.023
-    # Rayleigh-Taylor instability maximum diameter:
-    d0 = 4 * np.sqrt(ift / ((rho_w - rho)*g))
-    # Ohnesorge number
-    Oh = mu / np.sqrt(rho * ift * d0)
-    # Weber number
-    We = d0 * rho_w * g * Hs / ift
-    return a * (We**b) * (Oh**c) * Fbw(windspeed, Tp)
-
 
 def entrain(z, d, v, Np, dt, windspeed, h, mu, ift, rho):
     '''
@@ -212,7 +177,8 @@ def entrain(z, d, v, Np, dt, windspeed, h, mu, ift, rho):
     # Significant wave height and peak wave period
     Hs, Tp = jonswap(windspeed)
     # Calculate lifetime from entrainment rate
-    tau = 1/entrainmentrate(windspeed, Tp, Hs, mu, ift, rho)
+    tau = 1/entrainmentrate(rho, mu, ift, Hs, Tp, windspeed)
+
     # Probability for a droplet to be entrained
     p = 1 - np.exp(-dt/tau)
     R = np.random.random(Np - len(z))
@@ -220,7 +186,6 @@ def entrain(z, d, v, Np, dt, windspeed, h, mu, ift, rho):
     N = np.sum(R < p)
     # According to Delvigne & Sweeney (1988), droplets are distributed
     # in the interval (1.5 - 0.35)*Hs to (1.5 + 0.35)*Hs
-    znew = np.random.uniform(low = Hs*(1.5-0.35), high = Hs*(1.5+0.35), size = N)
     znew = np.random.uniform(low = 2, high = 3.2, size = N)
     # Assign new sizes from Johansen distribution
     sigma = 0.4 * np.log(10)
@@ -229,6 +194,9 @@ def entrain(z, d, v, Np, dt, windspeed, h, mu, ift, rho):
     D50v  = np.exp(np.log(D50n) + 3*sigma**2)
     dnew  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = N)
     vnew  = rise_speed(dnew, rho)
+    speed_class_edges = np.logspace(-6, 0, 33)
+    speed_class_centers = np.sqrt(speed_class_edges[:-1]*speed_class_edges[1:])
+    vnew = speed_class_centers[np.digitize(vnew, speed_class_edges)-1]
     # Append newly entrained droplets to existing arrays
     z = np.concatenate((z, znew))
     d = np.concatenate((d, dnew))

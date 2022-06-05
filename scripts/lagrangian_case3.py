@@ -69,10 +69,6 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
     t = 0
     for n in iterator(Nt):
 
-        # print center of gravity, for debugging
-        print(f'{n*dt}, {np.mean(Z)}')
-        #print(f'{n*dt}, {len(Z)}')
-
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
@@ -101,6 +97,14 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
 
         # Increment time
         t = dt*n
+<<<<<<< HEAD
+=======
+
+    # Store output also after final step
+    Z_out[-1,:len(Z)] = Z
+    V_out[-1,:len(V)] = V
+
+>>>>>>> e5943c268b0a023bf02889b5e45487b07c3cd6a5
     return Z_out, V_out
 
 ##############################
@@ -181,6 +185,8 @@ D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
 D50v  = np.exp(np.log(D50n) + 3*sigma**2)
 D0  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = args.Np)
 
+#Z0 = np.array([], dtype = np.float64)
+#D0 = np.array([], dtype = np.float64)
 
 ##############################
 #### Diffusivity profiles ####
