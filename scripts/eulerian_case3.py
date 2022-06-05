@@ -119,7 +119,7 @@ def experiment_case3(C0, K, params, outputfilename, args):
     tic = time()
     for n in iterator(0, params.Nt):
 
-        Z_mean = np.sum(C_now*params.z_cell)*params.dz
+        Z_mean = np.sum(C_now*params.z_cell)*params.dz / (np.sum(C_now)*params.dz)
         print(f'{n*args.dt}, {Z_mean}')
 
         # Store output once every N_skip steps

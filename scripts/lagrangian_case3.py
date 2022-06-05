@@ -52,13 +52,12 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
     N_out = 1 + int(Nt / N_skip)
     # Array to store output
     Z_out = np.zeros((N_out, Np)) - 999
+    V_out = np.zeros((N_out, Np)) - 999
 
     # Arrays for z-position (depth) and droplet size
     Z = Z0.copy()
     D = D0.copy()
     V = rise_speed(D, rho)
-
-    np.save('V.npy', V)
 
     # Use trange (progress bar) if instructed
     iterator = range
@@ -72,16 +71,18 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
 
         # print center of gravity, for debugging
         print(f'{n*dt}, {np.mean(Z)}')
+        #print(f'{n*dt}, {len(Z)}')
 
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
             Z_out[i,:len(Z)] = Z
+            V_out[i,:len(V)] = V
 
         # Random displacement
         Z = randomstep(K, Z, t, dt)
         # Reflect from surface
-        Z = reflect(Z)
+        Z = reflect(Z, zmax = 50)
         # Rise due to buoyancy
         Z = advect(Z, -V, dt)
 
@@ -100,7 +101,7 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
 
         # Increment time
         t = dt*n
-    return Z_out
+    return Z_out, V_out
 
 ##############################
 #### Numerical parameters ####
@@ -214,9 +215,10 @@ outputfilename = os.path.join(datafolder, f'Case3_K_{label}_lagrangian_Nparticle
 
 if (not os.path.exists(outputfilename)) or args.overwrite:
     tic = time.time()
-    Z_out = experiment_case3(Z0, D0, args.Np, Tmax, args.dt, args.save_dt, K, windspeed, h0, mu, ift, rho, correctstep, surfacing = True, entrainment = True, args = args)
+    Z_out, V_out = experiment_case3(Z0, D0, args.Np, Tmax, args.dt, args.save_dt, K, windspeed, h0, mu, ift, rho, correctstep, surfacing = True, entrainment = True, args = args)
     toc = time.time()
     np.save(outputfilename, Z_out)
+    np.save(outputfilename.replace('_Z_', '_V_'), V_out)
     logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}', args, error = True)
 
 else:
