@@ -16,7 +16,7 @@ from numba import jit
 import sys
 sys.path.append('.')
 from particlefunctions import *
-
+from logger import lagrangian_logger as logger
 
 ###########################################
 #### Main function to run a simulation ####
@@ -80,19 +80,25 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = 
 ##############################
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = int, default = 10, help = 'Timestep')
-parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 720, help = 'Interval at which to save results')
+parser.add_argument('--dt', dest = 'dt', type = float, default = 10, help = 'Timestep')
+parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 300, help = 'Interval at which to save results')
 parser.add_argument('--Np', dest = 'Np', type = int, default = 100000, help = 'Number of particles')
 parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help = 'Run ID (used to differentiate runs when saving')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
+parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')
-#parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
+parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
+parser.add_argument('-v', '--verbose', dest = 'verbose', action = 'store_true', help = 'Produce lots of status updates?')
+parser.add_argument('--statusfile', dest = 'statusfilename', default = None, help = 'Filename to write log messages to')
 args = parser.parse_args()
 
 
 
-# Consistency check of arguments
+# Open file for writing statusmessages if required
+if args.statusfilename is not None:
+    args.statusfile = open(args.statusfilename, 'w')
 
+# Consistency check of arguments
 if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
     print('dt does not evenly divide save_dt, output times will not be as expected')
     sys.exit()
@@ -106,7 +112,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 6*3600
+Tmax = 1*3600
 
 
 ############################
@@ -162,13 +168,16 @@ else:
     K = K_B
     label = 'B'
 
-#datafolder = '../results/'
-datafolder = '/work6/torn/EulerLagrange/'
+datafolder = '../results/'
+#datafolder = '/work6/torn/EulerLagrange/'
+outputfilename_Z = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
 
-tic = time.time()
-Z_out = experiment_case2(Z0, V0, args.Np, Zmax, Tmax, args.dt, args.save_dt, K, correctstep, args)
-toc = time.time()
-print(f'Simulation took {toc - tic:.1f} seconds, Case 2, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}, profile = {label}')
+if (not os.path.exists(outputfilename_Z)) or args.overwrite:
+    tic = time.time()
+    Z_out = experiment_case2(Z0, V0, args.Np, Zmax, Tmax, args.dt, args.save_dt, K, correctstep, args)
+    toc = time.time()
+    logger(f'Simulation took {toc - tic:.1f} seconds, Case 2, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}, profile = {label}', args, error=True)
+    np.savez_compressed(outputfilename_Z, Z=Z_out)
+else:
+    logger(f'File exists, skipping: {outputfilename_Z}', args, error = True)
 
-outputfilename = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
-np.save(outputfilename, Z_out)

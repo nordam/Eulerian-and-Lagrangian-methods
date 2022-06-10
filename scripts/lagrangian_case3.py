@@ -69,9 +69,6 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
     t = 0
     for n in iterator(Nt):
 
-        # print center of gravity, for debugging
-        #print(f'{n*dt}, {np.mean(Z)}')
-
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
@@ -100,11 +97,14 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
 
         # Increment time
         t = dt*n
+<<<<<<< HEAD
+=======
 
     # Store output also after final step
     Z_out[-1,:len(Z)] = Z
     V_out[-1,:len(V)] = V
 
+>>>>>>> e5943c268b0a023bf02889b5e45487b07c3cd6a5
     return Z_out, V_out
 
 ##############################

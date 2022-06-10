@@ -134,7 +134,7 @@ def experiment_case4(Z0, D0, Np, Zmax, Tmax, dt, save_dt, K, rho, randomstep, Nb
 ##############################
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = int, default = 10, help = 'Timestep')
+parser.add_argument('--dt', dest = 'dt', type = float, default = 10, help = 'Timestep')
 parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 1800, help = 'Interval at which to save results')
 parser.add_argument('--Np', dest = 'Np', type = int, default = 10000, help = 'Number of particles')
 parser.add_argument('--Nbins', dest = 'Nbins', type = int, default = 51, help = 'Number of bins to use in flocculation')
