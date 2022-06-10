@@ -11,6 +11,7 @@ from webernaturaldispersion import weber_natural_dispersion
 from oilfunctions import entrainmentrate
 from constants import CONST
 
+from numba import njit
 
 ###############################
 #### Numerical derivatives ####
@@ -57,6 +58,7 @@ def correctstep(K, z, t, dt):
 #### Rise speed ####
 ####################
 
+@njit
 def rise_speed(d, rho):
     '''
     Calculate the rise speed (m/s) of a droplet due to buoyancy.
@@ -75,7 +77,7 @@ def rise_speed(d, rho):
     rho_w = CONST.rho_w # Density of seawater (kg/m**3)
     g = CONST.g         # Acceleration of gravity (m/s**2)
 
-    g_    = g*(rho_w - rho) / rho_w
+    g_    = g*(rho - rho_w) / rho_w
     if g_ == 0.0:
         return 0.0*d
     else:
