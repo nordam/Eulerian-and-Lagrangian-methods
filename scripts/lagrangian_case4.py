@@ -240,6 +240,9 @@ else:
     label = 'B'
 
 datafolder = '../results/'
+if not os.path.exists(datafolder):
+    print(f'Creating result folder: {datafolder}')
+    os.mkdir(datafolder)
 
 outputfilename_Z = os.path.join(datafolder, f'Case4_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
 outputfilename_D = os.path.join(datafolder, f'Case4_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_D_{args.run_id:04}.npy')
