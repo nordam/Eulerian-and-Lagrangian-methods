@@ -18,6 +18,10 @@ sys.path.append('.')
 from particlefunctions import *
 from logger import lagrangian_logger as logger
 
+# Function to generate random speed distribution for microplastics
+from case2_speed_generator import draw_random_speeds
+
+
 ###########################################
 #### Main function to run a simulation ####
 ###########################################
@@ -119,15 +123,8 @@ Tmax = 1*3600
 #### Initial conditions ####
 ############################
 
-Np = args.Np
-i  = args.run_id
-# Rising/settling speeds, read from files
-Nfibres = int(Np * 0.485 / (0.485 + 0.465))
-Nnonfibres = Np - Nfibres
-V0 = np.zeros(Np)
-V0[:Nfibres] = np.random.choice(np.load(f'../data/speeds_fibre_{i:04}.npy'), size = Nfibres)
-V0[Nfibres:] = np.random.choice(np.load(f'../data/speeds_nonfibre_{i:04}.npy'), size = Nnonfibres)
-
+# Rising/settling speeds, generated randomly
+V0 = draw_random_speeds(args.Np)
 
 # Initial condition:
 # Normal distribution with mean mu and standard deviation sigma
@@ -170,14 +167,15 @@ else:
 
 datafolder = '../results/'
 #datafolder = '/work6/torn/EulerLagrange/'
-outputfilename_Z = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
+outputfilename_Z = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}')
 
 if (not os.path.exists(outputfilename_Z)) or args.overwrite:
     tic = time.time()
     Z_out = experiment_case2(Z0, V0, args.Np, Zmax, Tmax, args.dt, args.save_dt, K, correctstep, args)
     toc = time.time()
     logger(f'Simulation took {toc - tic:.1f} seconds, Case 2, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}, profile = {label}', args, error=True)
-    np.savez_compressed(outputfilename_Z, Z=Z_out)
+    #np.savez_compressed(outputfilename_Z, Z=Z_out)
+    np.save(outputfilename_Z, Z_out)
 else:
     logger(f'File exists, skipping: {outputfilename_Z}', args, error = True)
 

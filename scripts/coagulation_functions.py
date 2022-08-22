@@ -32,7 +32,8 @@ def beta_DS(r1, r2, v1, v2):
 
 @njit
 def kernel(r1, r2, v1, v2):
-    return beta_BM(r1,r2,v1,v2) + beta_TS(r1,r2,v1,v2) + beta_DS(r1,r2,v1,v2)
+    return 1.0
+    # return beta_BM(r1,r2,v1,v2) + beta_TS(r1,r2,v1,v2) + beta_DS(r1,r2,v1,v2)
 
 @njit
 def coagulation_rate_prefactor(r1, r2, v1, v2, alpha=1):

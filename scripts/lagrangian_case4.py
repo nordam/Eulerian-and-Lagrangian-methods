@@ -120,6 +120,7 @@ def experiment_case4(Z0, D0, Np, Zmax, Tmax, dt, save_dt, K, rho, randomstep, Nb
     t = 0
     for n in iterator(Nt):
 
+        print(np.mean(D))
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
@@ -133,10 +134,10 @@ def experiment_case4(Z0, D0, Np, Zmax, Tmax, dt, save_dt, K, rho, randomstep, Nb
         # Reflect from surface and sea floor
         Z = reflect(Z, zmax = Zmax)
         # Rise or sink due to buoyancy
-        V = rise_speed(2*D, rho)
-        Z = advect(Z, V, dt)
+        #V = rise_speed(2*D, rho)
+        #Z = advect(Z, V, dt)
         # Settle onto seabed
-        Z, D = settle(Z, D, Zmax)
+        #Z, D = settle(Z, D, Zmax)
         # Increment time
         t = dt*i
     return Z_out, D_out, count1, count2
@@ -147,9 +148,9 @@ def experiment_case4(Z0, D0, Np, Zmax, Tmax, dt, save_dt, K, rho, randomstep, Nb
 ##############################
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = float, default = 10, help = 'Timestep')
+parser.add_argument('--dt', dest = 'dt', type = float, default = 60, help = 'Timestep')
 parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 1800, help = 'Interval at which to save results')
-parser.add_argument('--tmax', dest = 'Tmax', type = int, default = 48*3600, help = 'Simulation time')
+parser.add_argument('--tmax', dest = 'Tmax', type = int, default = 6*3600, help = 'Simulation time')
 parser.add_argument('--Np', dest = 'Np', type = int, default = 50000, help = 'Number of particles')
 parser.add_argument('--alpha', dest = 'alpha', type = float, default = 1.0, help = 'Sticking probability')
 parser.add_argument('--Nbins', dest = 'Nbins', type = int, default = 51, help = 'Number of bins to use in flocculation')
@@ -209,8 +210,7 @@ while np.any(mask):
 
 # Size distribution
 D0  = size_distribution.rvs(size = args.Np)
-D0[:int(args.Np / 15)] = 1.08044e-8
-#D0[:] = 1.08044e-8
+D0[:] = 1.e-6
 #D0 = 1.08044e-8*np.ones(args.Np)
 
 ##############################

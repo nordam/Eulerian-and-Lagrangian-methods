@@ -15,6 +15,9 @@ import sys
 sys.path.append('.')
 from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_advection_diffusion_reaction
 
+# Function to generate random speed distribution for microplastics
+from case2_speed_generator import draw_random_speeds
+
 
 ####################################
 ####   Command line arguments   ####
@@ -65,8 +68,8 @@ else:
         counts = np.zeros(len(bins)-1)
 
     elif bin_spacing == 'logarithmic':
-        bins_positive = np.logspace(-4, np.log10(0.3), 3*int(Nclasses/4) + 1)
-        bins_negative = np.logspace(-4, np.log10(0.1), 1*int(Nclasses/4) + 1)
+        bins_positive = np.logspace(-7, np.log10(0.2), 3*int(Nclasses/4) + 1)
+        bins_negative = np.logspace(-7, np.log10(0.075), 1*int(Nclasses/4) + 1)
 
         mids_positive =    np.sqrt(bins_positive[1:]*bins_positive[:-1])
         mids_negative = -( np.sqrt(bins_negative[1:]*bins_negative[:-1]) )[::-1]
@@ -82,12 +85,11 @@ else:
         sys.exit()
 
     #for filename in tqdm(glob('speeds_nonfibre_*.npy')[:100]):
-    for i in range(500):
-        speeds_fibre = np.load(f'../data/speeds_fibre_{i:04}.npy')
-        speeds_nonfibre = np.load(f'../data/speeds_nonfibre_{i:04}.npy')
-        cf, _ = np.histogram(speeds_fibre, bins = bins)
-        cnf, _ = np.histogram(speeds_nonfibre, bins = bins)
-        counts += cf*0.485 + cnf*0.465
+    print('Generating random speeds...')
+    for i in trange(100):
+        # 100 times 10,000,000 speeds, total 1 billion
+        v = draw_random_speeds(10000000)
+        counts += np.histogram(v, bins=bins)[0]
 
     # Normalised mass fractions
     mass_fractions = counts / np.sum(counts)
