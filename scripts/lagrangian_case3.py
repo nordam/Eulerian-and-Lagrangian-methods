@@ -80,7 +80,7 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
         # Reflect from surface
         Z = reflect(Z, zmax = 50)
         # Rise due to buoyancy
-        Z = advect(Z, -V, dt)
+        Z = advect(Z, V, dt)
 
         if surfacing:
             # Remove surfaced (applies to depth, size and velocity arrays)
@@ -97,14 +97,11 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
 
         # Increment time
         t = dt*n
-<<<<<<< HEAD
-=======
 
     # Store output also after final step
     Z_out[-1,:len(Z)] = Z
     V_out[-1,:len(V)] = V
 
->>>>>>> e5943c268b0a023bf02889b5e45487b07c3cd6a5
     return Z_out, V_out
 
 ##############################
@@ -113,7 +110,7 @@ def experiment_case3(Z0, D0, Np, Tmax, dt, save_dt, K, windspeed, h0, mu, ift, r
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dt', dest = 'dt', type = int, default = 10, help = 'Timestep')
-parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 1800, help = 'Interval at which to save results')
+parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 3600, help = 'Interval at which to save results')
 parser.add_argument('--Np', dest = 'Np', type = int, default = 100000, help = 'Number of particles')
 parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help = 'Run ID (used to differentiate runs when saving')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
@@ -142,7 +139,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 13*3600
 
 # Oil parameters
 ## Dynamic viscosity of oil (kg/m/s)
@@ -214,10 +211,10 @@ else:
     K = K_B
     label = 'B'
 
-datafolder = '../results/'
 datafolder = '/work6/torn/EulerLagrange/'
-datafolder = '../tmp_results'
-outputfilename = os.path.join(datafolder, f'Case3_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
+datafolder = '/media/torn/SSD/EulerLagrange/'
+
+outputfilename = os.path.join(datafolder, f'Case3_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_save_dt={args.save_dt}_Z_{args.run_id:04}.npy')
 
 if (not os.path.exists(outputfilename)) or args.overwrite:
     tic = time.time()

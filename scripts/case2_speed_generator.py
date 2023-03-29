@@ -172,7 +172,7 @@ def rise_speed_CD(d, rho, CD):
     return np.sqrt(4*d*np.abs(g_)/(3*CD)) * np.sign(g_)
 
 # Since C_D is a function of speed, the speed is found by an iterative procedure
-def CD_iterator(CD_func, d, rho, CSF, rtol = 1e-3, maxiter = 100, return_speed=False, verbose=False):
+def CD_iterator(CD_func, d, rho, CSF, rtol = 1e-3, maxiter = 100, return_speed=False, verbose=False, P=None):
     # Drag coefficients are given implicitly as a function of Re.
     # Solve for CD with iterative procedure,
     # start by guessing Re from Stokes' law.
@@ -183,7 +183,11 @@ def CD_iterator(CD_func, d, rho, CSF, rtol = 1e-3, maxiter = 100, return_speed=F
     Re = Re0
     for n in range(maxiter):
         # Calculate drag coefficient
-        CD = CD_func(Re, CSF)
+        if P is None:
+            CD = CD_func(Re, CSF)
+        else:
+            CD = CD_func(Re, CSF, P=P)
+
         # Calculate new Reynolds number
         Re = np.abs(rise_speed_CD(d, rho, CD)) * d / CONST.nu
         # Check for convergence
@@ -209,11 +213,9 @@ def CD_fibre_sinking(Re, CSF):
     # https://pubs.acs.org/doi/pdf/10.1021/acs.est.8b06794
     return 4.7/np.sqrt(Re) + np.sqrt(CSF)
 
-def CD_pellet_rising(Re, CSF):
+def CD_pellet_rising(Re, CSF, P):
     # Drag coefficient for rising pellets from Eq. (12) in
     # https://pubs.acs.org/doi/pdf/10.1021/acs.est.8b06794
-    # Note: Hard-coding the Powers roundness factor to 3.5
-    P = 6
     return (20/Re + 10/np.sqrt(Re) + np.sqrt(1.195 - CSF))*(6/P)**(1-CSF)
 
 def CD_fibre_rising(Re, CSF):
@@ -254,8 +256,10 @@ def draw_random_speeds(Np):
 
     # Calculate speed for fibres
     v[cat==0] = CD_iterator(CD_fibre_rising, d[cat==0], rho[cat==0], CSF=CSF[cat==0], return_speed=True)
-    # Calculate speed for fibres
-    v[cat!=0] = CD_iterator(CD_pellet_rising, d[cat!=0], rho[cat!=0], CSF=CSF[cat!=0], return_speed=True)
+    # Calculate speed for non-fibres
+    #P = np.random.randint(1, 7, size=np.sum(cat!=0))
+    P = 3.5
+    v[cat!=0] = CD_iterator(CD_pellet_rising, d[cat!=0], rho[cat!=0], CSF=CSF[cat!=0], return_speed=True, P=P)
 
     # Return generated random samples
     return v

@@ -23,10 +23,38 @@ from webernaturaldispersion import weber_natural_dispersion
 from logger import eulerian_logger as logger
 
 
+####################################
+####   Command line arguments   ####
+####################################
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--dt', dest = 'dt', type = float, default = 300, help = 'Timestep')
+parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 3600, help = 'Interval at which to save results')
+parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
+parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
+parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
+parser.add_argument('--tol', dest = 'tol', type = float, default = 1e-6, help = 'Tolerance to use in the iterative procedure')
+parser.add_argument('--checkpoint', dest = 'checkpoint', action = 'store_true', help = 'Save results for checkpointing at every output timestep?')
+parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')
+parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
+parser.add_argument('-v', '--verbose', dest = 'verbose', action = 'store_true', help = 'Produce lots of status updates?')
+parser.add_argument('--statusfile', dest = 'statusfilename', default = None, help = 'Filename to write log messages to')
+args = parser.parse_args()
+
+# Open file for writing statusmessages if required
+if args.statusfilename is not None:
+    args.statusfile = open(args.statusfilename, 'w')
+
+# Consistency check of arguments
+if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
+    logger('dt does not evenly divide save_dt, output times will not be as expected', args, error = True)
+    sys.exit()
+
+
+
 ############################################
 #### Main functions to run a simulation ####
 ############################################
-
 
 def iterative_solver_case3(params, C0, L_AD,  R_AD, K_vec, v_minus, v_plus, args):
 
@@ -147,33 +175,6 @@ def experiment_case3(C0, K, params, outputfilename, args):
     return C_out
 
 
-####################################
-####   Command line arguments   ####
-####################################
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--dt', dest = 'dt', type = float, default = 300, help = 'Timestep')
-parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 1800, help = 'Interval at which to save results')
-parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
-parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
-parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
-parser.add_argument('--tol', dest = 'tol', type = float, default = 1e-6, help = 'Tolerance to use in the iterative procedure')
-parser.add_argument('--checkpoint', dest = 'checkpoint', action = 'store_true', help = 'Save results for checkpointing at every output timestep?')
-parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')
-parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
-parser.add_argument('-v', '--verbose', dest = 'verbose', action = 'store_true', help = 'Produce lots of status updates?')
-parser.add_argument('--statusfile', dest = 'statusfilename', default = None, help = 'Filename to write log messages to')
-args = parser.parse_args()
-
-# Open file for writing statusmessages if required
-if args.statusfilename is not None:
-    args.statusfile = open(args.statusfilename, 'w')
-
-# Consistency check of arguments
-if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
-    logger('dt does not evenly divide save_dt, output times will not be as expected', args, error = True)
-    sys.exit()
-
 ########################################
 #### Scenario parameters for Case 3 ####
 ########################################
@@ -209,9 +210,8 @@ D50v  = np.exp(np.log(D50n) + 3*sigma**2)
 
 
 # bin edges
-speed_class_edges = np.logspace(-10, 0, args.NK+1)
+speed_class_edges = np.logspace(-6, 0, args.NK+1)
 fractionator = Fractionator(speed_class_edges, rho)
-speeds = -fractionator.speeds
 # Fractions
 mass_fractions = fractionator.evaluate(D50v, sigma)
 # Normalise mass fractions
@@ -245,7 +245,7 @@ params = EulerianSystemParameters(
         Tmax = Tmax, # Simulation time
         dt = args.dt, # timestep
         Nclasses = args.NK, # Number of speed classes
-        speeds = speeds, # speed class values
+        speeds = -fractionator.speeds, # speed class values
         mass_fractions = mass_fractions, # fraction of mass in each speed class
         eta_top = 1, # Absorbing boundary in advection at top
         checkpoint = args.checkpoint, # save results underway?
@@ -258,7 +258,6 @@ params = EulerianSystemParameters(
         rho = rho, # Oil density
         Hs = Hs, # significant wave height
     )
-
 
 
 #########################################################
@@ -277,8 +276,9 @@ C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 #C0 = np.zeros_like(C0)
 
 datafolder = '/work6/torn/EulerLagrange'
-datafolder = '../tmp_results'
-outputfilename = os.path.join(datafolder, f'Case3_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
+datafolder = '/media/torn/SSD/EulerLagrange/'
+
+outputfilename = os.path.join(datafolder, f'Case3_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}_save_dt={args.save_dt}.npy')
 
 
 if (not os.path.exists(outputfilename)) or args.overwrite:

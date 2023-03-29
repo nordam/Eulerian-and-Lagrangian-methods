@@ -154,6 +154,7 @@ def entrainment_reaction_term_function(params, C):
     # Allocate vector
     NK, NJ = C.shape
     reaction_term = np.zeros((NK, NJ))
+    fractions = np.zeros((NK, NJ))
     # Width parameter of distribution (constant)
     sigma = 0.4*np.log(10)
 
@@ -535,7 +536,7 @@ def Crank_Nicolson_FVM_TVD_advection_diffusion_reaction(C0, K, params, outputfil
     # Array to hold one timestep, to avoid allocating too much memory
     C_now  = np.zeros_like(C0)
     C_now[:] = C0.copy()
-    # Array for output, store once every 900 seconds
+    # Array for output, store once every save_dt seconds
     N_skip = int(save_dt/params.dt)
     N_out = 1 + int(params.Nt / N_skip)
     C_out = np.zeros((N_out, NK, NJ)) - 999

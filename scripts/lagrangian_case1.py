@@ -74,10 +74,11 @@ def experiment_case1(Z0, V0, Np, Tmax, dt, save_dt, K, randomstep):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dt', dest = 'dt', type = int, default = 30, help = 'Timestep')
-parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 1800, help = 'Interval at which to save results')
+parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 3600, help = 'Interval at which to save results')
 parser.add_argument('--Np', dest = 'Np', type = int, default = 10000, help = 'Number of particles')
 parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help = 'Run ID (used to differentiate runs when saving')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
+parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
 #parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 args = parser.parse_args()
 
@@ -96,7 +97,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 12*3600
+Tmax = 13*3600
 
 
 ############################
@@ -159,12 +160,14 @@ else:
 
 datafolder = '../results/'
 datafolder = '/work6/torn/EulerLagrange/'
+datafolder = '/media/torn/SSD/EulerLagrange/'
+outputfilename_Z = os.path.join(datafolder, f'Case1_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
 
-tic = time.time()
-Z_out = experiment_case1(Z0, V0, args.Np, Tmax, args.dt, args.save_dt, K, correctstep)
-toc = time.time()
-print(f'Simulation took {toc - tic:.1f} seconds, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}')
-
-outputfilename = os.path.join(datafolder, f'Case1_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
-np.save(outputfilename, Z_out)
-
+if (not os.path.exists(outputfilename_Z)) or args.overwrite:
+    tic = time.time()
+    Z_out = experiment_case1(Z0, V0, args.Np, Tmax, args.dt, args.save_dt, K, correctstep)
+    toc = time.time()
+    np.save(outputfilename_Z, Z_out)
+    print(f'Simulation took {toc - tic:.1f} seconds, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}')
+else:
+    print(f'File exists, skipping: {outputfilename_Z}')

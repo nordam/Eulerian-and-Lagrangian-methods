@@ -196,9 +196,6 @@ def entrain(z, d, v, Np, dt, windspeed, h, mu, ift, rho):
     D50v  = np.exp(np.log(D50n) + 3*sigma**2)
     dnew  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = N)
     vnew  = rise_speed(dnew, rho)
-    speed_class_edges = np.logspace(-6, 0, 33)
-    speed_class_centers = np.sqrt(speed_class_edges[:-1]*speed_class_edges[1:])
-    vnew = speed_class_centers[np.digitize(vnew, speed_class_edges)-1]
     # Append newly entrained droplets to existing arrays
     z = np.concatenate((z, znew))
     d = np.concatenate((d, dnew))

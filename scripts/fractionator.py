@@ -34,7 +34,7 @@ class Fractionator():
         sizes_tmp   = np.logspace(-9, 2, 100000)
         speeds_tmp  = rise_speed(sizes_tmp, rho)
         # k gives degree, s=0 ensures no smoothing
-        inverse = UnivariateSpline(speeds_tmp, sizes_tmp, k=3, s=0)
+        inverse = UnivariateSpline(np.abs(speeds_tmp), sizes_tmp, k=3, s=0)
 
         # Find bins in size distribution, from bins in speed distribution
         size_class_edges     = inverse(speed_class_edges)

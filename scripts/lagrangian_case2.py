@@ -59,7 +59,7 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = 
 
     # Time loop
     t = 0
-    for n in iterator(Nt):
+    for n in iterator(Nt+1):
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
@@ -76,6 +76,10 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = 
         Z = np.maximum(0.0, Z)
         # Increment time
         t = dt*n
+
+    # Store output also after final step
+    Z_out[-1,:len(Z)] = Z
+
     return Z_out
 
 
@@ -85,7 +89,7 @@ def experiment_case2(Z0, V0, Np, Zmax, Tmax, dt, save_dt, K, randomstep, args = 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dt', dest = 'dt', type = float, default = 10, help = 'Timestep')
-parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 300, help = 'Interval at which to save results')
+parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 3600, help = 'Interval at which to save results')
 parser.add_argument('--Np', dest = 'Np', type = int, default = 100000, help = 'Number of particles')
 parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help = 'Run ID (used to differentiate runs when saving')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
@@ -116,7 +120,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 1*3600
+Tmax = 12*3600
 
 
 ############################
@@ -166,9 +170,12 @@ else:
     label = 'B'
 
 datafolder = '../results/'
+datafolder = '/media/torn/SSD/EulerLagrange/'
 #datafolder = '/work6/torn/EulerLagrange/'
-outputfilename_Z = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}')
+outputfilename_Z = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_save_dt={args.save_dt}_Z_{args.run_id:04}.npy')
 
+
+print(outputfilename_Z, os.path.exists(outputfilename_Z), args.overwrite)
 if (not os.path.exists(outputfilename_Z)) or args.overwrite:
     tic = time.time()
     Z_out = experiment_case2(Z0, V0, args.Np, Zmax, Tmax, args.dt, args.save_dt, K, correctstep, args)
