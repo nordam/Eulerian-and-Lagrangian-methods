@@ -14,12 +14,12 @@ from numba import jit
 
 # import stuff from .py files in local folder
 import sys
-sys.path.append('.')
+sys.path.append('src')
 from particlefunctions import *
 from logger import lagrangian_logger as logger
 
 # Function to generate random speed distribution for microplastics
-from case2_speed_generator import draw_random_speeds
+from microplastics_speed_generator import draw_random_speeds
 
 
 ###########################################
@@ -93,14 +93,11 @@ parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 3600, h
 parser.add_argument('--Np', dest = 'Np', type = int, default = 100000, help = 'Number of particles')
 parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help = 'Run ID (used to differentiate runs when saving')
 parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
-parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')
 parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
 parser.add_argument('-v', '--verbose', dest = 'verbose', action = 'store_true', help = 'Produce lots of status updates?')
 parser.add_argument('--statusfile', dest = 'statusfilename', default = None, help = 'Filename to write log messages to')
 args = parser.parse_args()
-
-
 
 # Open file for writing statusmessages if required
 if args.statusfilename is not None:
@@ -116,7 +113,6 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 #### Scenario parameters for Case 1 ####
 ########################################
 
-#### Hard-coded parameters for this case ####
 # Total depth
 Zmax = 50
 # Simulation time
@@ -169,19 +165,14 @@ else:
     K = K_B
     label = 'B'
 
-datafolder = '../results/'
-datafolder = '/media/torn/SSD/EulerLagrange/'
-#datafolder = '/work6/torn/EulerLagrange/'
-outputfilename_Z = os.path.join(datafolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_save_dt={args.save_dt}_Z_{args.run_id:04}.npy')
+resultsfolder = '../results/'
+outputfilename_Z = os.path.join(resultsfolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_save_dt={args.save_dt}_Z_{args.run_id:04}.npy')
 
-
-print(outputfilename_Z, os.path.exists(outputfilename_Z), args.overwrite)
 if (not os.path.exists(outputfilename_Z)) or args.overwrite:
     tic = time.time()
     Z_out = experiment_case2(Z0, V0, args.Np, Zmax, Tmax, args.dt, args.save_dt, K, correctstep, args)
     toc = time.time()
     logger(f'Simulation took {toc - tic:.1f} seconds, Case 2, Np = {args.Np}, dt = {args.dt}, run = {args.run_id}, profile = {label}', args, error=True)
-    #np.savez_compressed(outputfilename_Z, Z=Z_out)
     np.save(outputfilename_Z, Z_out)
 else:
     logger(f'File exists, skipping: {outputfilename_Z}', args, error = True)

@@ -14,7 +14,7 @@ from numba import jit
 
 # import stuff from .py files in local folder
 import sys
-sys.path.append('.')
+sys.path.append('src')
 from particlefunctions import *
 from wavefunctions import jonswap
 from webernaturaldispersion import weber_natural_dispersion
@@ -118,7 +118,6 @@ parser.add_argument('--progress', dest = 'progress', action = 'store_true', help
 parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
 parser.add_argument('-v', '--verbose', dest = 'verbose', action = 'store_true', help = 'Produce lots of status updates?')
 parser.add_argument('--statusfile', dest = 'statusfilename', default = None, help = 'Filename to write log messages to')
-#parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 args = parser.parse_args()
 
 # Open file for writing statusmessages if required
@@ -135,7 +134,6 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 #### Scenario parameters for Case 3 ####
 ########################################
 
-#### Hard-coded parameters for this case ####
 # Total depth
 Zmax = 50
 # Simulation time
@@ -182,8 +180,6 @@ D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h0)
 D50v  = np.exp(np.log(D50n) + 3*sigma**2)
 D0  = np.random.lognormal(mean = np.log(D50v), sigma = sigma, size = args.Np)
 
-#Z0 = np.array([], dtype = np.float64)
-#D0 = np.array([], dtype = np.float64)
 
 ##############################
 #### Diffusivity profiles ####
@@ -211,21 +207,18 @@ else:
     K = K_B
     label = 'B'
 
-datafolder = '/work6/torn/EulerLagrange/'
-datafolder = '/media/torn/SSD/EulerLagrange/'
+resultsfolder = '../results/'
+outputfilename_Z = os.path.join(resultsfolder, f'Case3_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_save_dt={args.save_dt}_Z_{args.run_id:04}.npy')
 
-outputfilename = os.path.join(datafolder, f'Case3_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_save_dt={args.save_dt}_Z_{args.run_id:04}.npy')
-
-if (not os.path.exists(outputfilename)) or args.overwrite:
+if (not os.path.exists(outputfilename_Z)) or args.overwrite:
     tic = time.time()
     Z_out, V_out = experiment_case3(Z0, D0, args.Np, Tmax, args.dt, args.save_dt, K, windspeed, h0, mu, ift, rho, correctstep, surfacing = True, entrainment = True, args = args)
     toc = time.time()
-    np.save(outputfilename, Z_out)
-    np.save(outputfilename.replace('_Z_', '_V_'), V_out)
-    logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}', args, error = True)
+    np.save(outputfilename_Z, Z_out)
+    logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename_Z}', args, error = True)
 
 else:
-    logger(f'File exists, skipping: {outputfilename}', args, error = True)
+    logger(f'File exists, skipping: {outputfilename_Z}', args, error = True)
 
 if args.statusfilename is not None:
     args.statusfile.close()

@@ -16,6 +16,7 @@ from numba import jit
 import sys
 sys.path.append('src')
 from particlefunctions import *
+from logger import lagrangian_logger as logger
 
 
 ###########################################
@@ -82,7 +83,6 @@ parser.add_argument('--progress', dest = 'progress', action = 'store_true', help
 parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
 parser.add_argument('-v', '--verbose', dest = 'verbose', action = 'store_true', help = 'Produce lots of status updates?')
 parser.add_argument('--statusfile', dest = 'statusfilename', default = None, help = 'Filename to write log messages to')
-#parser.add_argument('--checkpoint', dest = 'checkpoint', type = bool, default = False, help = 'Save results for checkpointing at every output timestep?')
 args = parser.parse_args()
 
 # Consistency check of arguments
@@ -168,9 +168,9 @@ if (not os.path.exists(outputfilename_Z)) or args.overwrite:
     Z_out = experiment_case1(Z0, V0, args.Np, Tmax, args.dt, args.save_dt, K, correctstep)
     toc = time.time()
     np.save(outputfilename_Z, Z_out)
-    logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename}', args, error = True)
+    logger(f'Simulation took {toc - tic:.1f} seconds, output written to {outputfilename_Z}', args, error = True)
 else:
-    logger(f'File exists, skipping: {outputfilename}', args, error = True)
+    logger(f'File exists, skipping: {outputfilename_Z}', args, error = True)
 
 if args.statusfilename is not None:
     args.statusfile.close()
