@@ -12,11 +12,11 @@ import numpy as np
 
 # import stuff from .py files in local folder
 import sys
-sys.path.append('.')
+sys.path.append('src')
 from eulerian_functions import *
 from logger import eulerian_logger as logger
 # Function to generate random speed distribution for microplastics
-from case2_speed_generator import draw_random_speeds
+from microplastics_speed_generator import draw_random_speeds
 
 
 
@@ -174,7 +174,6 @@ Tmax = 12*3600
 
 # For this case, we use a speed distribution taken from
 # a random sample of microplastics properties
-bin_spacing = 'logarithmic'
 Nclasses = args.NK
 speeds_filename = f'../data/Case2_speeds_{bin_spacing}_Nclasses={Nclasses}.npy'
 mass_fractions_filename = f'../data/Case2_mass_fractions_{bin_spacing}_Nclasses={Nclasses}.npy'
@@ -186,32 +185,19 @@ if os.path.exists(speeds_filename) and os.path.exists(mass_fractions_filename):
 
 else:
     # Read random samples and create histogram of speeds
-    if bin_spacing == 'linear':
-        bins_positive = np.linspace(0, 0.3, 3*int(Nclasses/4)+1)
-        mids_positive = bins_positive[:-1] + width_positive/2
+    # and store historgram for later use
 
-        bins_negative = np.linspace(-0.1, 0, int(Nclasses/4)+1)
-        mids_negative = bins_negative[:-1] + width_negative/2
+    # Create positive and negative log-spaced bins
+    bins_positive = np.logspace(-8, np.log10(0.15), 3*int(Nclasses/4) + 1)
+    bins_negative = np.logspace(-8, np.log10(0.05), 1*int(Nclasses/4) + 1)
 
-        bins = np.concatenate((bins_negative, bins_positive[1:]))
-        mids = np.concatenate((mids_negative, mids_positive))
-        counts = np.zeros(len(bins)-1)
+    mids_positive =    np.sqrt(bins_positive[1:]*bins_positive[:-1])
+    mids_negative = -( np.sqrt(bins_negative[1:]*bins_negative[:-1]) )[::-1]
+    bins_negative = -bins_negative[::-1]
 
-    elif bin_spacing == 'logarithmic':
-        bins_positive = np.logspace(-8, np.log10(0.15), 3*int(Nclasses/4) + 1)
-        bins_negative = np.logspace(-8, np.log10(0.05), 1*int(Nclasses/4) + 1)
+    counts = np.zeros(Nclasses)
+    mids = np.concatenate([mids_negative, mids_positive])
 
-        mids_positive =    np.sqrt(bins_positive[1:]*bins_positive[:-1])
-        mids_negative = -( np.sqrt(bins_negative[1:]*bins_negative[:-1]) )[::-1]
-        bins_negative = -bins_negative[::-1]
-
-        counts = np.zeros(Nclasses)
-        mids = np.concatenate([mids_negative, mids_positive])
-
-    else:
-        print('Invalid bin spacing: ', bin_spacing)
-        import sys
-        sys.exit()
 
     #for filename in tqdm(glob('speeds_nonfibre_*.npy')[:100]):
     logger('Generating random speeds...', args, error=True)
@@ -226,7 +212,7 @@ else:
         counts[:len(counts_negative)] += counts_negative
         counts[len(counts_negative):] += counts_positive
 
-    print(f'{outside} particles fell outside')
+    logger(f'{outside} speeds fell outside histogram range', args)
     # Normalised mass fractions
     mass_fractions = counts / np.sum(counts)
     # midpoints representing speed of each class
@@ -235,10 +221,6 @@ else:
     np.save(speeds_filename, speeds)
     np.save(mass_fractions_filename, mass_fractions)
     logger('Done generating speeds', args, error=True)
-
-
-print('Average velocity = ', np.sum(mass_fractions * speeds))
-#sys.exit()
 
 
 # Initial condition:
@@ -253,8 +235,10 @@ pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*
 ####   Diffusivity profiles   ####
 ##################################
 
+# Constant diffusivity (not used in paper)
 K_A = lambda z: 1e-2*np.ones(len(z))
 
+# Fitted to results of GOTM simulation
 alpha, beta, zeta, z0 = (0.00636, 0.088, 1.54, 1.3)
 K_B = lambda z: alpha*(z+z0)*np.exp(-(beta*(z+z0))**zeta)
 
@@ -291,10 +275,8 @@ else:
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
-datafolder = '/work6/torn/EulerLagrange'
-datafolder = '../results'
-datafolder = '/media/torn/SSD/EulerLagrange/'
-outputfilename = os.path.join(datafolder, f'Case2_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}_save_dt={args.save_dt}.npy')
+resultsfolder = '../results'
+outputfilename = os.path.join(resultsfolder, f'Case2_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}_save_dt={args.save_dt}.npy')
 
 
 if (not os.path.exists(outputfilename)) or args.overwrite:

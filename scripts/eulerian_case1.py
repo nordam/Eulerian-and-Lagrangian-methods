@@ -12,7 +12,7 @@ from numba import jit
 
 # import stuff from .py files in local folder
 import sys
-sys.path.append('.')
+sys.path.append('src')
 from eulerian_functions import *
 from logger import eulerian_logger as logger
 
@@ -192,7 +192,7 @@ pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*
 ####   Diffusivity profiles   ####
 ##################################
 
-# Constant diffusivity
+# Constant diffusivity (not used in paper)
 K_A = lambda z: 1e-2*np.ones(len(z))
 
 # Fitted to results of GOTM simulation
@@ -216,7 +216,6 @@ params = EulerianSystemParameters(
         checkpoint = args.checkpoint, # save results underway?
     )
 
-print(params.speeds)
 
 #########################################################
 ####    Run simulation for one diffusivity profile   ####
@@ -232,12 +231,8 @@ else:
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
-#np.save(f'../debug/C0_case1_Nclasses={params.Nclasses}_NJ={params.Nz}.npy', C0)
-
-datafolder = '/work6/torn/EulerLagrange'
-datafolder = '../results/'
-#datafolder = '../debug/'
-outputfilename = os.path.join(datafolder, f'Case1_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
+resultsfolder = '../results/'
+outputfilename = os.path.join(resultsfolder, f'Case1_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}.npy')
 
 
 if (not os.path.exists(outputfilename)) or args.overwrite:

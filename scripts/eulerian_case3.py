@@ -11,7 +11,7 @@ import numpy as np
 
 # import stuff from .py files in local folder
 import sys
-sys.path.append('.')
+sys.path.append('src')
 from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_advection_diffusion_reaction
 from fractionator import Fractionator
 from particlefunctions import rise_speed
@@ -228,8 +228,10 @@ pdf_IC = lambda z: np.exp(-0.5*((z - mu_IC)/sigma_IC)**2) / (sigma_IC*np.sqrt(2*
 ####   Diffusivity profiles   ####
 ##################################
 
+# Constant diffusivity (not used in paper)
 K_A = lambda z: 1e-2*np.ones(len(z))
 
+# Fitted to results of GOTM simulation
 alpha, beta, zeta, z0 = (0.00636, 0.088, 1.54, 1.3)
 K_B = lambda z: alpha*(z+z0)*np.exp(-(beta*(z+z0))**zeta)
 
@@ -273,12 +275,9 @@ else:
 
 # Initial concentration array for all cells and time levels
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
-#C0 = np.zeros_like(C0)
 
-datafolder = '/work6/torn/EulerLagrange'
-datafolder = '/media/torn/SSD/EulerLagrange/'
-
-outputfilename = os.path.join(datafolder, f'Case3_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}_save_dt={args.save_dt}.npy')
+resultsfolder = '../results/'
+outputfilename = os.path.join(resultsfolder, f'Case3_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}_save_dt={args.save_dt}.npy')
 
 
 if (not os.path.exists(outputfilename)) or args.overwrite:
