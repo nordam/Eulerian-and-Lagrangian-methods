@@ -30,7 +30,7 @@ parser.add_argument('--dt', dest = 'dt', type = float, default = 300, help = 'Ti
 parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 3600, help = 'Interval at which to save results')
 parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
 parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
-parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
+parser.add_argument('--profile', dest = 'profile', type = str, default = 'B', choices = ['A', 'B'], help = 'Diffusivity profiles')
 parser.add_argument('--tol', dest = 'tol', type = float, default = 1e-6, help = 'Tolerance to use in the iterative procedure')
 parser.add_argument('--checkpoint', dest = 'checkpoint', action = 'store_true', help = 'Save results for checkpointing at every output timestep?')
 parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')
@@ -175,8 +175,8 @@ Tmax = 12*3600
 # For this case, we use a speed distribution taken from
 # a random sample of microplastics properties
 Nclasses = args.NK
-speeds_filename = f'../data/Case2_speeds_{bin_spacing}_Nclasses={Nclasses}.npy'
-mass_fractions_filename = f'../data/Case2_mass_fractions_{bin_spacing}_Nclasses={Nclasses}.npy'
+speeds_filename = f'../data/Case2_speeds_Nclasses={Nclasses}.npy'
+mass_fractions_filename = f'../data/Case2_mass_fractions_Nclasses={Nclasses}.npy'
 
 if os.path.exists(speeds_filename) and os.path.exists(mass_fractions_filename):
     # If speeds are already calculated and stored, load those

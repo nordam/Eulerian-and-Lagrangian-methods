@@ -12,13 +12,12 @@ import numpy as np
 # import stuff from .py files in local folder
 import sys
 sys.path.append('src')
-from eulerian_functions import EulerianSystemParameters, Crank_Nicolson_FVM_TVD_advection_diffusion_reaction
+from eulerian_functions import *
 from fractionator import Fractionator
 from particlefunctions import rise_speed
 from constants import CONST
 from wavefunctions import jonswap, Fbw
 from oilfunctions import entrainmentrate
-from eulerian_functions import *
 from webernaturaldispersion import weber_natural_dispersion
 from logger import eulerian_logger as logger
 
@@ -32,7 +31,7 @@ parser.add_argument('--dt', dest = 'dt', type = float, default = 300, help = 'Ti
 parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 3600, help = 'Interval at which to save results')
 parser.add_argument('--NJ', dest = 'NJ', type = int, default = 1000, help = 'Number of grid cells')
 parser.add_argument('--NK', dest = 'NK', type = int, default = 8, help = 'Number of speed classes')
-parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
+parser.add_argument('--profile', dest = 'profile', type = str, default = 'B', choices = ['A', 'B'], help = 'Diffusivity profiles')
 parser.add_argument('--tol', dest = 'tol', type = float, default = 1e-6, help = 'Tolerance to use in the iterative procedure')
 parser.add_argument('--checkpoint', dest = 'checkpoint', action = 'store_true', help = 'Save results for checkpointing at every output timestep?')
 parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')

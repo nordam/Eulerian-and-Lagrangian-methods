@@ -10,7 +10,6 @@ import argparse
 # Numerical packages
 from scipy import stats
 import numpy as np
-from numba import jit
 
 # import stuff from .py files in local folder
 import sys
@@ -45,13 +44,13 @@ def experiment_case1(Z0, V0, Np, Tmax, dt, save_dt, K, randomstep):
     V  = V0.copy()
     # Calculate size of output arrays
     N_skip = int(save_dt/dt)
-    N_out = 1 + int(Nt / N_skip)
+    N_out = int(Nt / N_skip) + 1 # Add 1 to store initial state
     # Array to store output
     Z_out = np.zeros((N_out, Np)) - 999
 
     # Time loop
     t = 0
-    for n in range(Nt):
+    for n in range(Nt+1):
         # Store output once every N_skip steps
         if n % N_skip == 0:
             i = int(n / N_skip)
@@ -78,7 +77,7 @@ parser.add_argument('--dt', dest = 'dt', type = int, default = 30, help = 'Times
 parser.add_argument('--save_dt', dest = 'save_dt', type = int, default = 3600, help = 'Interval at which to save results')
 parser.add_argument('--Np', dest = 'Np', type = int, default = 10000, help = 'Number of particles')
 parser.add_argument('--run_id', dest = 'run_id', type = int, default = 0, help = 'Run ID (used to differentiate runs when saving')
-parser.add_argument('--profile', dest = 'profile', type = str, default = 'A', choices = ['A', 'B'], help = 'Diffusivity profiles')
+parser.add_argument('--profile', dest = 'profile', type = str, default = 'B', choices = ['A', 'B'], help = 'Diffusivity profiles')
 parser.add_argument('--progress', dest = 'progress', action = 'store_true', help = 'Display progress bar?')
 parser.add_argument('--overwrite', dest = 'overwrite', action = 'store_true', help = 'Overwrite existing file?')
 parser.add_argument('-v', '--verbose', dest = 'verbose', action = 'store_true', help = 'Produce lots of status updates?')
@@ -99,7 +98,7 @@ if (args.save_dt / args.dt) != int(args.save_dt / args.dt):
 # Total depth
 Zmax = 50
 # Simulation time
-Tmax = 13*3600
+Tmax = 12*3600
 
 
 ############################
@@ -161,7 +160,7 @@ else:
     label = 'B'
 
 resultsfolder = '../results/'
-outputfilename_Z = os.path.join(resultsfolder, f'Case1_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_Z_{args.run_id:04}.npy')
+outputfilename_Z = os.path.join(resultsfolder, f'Case1_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_save_dt={args.save_dt}_Z_{args.run_id:04}.npy')
 
 if (not os.path.exists(outputfilename_Z)) or args.overwrite:
     tic = time.time()
