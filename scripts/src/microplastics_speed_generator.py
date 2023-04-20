@@ -30,11 +30,11 @@ CONST = PhysicalConstants(
 # Normal-inverse Gaussian distribution, with parameters from
 # https://pubs.acs.org/doi/pdf/10.1021/acs.estlett.9b00379
 
-loc   = 0.84
-scale = 0.097
+mu    = 0.84
+delta = 0.097
 alpha = 75.1
 beta  = 71.3
-pdf_density = norminvgauss(alpha, beta, loc, scale)
+pdf_density = norminvgauss(alpha*delta, beta*delta, mu, delta)
 rvs_density = lambda N: pdf_density.rvs(N)
 
 
@@ -49,8 +49,8 @@ rvs_density = lambda N: pdf_density.rvs(N)
 # Cut-offs at 20 um and 5000 um.
 
 # Un-normalised number distribution pdf
-alpha = 1.6
-powerlaw = lambda d : d ** (-alpha)
+alpha_exp = 1.6
+powerlaw = lambda d : d ** (-alpha_exp)
 # Normalisation constant (calculated analytically from the integral)
 P0 = 1/(-5/3*(5000**(-0.6) - 20**(-0.6)))
 # Normalised volume distribution

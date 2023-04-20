@@ -188,8 +188,8 @@ else:
     # and store historgram for later use
 
     # Create positive and negative log-spaced bins
-    bins_positive = np.logspace(-8, np.log10(0.15), 3*int(Nclasses/4) + 1)
-    bins_negative = np.logspace(-8, np.log10(0.05), 1*int(Nclasses/4) + 1)
+    bins_positive = np.logspace(-8, np.log10(0.1), int(Nclasses/2) + 1)
+    bins_negative = np.logspace(-8, np.log10(0.3), int(Nclasses/2) + 1)
 
     mids_positive =    np.sqrt(bins_positive[1:]*bins_positive[:-1])
     mids_negative = -( np.sqrt(bins_negative[1:]*bins_negative[:-1]) )[::-1]
