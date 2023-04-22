@@ -19,4 +19,4 @@ The notebook ```notebooks/Example-plotting.ipynb``` contains some examples for p
 
 ## Terminal velocity distribution of microplastics
 
-One of the three cases makes use of a terminal velocity distribution for microplastics, derived by combining the results of two earlier papers. The code used to obtain the velocity distribution is demonstrated in some detail in the notebookn ```notebooks/Microplastics-Speed-Distribution.ipynb```.
+One of the three cases makes use of a terminal velocity distribution for microplastics, derived by combining the results of two earlier papers. The code used to obtain the velocity distribution is demonstrated in some detail in the notebook ```notebooks/Microplastics-Speed-Distribution.ipynb```.
