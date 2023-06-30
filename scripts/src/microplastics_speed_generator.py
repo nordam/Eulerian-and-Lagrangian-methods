@@ -30,7 +30,7 @@ CONST = PhysicalConstants(
 # Normal-inverse Gaussian distribution, with parameters from
 # https://pubs.acs.org/doi/pdf/10.1021/acs.estlett.9b00379
 
-mu   = 0.84
+mu    = 0.84
 delta = 0.097
 alpha = 75.1
 beta  = 71.3
