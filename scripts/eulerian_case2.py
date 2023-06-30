@@ -188,8 +188,8 @@ else:
     # and store historgram for later use
 
     # Create positive and negative log-spaced bins
-    bins_positive = np.logspace(-8, np.log10(0.15), 3*int(Nclasses/4) + 1)
-    bins_negative = np.logspace(-8, np.log10(0.05), 1*int(Nclasses/4) + 1)
+    bins_positive = np.logspace(-8, np.log10(0.1), 2*int(Nclasses/4) + 1)
+    bins_negative = np.logspace(-8, np.log10(0.3), 2*int(Nclasses/4) + 1)
 
     mids_positive =    np.sqrt(bins_positive[1:]*bins_positive[:-1])
     mids_negative = -( np.sqrt(bins_negative[1:]*bins_negative[:-1]) )[::-1]
@@ -212,7 +212,7 @@ else:
         counts[:len(counts_negative)] += counts_negative
         counts[len(counts_negative):] += counts_positive
 
-    logger(f'{outside} speeds fell outside histogram range', args)
+    logger(f'{outside} speeds fell outside histogram range', args, error=True)
     # Normalised mass fractions
     mass_fractions = counts / np.sum(counts)
     # midpoints representing speed of each class
@@ -276,6 +276,7 @@ else:
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
 resultsfolder = '../results'
+resultsfolder = '/media/torn/SSD/EulerLagrange'
 outputfilename = os.path.join(resultsfolder, f'Case2_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}_save_dt={args.save_dt}.npy')
 
 

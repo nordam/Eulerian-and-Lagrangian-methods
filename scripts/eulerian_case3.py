@@ -199,6 +199,8 @@ h0     = 3e-3
 windspeed = 9
 # Significant wave height and peak wave period
 Hs, Tp = jonswap(windspeed)
+print('Hs = ', Hs)
+sys.exit()
 # Entrainment rate
 gamma = entrainmentrate(rho, mu, ift, Hs, Tp, windspeed)
 

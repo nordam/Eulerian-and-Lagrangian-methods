@@ -149,6 +149,8 @@ h0     = 3e-3
 windspeed = 9
 # Significant wave height and peak wave period
 Hs, Tp = jonswap(windspeed, fetch = 143233)
+print('Hs = ', Hs)
+sys.exit()
 
 
 ############################
