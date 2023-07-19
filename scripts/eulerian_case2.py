@@ -276,7 +276,6 @@ else:
 C0 = pdf_IC(params.z_cell)[None,:] * params.mass_fractions[:,None]
 
 resultsfolder = '../results'
-resultsfolder = '/media/torn/SSD/EulerLagrange'
 outputfilename = os.path.join(resultsfolder, f'Case2_K_{label}_block_Nclasses={params.Nclasses}_NJ={params.Nz}_dt={params.dt}_save_dt={args.save_dt}.npy')
 
 

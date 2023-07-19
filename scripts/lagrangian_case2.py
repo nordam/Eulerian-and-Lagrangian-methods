@@ -162,7 +162,6 @@ else:
     label = 'B'
 
 resultsfolder = '../results/'
-resultsfolder = '/media/torn/SSD/EulerLagrange/'
 outputfilename_Z = os.path.join(resultsfolder, f'Case2_K_{label}_lagrangian_Nparticles={args.Np}_dt={args.dt}_save_dt={args.save_dt}_Z_{args.run_id:04}.npy')
 
 if (not os.path.exists(outputfilename_Z)) or args.overwrite:
