@@ -93,7 +93,29 @@ class EulerianSystemParameters():
 
         if self.gamma > 0:
             # Indices of entrainment region [1.15*Hs, 1.85*Hs]
-            self.sub_cells = np.where((self.z_cell >= 2) & (self.z_cell <= 3.2))[0]
+            self.sub_cells = np.where((self.z_cell >= 1.15*Hs) & (self.z_cell <= 1.85*Hs))[0]
+            self.fractional_sub_cells = np.zeros(Nz)
+            for i in range(Nz):
+                if (self.z_face[i] >= 1.15*Hs) and (self.z_face[i+1] <= 1.85*Hs):
+                    # Both cell faces are inside entrainment region
+                    self.fractional_sub_cells[i] = 1
+                elif (self.z_face[i+1] >= 1.15*Hs) and (self.z_face[i+1] <= 1.85*Hs):
+                    # Only bottom cell face is inside entrainment region
+                    self.fractional_sub_cells[i] = (self.z_face[i+1] - 1.15*Hs) / self.dz
+                    assert self.fractional_sub_cells[i] >= 0
+                    assert self.fractional_sub_cells[i] <= 1
+                elif (self.z_face[i] >= 1.15*Hs) and (self.z_face[i] <= 1.85*Hs):
+                    # Only top cell face is inside entrainment region
+                    self.fractional_sub_cells[i] = (1.85*Hs - self.z_face[i]) / self.dz
+                    assert self.fractional_sub_cells[i] >= 0
+                    assert self.fractional_sub_cells[i] <= 1
+                else:
+                    # Both cell faces are outside entrainment region
+                    self.fractional_sub_cells[i] = 0
+
+            # Check that the fractions sum to the correct amount
+            assert np.abs( np.sum(self.fractional_sub_cells) - (1.85-1.15)*Hs/self.dz) < 1e-9
+
             # Number of cells in the entrainment region
             self.N_sub = len(self.sub_cells)
 
@@ -161,9 +183,9 @@ def entrainment_reaction_term_function(params, C):
         D50n_h  = weber_natural_dispersion(params.rho, params.mu, params.ift, params.Hs, h)
         D50v_h  = np.exp(np.log(D50n_h) + 3*sigma**2)
         #f = Fractionator(speed_class_edges)
-        fractions = params.fractionator.evaluate(D50v_h, sigma)[:,None]*np.ones([NK, params.N_sub])
+        fractions = params.fractionator.evaluate(D50v_h, sigma)[:,None]*np.ones([NK, NJ])
         # Reaction term for the N_sub top cellss
-        reaction_term[:,params.sub_cells] = params.gamma*surfaced_fraction*fractions/((params.N_sub*params.dz))
+        reaction_term[:,:] = params.fractional_sub_cells[None,:]*params.gamma*surfaced_fraction*fractions/(params.Hs*(1.85 - 1.15))
 
     return reaction_term, fractions[:,0]
 

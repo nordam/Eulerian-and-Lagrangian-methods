@@ -188,7 +188,7 @@ def entrain(z, d, v, Np, dt, windspeed, h, mu, ift, rho):
     N = np.sum(R < p)
     # According to Delvigne & Sweeney (1988), droplets are distributed
     # in the interval (1.5 - 0.35)*Hs to (1.5 + 0.35)*Hs
-    znew = np.random.uniform(low = 2, high = 3.2, size = N)
+    znew = np.random.uniform(low = 1.15*Hs, high = 1.85*Hs, size = N)
     # Assign new sizes from Johansen distribution
     sigma = 0.4 * np.log(10)
     D50n  = weber_natural_dispersion(rho, mu, ift, Hs, h)
